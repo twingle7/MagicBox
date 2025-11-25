@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <title>游戏界面</title>
+  <style>body{margin:40px;font:20px/1.5 Arial;text-align:center}</style>
+</head>
+<body>
+  <h1>🎮 欢迎来到游戏界面</h1>
+  <!-- 按钮1 区域 -->
+  <div id="panel1" style="margin:20px 0;">
+   <h3>投币</h3>
+   <input id="inGolds" type="number" min="1" placeholder="输入正整数金币">
+   <button id="btn1">确认投币</button>
+   <div id="rst1" style="margin-top:8px;"></div>
+  </div>
+</body>
+<script>
+  console.log(localStorage.getItem('uid'));
+  const $ = id => document.getElementById(id);
+  const inGolds = $('inGolds');
+  const rst1   = $('rst1');
+  const btn1   = $('btn1');
+
+  btn1.onclick = async () => {
+    const n = Number(inGolds.value);
+    if (!Number.isInteger(n) || n <= 0) {
+      show(rst1, '请输入正整数金币！', false);
+      return;
+    }
+
+    const uid = localStorage.getItem('uid');
+    if (!uid) {                       // 保险起见再判一次
+      show(rst1, '未登录，请先登录', false);
+      return;
+    }
+
+    btn1.disabled = true;
+    try {
+      const res = await fetch('http://47.92.231.94:8080/game/play', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid, golds: n })
+      });
+      const data = await res.json();
+      handleResult(data);
+    } catch (e) {
+      show(rst1, '网络错误：' + e, false);
+    } finally {
+      btn1.disabled = false;
+    }
+  };
+
+  function handleResult(data) {
+    switch (data.code) {
+      case 0:   // 赢了
+        show(rst1, `${data.msg}，当前余额 ${data.nowGolds}`, true);
+        break;
+      case 1:   // 正数检查（若后端再拦一次）
+      case 2:   // 余额不足
+        show(rst1, `${data.msg}，当前余额 ${data.nowGolds}`, true);
+      case 3:   // 用户不存在
+        show(rst1, data.msg, false);
+        break;
+      case 8:   //输了
+        show(rst1, `${data.msg}，当前余额 ${data.nowGolds}`, false);
+        break;
+      default:
+        show(rst1, '未知状态码：' + data.code, false);
+    }
+  }
+
+  function show(box, text, isOk) {
+    box.textContent = text;
+    box.style.color = isOk ? 'green' : 'crimson';
+  }
+</script>
+</html>

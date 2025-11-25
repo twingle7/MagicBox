@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic Box - 注册</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      display: flex;
+      max-width: 900px;
+      width: 100%;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .register-section {
+      flex: 1;
+      padding: 40px;
+    }
+    
+    .game-info {
+      flex: 1;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e5ee;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #6a11cb;
+      box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    #submitBtn {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+    }
+    
+    #submitBtn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+    }
+    
+    #submitBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    #backBtn {
+      background: #f8f9fa;
+      color: #6a11cb;
+      border: 2px solid #e1e5ee;
+    }
+    
+    #backBtn:hover {
+      background: #e9ecef;
+    }
+    
+    #msg {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    .err {
+      background-color: #ffe6e6;
+      color: #d32f2f;
+      border-left: 4px solid #d32f2f;
+    }
+    
+    .ok {
+      background-color: #e6f4ea;
+      color: #0f9d58;
+      border-left: 4px solid #0f9d58;
+    }
+    
+    .game-title {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .game-description {
+      line-height: 1.6;
+      font-size: 16px;
+      text-align: justify;
+    }
+    
+    .highlight {
+      font-weight: 600;
+      color: #ffeb3b;
+    }
+    
+    .green-text {
+      color: #4caf50;
+    }
+    
+    .red-text {
+      color: #f44336;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .game-info {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="register-section">
+      <h1>创建账户</h1>
+      <p class="subtitle">注册您的Magic Box账户</p>
+      
+      <div class="form-group">
+        <label for="uid">用户ID：</label>
+        <input id="uid" type="text" placeholder="请输入新ID" />
+      </div>
+      
+      <div class="form-group">
+        <label for="pwd">密码：</label>
+        <input id="pwd" type="password" placeholder="请输入密码" />
+      </div>
+      
+      <div id="msg"></div>
+      
+      <div class="btn-group">
+        <button id="submitBtn">注册</button>
+        <button id="backBtn">返回登录</button>
+      </div>
+    </div>
+    
+    <div class="game-info">
+      <h2 class="game-title">Magic Box 游戏简介</h2>
+      <p class="game-description">
+        欢迎来到<span class="highlight">Magic Box</span>！在这个刺激的游戏中，你将会拥有一个神奇的魔法盒子，以及<span class="highlight">10,000枚硬币</span>的启动资金。
+        <br><br>
+        每次游戏，你可以选择一定量的硬币投入魔法盒子中。结果将由命运决定：
+        <br><br>
+        • <span class="green-text">有50%的几率翻倍</span> - 你的硬币数量将翻倍！
+        <br>
+        • <span class="red-text">有50%的几率归零</span> - 你投入的硬币将全部消失！
+        <br><br>
+        考验你的勇气与智慧，合理分配你的硬币，看看你能走多远！
+        <br><br>
+        <span class="highlight">祝你好运！</span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const uid = $('uid');
+    const pwd = $('pwd');
+    const msg = $('msg');
+    const btn = $('submitBtn');
+
+    btn.onclick = async () => {
+      if (!uid.value || !pwd.value) {
+        show('请完整填写ID和密码', false);
+        return;
+      }
+      btn.disabled = true;
+      try {
+        const res = await fetch('http://47.92.231.94:8080/user/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: uid.value, pwd: pwd.value })
+        });
+        const data = await res.json();
+        handle(data);
+      } catch (e) {
+        show('网络错误：' + e, false);
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    function handle(data) {
+      if (data.code === 0) {          // 注册成功
+        localStorage.setItem('uid', uid.value);   // 保存当前用户 id
+        show(data.msg + '，即将进入游戏...', true);
+        setTimeout(() => location.href = 'game.html', 1200);
+      } else {                          // 用户已存在
+        show(data.msg, false);
+      }
+    }
+
+    function show(text, isOk) {
+      msg.textContent = text;
+      msg.className = isOk ? 'ok' : 'err';
+    }
+    
+    // 添加返回登录页面的功能
+    $('backBtn').onclick = () => location.href = 'login.html';
+  </script>
+</body>
+</html>
