@@ -202,7 +202,7 @@
       
       <div class="btn-group">
         <button id="submitBtn">登录</button>
-        <button id="regBtn">去注册</button>
+        <!-- <button id="regBtn">去注册</button> -->
       </div>
     </div>
     
@@ -220,6 +220,7 @@
         考验你的勇气与智慧，合理分配你的硬币，看看你能走多远！
         <br><br>
         <span class="highlight">祝你好运！</span>
+        <span>(info:排行榜将于交易所功能完成后更新)</span>
       </p>
     </div>
   </div>
@@ -272,7 +273,7 @@
           setTimeout(() => location.href = 'game.html', 1200);
           break;
         case 1:   // 用户不存在
-          show(data.msg + '，请注册！', false);
+          show(data.msg + '，请联系TG获得邀请！', false);
           // TODO: 可跳转注册页
           break;
         case 2:   // 密码错误

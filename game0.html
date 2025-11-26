@@ -1,35 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>游戏界面</title>
   <style>
-    :root {
-      --primary: #6c5ce7;
-      --secondary: #a29bfe;
-      --success: #00b894;
-      --danger: #e17055;
-      --warning: #fdcb6e;
-      --dark: #2d3436;
-      --light: #dfe6e9;
-    }
-    
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
     body {
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      color: var(--light);
+      color: #fff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      position: relative;
+    }
+    
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      gap: 20px;
     }
     
     .container {
@@ -43,15 +44,35 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    h1 {
+    .header {
       text-align: center;
       margin-bottom: 30px;
+    }
+    
+    h1 {
       font-size: 2.5rem;
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       text-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
+      margin-bottom: 10px;
+    }
+    
+    .user-info {
+      font-size: 1.1rem;
+      color: #a29bfe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .user-id {
+      background: rgba(162, 155, 254, 0.2);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 600;
     }
     
     .game-panel {
@@ -71,7 +92,7 @@
     h3 {
       margin-bottom: 20px;
       font-size: 1.5rem;
-      color: var(--secondary);
+      color: #a29bfe;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -97,7 +118,7 @@
     
     input:focus {
       outline: none;
-      border-color: var(--primary);
+      border-color: #6c5ce7;
       box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
     }
     
@@ -105,7 +126,7 @@
       padding: 12px 20px;
       border-radius: 10px;
       border: none;
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
       color: white;
       font-size: 1rem;
       font-weight: 600;
@@ -151,14 +172,14 @@
     
     .result.success {
       background: rgba(0, 184, 148, 0.2);
-      border: 1px solid var(--success);
-      color: var(--success);
+      border: 1px solid #00b894;
+      color: #00b894;
     }
     
     .result.error {
       background: rgba(225, 112, 85, 0.2);
-      border: 1px solid var(--danger);
-      color: var(--danger);
+      border: 1px solid #e17055;
+      color: #e17055;
     }
     
     .coin-icon {
@@ -168,16 +189,6 @@
       background: gold;
       border-radius: 50%;
       box-shadow: 0 0 5px gold;
-    }
-    
-    .pulse {
-      animation: pulse 1.5s infinite;
-    }
-    
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
     }
     
     .spinner {
@@ -193,32 +204,563 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+    
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* 个人信息面板样式 - 优化显示 */
+    .user-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 280px; /* 增加宽度以容纳更多信息 */
+      transition: all 0.3s ease;
+      z-index: 10;
+      max-height: 60px;
+      overflow: hidden;
+    }
+
+    .user-panel.expanded {
+      max-height: 400px; /* 增加展开高度 */
+    }
+
+    .user-panel h3 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .user-toggle {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .user-panel.expanded .user-toggle {
+      transform: rotate(180deg);
+    }
+
+    .user-panel button {
+      width: 100%;
+      padding: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .user-panel pre {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+
+    .user-panel pre.show {
+      opacity: 1;
+      max-height: 300px; /* 设置最大高度并允许滚动 */
+      margin-top: 15px;
+      overflow-y: auto;
+    }
+
+    .user-panel pre.success {
+      color: #00b894;
+      border: 1px solid rgba(0, 184, 148, 0.3);
+    }
+
+    .user-panel pre.error {
+      color: #e17055;
+      border: 1px solid rgba(225, 112, 85, 0.3);
+    }
+
+    /* 自定义滚动条 */
+    .user-panel pre::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .user-panel pre::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+
+    .user-panel pre::-webkit-scrollbar-thumb {
+      background: rgba(108, 92, 231, 0.5);
+      border-radius: 2px;
+    }
+
+    .user-panel pre::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 92, 231, 0.7);
+    }
+
+    /* 排行榜面板样式 */
+    .rank-panel {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 220px;
+      transition: all 0.3s ease;
+      z-index: 10;
+      max-height: 60px;
+      overflow: hidden;
+    }
+
+    .rank-panel.expanded {
+      max-height: 80vh;
+      width: 320px;
+      overflow: visible;
+    }
+
+    .rank-panel h3 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .rank-toggle {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .rank-panel.expanded .rank-toggle {
+      transform: rotate(180deg);
+    }
+
+    .rank-panel button {
+      width: 100%;
+      padding: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .rank-content {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+
+    .rank-panel.expanded .rank-content {
+      opacity: 1;
+      max-height: none;
+      overflow: visible;
+    }
+
+    .rank-list {
+      max-height: 60vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin-bottom: 10px;
+    }
+
+    .rank-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .rank-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .rank-list::-webkit-scrollbar-thumb {
+      background: rgba(108, 92, 231, 0.5);
+      border-radius: 3px;
+    }
+
+    .rank-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 92, 231, 0.7);
+    }
+
+    .rank-header {
+      display: grid;
+      grid-template-columns: 50px 1fr 70px;
+      gap: 10px;
+      padding: 12px 15px;
+      background: rgba(108, 92, 231, 0.2);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #a29bfe;
+      font-size: 0.85rem;
+    }
+
+    .rank-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rank-item {
+      display: grid;
+      grid-template-columns: 50px 1fr 70px;
+      gap: 10px;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      font-size: 0.85rem;
+      min-height: 44px;
+    }
+
+    .rank-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .rank-item.current-user {
+      background: rgba(0, 184, 148, 0.15);
+      border: 1px solid rgba(0, 184, 148, 0.3);
+    }
+
+    .rank-position {
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rank-1 .rank-position {
+      color: gold;
+      font-size: 1.1em;
+    }
+
+    .rank-2 .rank-position {
+      color: silver;
+      font-size: 1.05em;
+    }
+
+    .rank-3 .rank-position {
+      color: #cd7f32;
+      font-size: 1.05em;
+    }
+
+    .rank-user {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      word-break: break-all;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .current-user .rank-user {
+      color: #00b894;
+      font-weight: 600;
+    }
+
+    .current-user-marker {
+      background: #00b894;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      margin-left: 8px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .rank-amount {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-weight: 600;
+      color: #fdcb6e;
+    }
+
+    .current-user .rank-amount {
+      color: #00b894;
+    }
+
+    .rank-summary {
+      padding: 12px;
+      background: rgba(108, 92, 231, 0.1);
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      color: #a29bfe;
+      border: 1px solid rgba(108, 92, 231, 0.2);
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+
+    .rank-error {
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      background: rgba(225, 112, 85, 0.2);
+      border: 1px solid #e17055;
+      color: #e17055;
+      font-size: 0.85rem;
+      display: none;
+      margin-top: 10px;
+    }
+
+    /* 功能按钮区域 */
+    .function-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .func-button {
+      padding: 15px 25px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 150px;
+    }
+
+    .func-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+      text-decoration: none;
+      color: white;
+    }
+
+    .func-button:active {
+      transform: translateY(-1px);
+    }
+
+    .func-button.bank {
+      background: linear-gradient(45deg, #00b894, #55efc4);
+    }
+
+    .func-button.market {
+      background: linear-gradient(45deg, #e17055, #fab1a0);
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .user-panel {
+        position: static;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      
+      .rank-panel {
+        position: static;
+        width: 100%;
+        max-height: 60px;
+        margin-bottom: 20px;
+      }
+      
+      .rank-panel.expanded {
+        width: 100%;
+        max-height: 70vh;
+      }
+      
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .container {
+        max-width: 100%;
+      }
+      
+      .function-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .func-button {
+        width: 100%;
+      }
+
+      .rank-list {
+        max-height: 50vh;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .rank-header,
+      .rank-item {
+        grid-template-columns: 40px 1fr 60px;
+        gap: 8px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+      
+      .rank-panel {
+        padding: 12px;
+      }
+      
+      .rank-panel.expanded {
+        width: 100%;
+      }
+
+      .current-user-marker {
+        font-size: 0.65rem;
+        padding: 1px 6px;
+        margin-left: 6px;
+      }
+
+      .user-panel {
+        width: 100%;
+      }
+
+      .user-panel pre {
+        font-size: 0.85rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎮 欢迎来到MagicBox!</h1>
+  <!-- 个人信息面板（固定在右上角） -->
+  <div class="user-panel" id="userPanel">
+    <h3 onclick="toggleUserPanel()">
+      <span>👤 个人中心</span>
+      <span class="user-toggle">▼</span>
+    </h3>
+    <button id="btn2">查看个人信息</button>
+    <pre id="rst2"></pre>
+  </div>
+
+  <!-- 排行榜面板（固定在左上角，可折叠） -->
+  <div class="rank-panel" id="rankPanel">
+    <h3 onclick="toggleRankPanel()">
+      <span>🏆 排行榜</span>
+      <span class="rank-toggle">▼</span>
+    </h3>
+    <button id="btn3">刷新排行榜</button>
     
-    <!-- 投币区域 -->
-    <div class="game-panel">
-      <h3><span class="coin-icon"></span> 投币</h3>
-      <div class="input-group">
-        <input id="inGolds" type="number" min="1" placeholder="输入正整数金币">
-        <button id="btn1">
-          <span>确认投币</span>
-        </button>
+    <div class="rank-content" id="rankContent">
+      <div class="rank-list" id="rankList">
+        <div class="rank-header">
+          <div>排名</div>
+          <div>用户</div>
+          <div>金币</div>
+        </div>
+        <div class="rank-items" id="rankItems">
+          <!-- 排行榜内容将通过JavaScript动态生成 -->
+        </div>
       </div>
-      <div id="rst1" class="result"></div>
+      <div class="rank-summary" id="rankSummary"></div>
+      <div class="rank-error" id="rankError"></div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="container">
+      <div class="header">
+        <h1>🎮 欢迎来到游戏界面</h1>
+        <div class="user-info">
+          <span>用户ID:</span>
+          <span class="user-id" id="userIdDisplay">加载中...</span>
+        </div>
+      </div>
+      
+      <!-- 投币区域 -->
+      <div class="game-panel">
+        <h3><span class="coin-icon"></span> 投币游戏</h3>
+        <div class="input-group">
+          <input id="inGolds" type="number" min="1" placeholder="输入正整数金币">
+          <button id="btn1">
+            <span>确认投币</span>
+          </button>
+        </div>
+        <div id="rst1" class="result"></div>
+      </div>
+
+      <!-- 功能按钮区域 -->
+      <div class="function-buttons">
+        <a href="bank.html" class="func-button bank">
+          🏦 银行系统
+        </a>
+        <a href="market.html" class="func-button market">
+          🏪 交易大厅
+        </a>
+      </div>
     </div>
   </div>
 
   <script>
-    console.log(localStorage.getItem('uid'));
+    // 获取DOM元素
     const $ = id => document.getElementById(id);
     const inGolds = $('inGolds');
     const rst1 = $('rst1');
     const btn1 = $('btn1');
-
+    const userIdDisplay = $('userIdDisplay');
+    const btn2 = $('btn2');
+    const rst2 = $('rst2');
+    const btn3 = $('btn3');
+    const userPanel = $('userPanel');
+    const rankPanel = $('rankPanel');
+    const rankContent = $('rankContent');
+    const rankList = $('rankList');
+    const rankItems = $('rankItems');
+    const rankSummary = $('rankSummary');
+    const rankError = $('rankError');
+    
+    // 切换个人信息面板展开/收起
+    function toggleUserPanel() {
+      userPanel.classList.toggle('expanded');
+    }
+    
+    // 切换排行榜面板展开/收起
+    function toggleRankPanel() {
+      rankPanel.classList.toggle('expanded');
+      if (rankPanel.classList.contains('expanded')) {
+        // 如果展开时还没有加载数据，自动加载一次
+        if (rankItems.children.length === 0) {
+          loadRankData();
+        }
+      }
+    }
+    
+    // 显示用户ID
+    function displayUserId() {
+      const uid = localStorage.getItem('uid');
+      if (uid) {
+        userIdDisplay.textContent = uid;
+        userIdDisplay.classList.add('pulse');
+      } else {
+        userIdDisplay.textContent = '未登录';
+        userIdDisplay.style.color = '#e17055';
+      }
+    }
+    
+    // 初始化显示用户ID
+    displayUserId();
+    
+    // 投币按钮点击事件
     btn1.onclick = async () => {
       const n = Number(inGolds.value);
       if (!Number.isInteger(n) || n <= 0) {
@@ -252,9 +794,13 @@
       }
     };
 
+    // 处理结果
     function handleResult(data) {
       // 对于case0和case8，延迟显示结果
       if (data.code === 0 || data.code === 8) {
+        // 先显示加载动画
+        show(rst1, '游戏进行中...', true);
+        
         setTimeout(() => {
           showResult(data);
           // 恢复按钮状态
@@ -269,6 +815,7 @@
       }
     }
 
+    // 显示结果
     function showResult(data) {
       switch (data.code) {
         case 0:   // 赢了
@@ -289,6 +836,7 @@
       }
     }
 
+    // 显示消息
     function show(box, text, isOk) {
       // 移除之前的类
       box.classList.remove('success', 'error', 'show');
@@ -304,6 +852,178 @@
       
       // 添加显示类
       box.classList.add('show');
+    }
+
+    // 个人信息按钮点击事件 - 保持原有逻辑
+    btn2.onclick = async () => {
+      const uid = localStorage.getItem('uid');
+      if (!uid) {
+        showUserInfo('未登录，请先登录', false);
+        return;
+      }
+
+      btn2.disabled = true;
+      btn2.innerHTML = '<span class="spinner"></span> 加载中...';
+      
+      try {
+        const res = await fetch('http://47.92.231.94:8080/user/info', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: uid })
+        });
+        const data = await res.json();
+        handleInfo(data);
+      } catch (e) {
+        showUserInfo('网络错误：' + e, false);
+      } finally {
+        btn2.disabled = false;
+        btn2.innerHTML = '查看个人信息';
+      }
+    };
+
+    // 处理个人信息 - 保持原有逻辑，只优化显示格式
+    function handleInfo(data) {
+      if (data.code === -1) {
+        // 后端要求不打印
+        showUserInfo('', true);
+        return;
+      }
+      // 成功打印 - 优化显示格式
+      const infoText = `用户ID：${data.id}\n现金余额：${data.amount} 金币\n银行存款：${data.account || 0} 金币\n贷款余额：${data.loan || 0} 金币\n总资产：${(data.amount || 0) + (data.account || 0) - (data.loan || 0)} 金币`;
+      showUserInfo(infoText, true);
+    }
+
+    // 显示用户信息 - 保持原有逻辑
+    function showUserInfo(text, isOk) {
+      // 移除之前的类
+      rst2.classList.remove('success', 'error', 'show');
+      
+      // 设置文本
+      rst2.textContent = text;
+      
+      // 添加适当的类
+      if (text) {
+        rst2.classList.add(isOk ? 'success' : 'error');
+      }
+      
+      // 强制重排以触发动画
+      void rst2.offsetWidth;
+      
+      // 添加显示类
+      if (text) {
+        rst2.classList.add('show');
+      }
+      
+      // 展开面板显示信息
+      userPanel.classList.add('expanded');
+    }
+
+    // 排行榜按钮点击事件
+    btn3.onclick = async () => {
+      const uid = localStorage.getItem('uid');
+      if (!uid) {
+        showRankError('未登录，请先登录');
+        return;
+      }
+
+      btn3.disabled = true;
+      btn3.innerHTML = '<span class="spinner"></span> 加载中...';
+      
+      try {
+        const res = await fetch('http://47.92.231.94:8080/game/rank', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: uid })
+        });
+        const data = await res.json();
+        handleRank(data, uid);
+      } catch (e) {
+        showRankError('网络错误：' + e);
+      } finally {
+        btn3.disabled = false;
+        btn3.innerHTML = '刷新排行榜';
+      }
+    };
+
+    // 处理排行榜数据
+    function handleRank(data, myId) {
+      if (data.code === -1) {
+        hideRankContent();
+        return;
+      }
+
+      // 隐藏错误信息
+      rankError.style.display = 'none';
+      
+      // 清空之前的排行榜内容
+      rankItems.innerHTML = '';
+      
+      // 创建排行榜项
+      data.ranklist.forEach((item, index) => {
+        const isCurrentUser = item.id === myId;
+        const rankItem = document.createElement('div');
+        rankItem.className = `rank-item ${isCurrentUser ? 'current-user' : ''} rank-${index + 1}`;
+        
+        rankItem.innerHTML = `
+          <div class="rank-position">${index + 1}</div>
+          <div class="rank-user">
+            ${item.id}
+            ${isCurrentUser ? '<span class="current-user-marker">我</span>' : ''}
+          </div>
+          <div class="rank-amount">${item.amount}</div>
+        `;
+        
+        rankItems.appendChild(rankItem);
+      });
+
+      // 更新汇总信息
+      rankSummary.textContent = `我的余额：${data.myAmount} 金币`;
+      
+      showRankContent();
+    }
+
+    // 显示排行榜内容
+    function showRankContent() {
+      rankContent.style.display = 'block';
+    }
+
+    // 隐藏排行榜内容
+    function hideRankContent() {
+      rankContent.style.display = 'none';
+    }
+
+    // 显示排行榜错误信息
+    function showRankError(message) {
+      rankError.textContent = message;
+      rankError.style.display = 'block';
+      hideRankContent();
+    }
+
+    // 加载排行榜数据
+    async function loadRankData() {
+      const uid = localStorage.getItem('uid');
+      if (!uid) {
+        showRankError('未登录，请先登录');
+        return;
+      }
+
+      btn3.disabled = true;
+      btn3.innerHTML = '<span class="spinner"></span> 加载中...';
+      
+      try {
+        const res = await fetch('http://47.92.231.94:8080/game/rank', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: uid })
+        });
+        const data = await res.json();
+        handleRank(data, uid);
+      } catch (e) {
+        showRankError('网络错误：' + e);
+      } finally {
+        btn3.disabled = false;
+        btn3.innerHTML = '刷新排行榜';
+      }
     }
   </script>
 </body>
