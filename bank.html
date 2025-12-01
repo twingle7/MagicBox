@@ -572,6 +572,8 @@
     
     // 获取用户ID
     const uid = () => localStorage.getItem('uid');
+    // 获取cookie
+    const cookie = () => localStorage.getItem('cookie');
     
     // API调用函数
     const api = (path, body) => fetch('http://47.92.231.94:8080' + path, {
@@ -632,6 +634,8 @@
     // 获取并显示个人信息
     async function loadUserInfo() {
       const userUid = uid();
+      const userCookie = cookie();
+
       if (!userUid) {
         showUserInfo('未登录，请先登录', false);
         return;
@@ -641,7 +645,7 @@
       btn2.innerHTML = '<span class="spinner"></span> 加载中...';
       
       try {
-        const res = await api('/user/info', { id: userUid });
+        const res = await api('/user/info', { cookie: userCookie });
         const data = await res.json();
         handleInfo(data);
       } catch (e) {
@@ -714,6 +718,8 @@
       }
       
       const userUid = uid();
+      const userCookie = cookie();
+
       if (!userUid) {
         show(loanMsg, '未登录，请先登录', false);
         return;
@@ -729,7 +735,7 @@
         // 延迟1秒后再发送请求
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const res = await api('/bank/loan', { id: userUid, num: n });
+        const res = await api('/bank/loan', { cookie: userCookie, num: n });
         const data = await res.json();
         
         let message = data.msg;
@@ -760,6 +766,8 @@
       }
       
       const userUid = uid();
+      const userCookie =cookie();
+
       if (!userUid) {
         show(repayMsg, '未登录，请先登录', false);
         return;
@@ -775,7 +783,7 @@
         // 延迟1秒后再发送请求
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const res = await api('/bank/repay', { id: userUid, num: n });
+        const res = await api('/bank/repay', { cookie: userCookie, num: n });
         const data = await res.json();
         
         let message = data.msg;
@@ -812,6 +820,8 @@
       }
       
       const userUid = uid();
+      const userCookie = cookie();
+
       if (!userUid) {
         show(depMsg, '未登录，请先登录', false);
         return;
@@ -827,7 +837,7 @@
         // 延迟1秒后再发送请求
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const res = await api('/bank/deposit', { id: userUid, pwd, num: n });
+        const res = await api('/bank/deposit', { cookie: userCookie, pwd, num: n });
         const data = await res.json();
         
         // 三种情况：0 成功 / 1 密码错 / 2 现金不足 / -1 数据库故障
@@ -868,6 +878,8 @@
       }
       
       const userUid = uid();
+      const userCookie = cookie();
+      
       if (!userUid) {
         show(wdMsg, '未登录，请先登录', false);
         return;
@@ -883,7 +895,7 @@
         // 延迟1秒后再发送请求
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const res = await api('/bank/withdraw', { id: userUid, pwd, num: n });
+        const res = await api('/bank/withdraw', { cookie: userCookie, pwd, num: n });
         const data = await res.json();
         
         let message = data.msg;

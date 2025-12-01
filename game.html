@@ -520,6 +520,171 @@
       margin-top: 10px;
     }
 
+    /* 日常任务面板样式 */
+    .task-panel {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 280px;
+      transition: all 0.3s ease;
+      z-index: 10;
+      max-height: 60px;
+      overflow: hidden;
+    }
+
+    .task-panel.expanded {
+      max-height: 70vh;
+      overflow: visible;
+    }
+
+    .task-panel h3 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .task-toggle {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .task-panel.expanded .task-toggle {
+      transform: rotate(180deg);
+    }
+
+    .task-panel button {
+      width: 100%;
+      padding: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .task-content {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+
+    .task-panel.expanded .task-content {
+      opacity: 1;
+      max-height: none;
+      overflow: visible;
+    }
+
+    .task-list {
+      max-height: 50vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin-bottom: 10px;
+    }
+
+    .task-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .task-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .task-list::-webkit-scrollbar-thumb {
+      background: rgba(108, 92, 231, 0.5);
+      border-radius: 3px;
+    }
+
+    .task-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 92, 231, 0.7);
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+    }
+
+    .task-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .task-name {
+      font-weight: 500;
+      color: #f6fe9b;
+      flex: 1;
+      align-content: center;
+    }
+
+    .task-button {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      max-width: 80px;
+    }
+
+    .task-button:disabled {
+      background: #636e72;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .task-button.available {
+      background: linear-gradient(45deg, #00b894, #55efc4);
+    }
+
+    .task-button.available:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+    }
+
+    .task-button.completed {
+      background: #636e72;
+      color: #dfe6e9;
+    }
+
+    .task-button.incomplete {
+      background: #2d3436;
+      color: #636e72;
+    }
+
+    .task-error {
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      background: rgba(225, 112, 85, 0.2);
+      border: 1px solid #e17055;
+      color: #e17055;
+      font-size: 0.85rem;
+      display: none;
+      margin-top: 10px;
+    }
+
+    .task-loading {
+      text-align: center;
+      padding: 20px;
+      color: #a29bfe;
+      font-style: italic;
+    }
+
     /* 功能按钮区域 */
     .function-buttons {
       display: flex;
@@ -586,6 +751,18 @@
         max-height: 70vh;
       }
       
+      .task-panel {
+        position: static;
+        width: 100%;
+        max-height: 60px;
+        margin-bottom: 20px;
+      }
+      
+      .task-panel.expanded {
+        width: 100%;
+        max-height: 70vh;
+      }
+      
       .main-container {
         flex-direction: column;
       }
@@ -606,6 +783,10 @@
       .rank-list {
         max-height: 50vh;
       }
+      
+      .task-list {
+        max-height: 50vh;
+      }
     }
 
     @media (max-width: 480px) {
@@ -624,6 +805,21 @@
       .rank-panel.expanded {
         width: 100%;
       }
+      
+      .task-panel {
+        padding: 12px;
+      }
+      
+      .task-item {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+      }
+      
+      .task-button {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        min-width: 70px;
+      }
 
       .current-user-marker {
         font-size: 0.65rem;
@@ -639,6 +835,7 @@
         font-size: 0.85rem;
       }
     }
+
   </style>
 </head>
 <body>
@@ -673,6 +870,22 @@
       </div>
       <div class="rank-summary" id="rankSummary"></div>
       <div class="rank-error" id="rankError"></div>
+    </div>
+  </div>
+
+  <!-- 日常任务面板（固定在右下角，可折叠） -->
+  <div class="task-panel" id="taskPanel">
+    <h3 onclick="toggleTaskPanel()">
+      <span>📋 日常任务</span>
+      <span class="task-toggle">▼</span>
+    </h3>
+    <button id="refreshTaskBtn">刷新任务</button>
+    
+    <div class="task-content" id="taskContent">
+      <div class="task-list" id="taskList">
+        <!-- 任务列表内容将通过JavaScript动态生成 -->
+      </div>
+      <div class="task-error" id="taskError"></div>
     </div>
   </div>
 
@@ -728,8 +941,17 @@
     const rankSummary = $('rankSummary');
     const rankError = $('rankError');
     
+    // 日常任务相关元素
+    const taskPanel = $('taskPanel');
+    const taskContent = $('taskContent');
+    const taskList = $('taskList');
+    const refreshTaskBtn = $('refreshTaskBtn');
+    const taskError = $('taskError');
+    
     // 获取用户ID
     const uid = () => localStorage.getItem('uid');
+    // 获取cookie
+    const cookie = () => localStorage.getItem('cookie');
     
     // API调用函数
     const api = (path, body) => fetch('http://47.92.231.94:8080' + path, {
@@ -737,6 +959,9 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
+    
+    // 新增：标记是否已发送过首次投币任务
+    let hasSentFirstBetTask = false;
     
     // 切换个人信息面板展开/收起
     function toggleUserPanel() {
@@ -750,6 +975,17 @@
         // 如果展开时还没有加载数据，自动加载一次
         if (rankItems.children.length === 0) {
           loadRankData();
+        }
+      }
+    }
+    
+    // 切换任务面板展开/收起
+    function toggleTaskPanel() {
+      taskPanel.classList.toggle('expanded');
+      if (taskPanel.classList.contains('expanded')) {
+        // 如果展开时还没有加载数据，自动加载一次
+        if (taskList.children.length === 0 || taskList.textContent === '加载中...') {
+          loadTasks();
         }
       }
     }
@@ -801,6 +1037,7 @@
     // 获取并显示个人信息
     async function loadUserInfo() {
       const userUid = uid();
+      const userCookie = cookie();
       if (!userUid) {
         showUserInfo('未登录，请先登录', false);
         return;
@@ -810,7 +1047,7 @@
       btn2.innerHTML = '<span class="spinner"></span> 加载中...';
       
       try {
-        const res = await api('/user/info', { id: userUid });
+        const res = await api('/user/info', { cookie: userCookie });
         const data = await res.json();
         handleInfo(data);
       } catch (e) {
@@ -874,6 +1111,23 @@
     // 个人信息按钮点击事件
     btn2.onclick = loadUserInfo;
     
+    // 新增：发送首次投币任务
+    async function sendFirstBetTask() {
+      const userCookie = cookie();
+      if (!userCookie) {
+        return false;
+      }
+      
+      try {
+        const res = await api('/task/user_finish', { cookie: userCookie , task_id: 1 });
+        const data = await res.json();
+        return data.success === true;
+      } catch (e) {
+        console.error('发送首次投币任务失败:', e);
+        return false;
+      }
+    }
+    
     // 投币按钮点击事件
     btn1.onclick = async () => {
       const n = Number(inGolds.value);
@@ -883,6 +1137,8 @@
       }
 
       const userUid = uid();
+      const userCookie = cookie();
+
       if (!userUid) {
         show(rst1, '未登录，请先登录', false);
         return;
@@ -892,7 +1148,17 @@
       setButtonLoading(btn1, true, '确认投币');
       
       try {
-        const res = await api('/game/play', { uid: userUid, golds: n });
+        // 新增：如果是首次投币，先发送任务请求
+        if (!hasSentFirstBetTask) {
+          const taskSuccess = await sendFirstBetTask();
+          if (taskSuccess) {
+            hasSentFirstBetTask = true; // 标记为已发送，后续不再发送
+            console.log('首次投币任务发送成功');
+          }
+        }
+        
+        // 执行正常的投币逻辑
+        const res = await api('/game/play', { cookie: userCookie, golds: n });
         const data = await res.json();
         handleResult(data);
       } catch (e) {
@@ -949,6 +1215,8 @@
     // 排行榜按钮点击事件
     btn3.onclick = async () => {
       const userUid = uid();
+      const userCookie = cookie();
+
       if (!userUid) {
         showRankError('未登录，请先登录');
         return;
@@ -957,7 +1225,7 @@
       setButtonLoading(btn3, true, '刷新排行榜');
       
       try {
-        const res = await api('/game/rank', { id: userUid });
+        const res = await api('/game/rank', { cookie: userCookie });
         const data = await res.json();
         handleRank(data, userUid);
       } catch (e) {
@@ -1024,6 +1292,8 @@
     // 加载排行榜数据
     async function loadRankData() {
       const userUid = uid();
+      const userCookie = cookie();
+
       if (!userUid) {
         showRankError('未登录，请先登录');
         return;
@@ -1032,7 +1302,7 @@
       setButtonLoading(btn3, true, '刷新排行榜');
       
       try {
-        const res = await api('/game/rank', { id: userUid });
+        const res = await api('/game/rank', { cookie: userCookie });
         const data = await res.json();
         handleRank(data, userUid);
       } catch (e) {
@@ -1040,6 +1310,142 @@
       } finally {
         setButtonLoading(btn3, false, '刷新排行榜');
       }
+    }
+
+    // 日常任务相关函数
+    const TASK_MAP = {
+      0: '每日登录(1000币)',
+      1: '每日投币(1000币)'
+    };
+
+    /* 工具：创建任务行 */
+    function buildTask({task_id, code}) {
+      const taskItem = document.createElement('div');
+      taskItem.className = 'task-item';
+      
+      const taskName = document.createElement('div');
+      taskName.className = 'task-name';
+      taskName.textContent = TASK_MAP[task_id];
+      
+      const taskButton = document.createElement('button');
+      taskButton.className = 'task-button';
+      taskButton.dataset.tid = task_id;
+      taskButton.dataset.code = code;
+
+      switch (code) {
+        case 0: // 未完成
+          taskButton.textContent = '未完成';
+          taskButton.disabled = true;
+          taskButton.className = 'task-button incomplete';
+          break;
+        case 1: // 可领取
+          taskButton.textContent = '领取奖励';
+          taskButton.className = 'task-button available';
+          taskButton.onclick = () => claimTask(task_id, taskButton);
+          break;
+        case 2: // 已领取
+          taskButton.textContent = '已领取';
+          taskButton.disabled = true;
+          taskButton.className = 'task-button completed';
+          break;
+      }
+      
+      taskItem.appendChild(taskName);
+      taskItem.appendChild(taskButton);
+      return taskItem;
+    }
+
+    /* 领取奖励 */
+    async function claimTask(taskId, btn) {
+      const userCookie = cookie();
+      if (!userCookie) {
+        showTaskError('未登录，请先登录');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>';
+      
+      try {
+        const res = await fetch('http://47.92.231.94:8080/task/user_take', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cookie: userCookie,
+            task_id: taskId
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          btn.textContent = '已领取';
+          btn.className = 'task-button completed';
+          btn.onclick = null;
+          // 领取成功后刷新个人信息
+          setTimeout(loadUserInfo, 500);
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '领取奖励';
+          showTaskError(data.msg || '领取失败');
+        }
+      } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = '领取奖励';
+        showTaskError('网络错误：' + e);
+      }
+    }
+
+    /* 拉取并渲染任务 */
+    async function loadTasks() {
+      const userCookie = cookie();
+      if (!userCookie) {
+        showTaskError('未登录，请先登录');
+        return;
+      }
+
+      taskList.innerHTML = '<div class="task-loading">加载中...</div>';
+      hideTaskError();
+      
+      try {
+        const res = await fetch('http://47.92.231.94:8080/task/view', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cookie: userCookie })
+        });
+        const json = await res.json();
+        if (!json.tasks) throw new Error('格式错误');
+        renderTasks(json.tasks);
+      } catch (e) {
+        showTaskError('加载失败：' + e);
+      }
+    }
+
+    function renderTasks(tasks) {
+      taskList.innerHTML = '';
+      tasks.forEach(t => taskList.appendChild(buildTask(t)));
+    }
+
+    // 显示任务错误信息
+    function showTaskError(message) {
+      taskError.textContent = message;
+      taskError.style.display = 'block';
+    }
+
+    // 隐藏任务错误信息
+    function hideTaskError() {
+      taskError.style.display = 'none';
+    }
+
+    // 刷新按钮点击事件
+    refreshTaskBtn.onclick = loadTasks;
+
+    // 显示任务内容
+    function showTaskContent() {
+      taskContent.style.display = 'block';
+    }
+
+    // 隐藏任务内容
+    function hideTaskContent() {
+      taskContent.style.display = 'none';
     }
     
     // 页面加载时自动显示个人信息

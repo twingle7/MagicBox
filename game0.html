@@ -226,7 +226,7 @@
       padding: 15px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      width: 280px; /* 增加宽度以容纳更多信息 */
+      width: 280px;
       transition: all 0.3s ease;
       z-index: 10;
       max-height: 60px;
@@ -234,7 +234,7 @@
     }
 
     .user-panel.expanded {
-      max-height: 400px; /* 增加展开高度 */
+      max-height: 400px;
     }
 
     .user-panel h3 {
@@ -277,7 +277,7 @@
 
     .user-panel pre.show {
       opacity: 1;
-      max-height: 300px; /* 设置最大高度并允许滚动 */
+      max-height: 300px;
       margin-top: 15px;
       overflow-y: auto;
     }
@@ -292,7 +292,6 @@
       border: 1px solid rgba(225, 112, 85, 0.3);
     }
 
-    /* 自定义滚动条 */
     .user-panel pre::-webkit-scrollbar {
       width: 4px;
     }
@@ -521,6 +520,171 @@
       margin-top: 10px;
     }
 
+    /* 日常任务面板样式 */
+    .task-panel {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 280px;
+      transition: all 0.3s ease;
+      z-index: 10;
+      max-height: 60px;
+      overflow: hidden;
+    }
+
+    .task-panel.expanded {
+      max-height: 70vh;
+      overflow: visible;
+    }
+
+    .task-panel h3 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .task-toggle {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .task-panel.expanded .task-toggle {
+      transform: rotate(180deg);
+    }
+
+    .task-panel button {
+      width: 100%;
+      padding: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .task-content {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+
+    .task-panel.expanded .task-content {
+      opacity: 1;
+      max-height: none;
+      overflow: visible;
+    }
+
+    .task-list {
+      max-height: 50vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin-bottom: 10px;
+    }
+
+    .task-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .task-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .task-list::-webkit-scrollbar-thumb {
+      background: rgba(108, 92, 231, 0.5);
+      border-radius: 3px;
+    }
+
+    .task-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 92, 231, 0.7);
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+    }
+
+    .task-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .task-name {
+      font-weight: 500;
+      color: #f6fe9b;
+      flex: 1;
+      align-content: center;
+    }
+
+    .task-button {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      max-width: 80px;
+    }
+
+    .task-button:disabled {
+      background: #636e72;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .task-button.available {
+      background: linear-gradient(45deg, #00b894, #55efc4);
+    }
+
+    .task-button.available:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+    }
+
+    .task-button.completed {
+      background: #636e72;
+      color: #dfe6e9;
+    }
+
+    .task-button.incomplete {
+      background: #2d3436;
+      color: #636e72;
+    }
+
+    .task-error {
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      background: rgba(225, 112, 85, 0.2);
+      border: 1px solid #e17055;
+      color: #e17055;
+      font-size: 0.85rem;
+      display: none;
+      margin-top: 10px;
+    }
+
+    .task-loading {
+      text-align: center;
+      padding: 20px;
+      color: #a29bfe;
+      font-style: italic;
+    }
+
     /* 功能按钮区域 */
     .function-buttons {
       display: flex;
@@ -587,6 +751,18 @@
         max-height: 70vh;
       }
       
+      .task-panel {
+        position: static;
+        width: 100%;
+        max-height: 60px;
+        margin-bottom: 20px;
+      }
+      
+      .task-panel.expanded {
+        width: 100%;
+        max-height: 70vh;
+      }
+      
       .main-container {
         flex-direction: column;
       }
@@ -607,6 +783,10 @@
       .rank-list {
         max-height: 50vh;
       }
+      
+      .task-list {
+        max-height: 50vh;
+      }
     }
 
     @media (max-width: 480px) {
@@ -625,6 +805,21 @@
       .rank-panel.expanded {
         width: 100%;
       }
+      
+      .task-panel {
+        padding: 12px;
+      }
+      
+      .task-item {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+      }
+      
+      .task-button {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        min-width: 70px;
+      }
 
       .current-user-marker {
         font-size: 0.65rem;
@@ -640,6 +835,7 @@
         font-size: 0.85rem;
       }
     }
+
   </style>
 </head>
 <body>
@@ -649,7 +845,7 @@
       <span>👤 个人中心</span>
       <span class="user-toggle">▼</span>
     </h3>
-    <button id="btn2">查看个人信息</button>
+    <button id="btn2">刷新个人信息</button>
     <pre id="rst2"></pre>
   </div>
 
@@ -666,7 +862,7 @@
         <div class="rank-header">
           <div>排名</div>
           <div>用户</div>
-          <div>金币</div>
+          <div>总资产</div>
         </div>
         <div class="rank-items" id="rankItems">
           <!-- 排行榜内容将通过JavaScript动态生成 -->
@@ -677,10 +873,26 @@
     </div>
   </div>
 
+  <!-- 日常任务面板（固定在右下角，可折叠） -->
+  <div class="task-panel" id="taskPanel">
+    <h3 onclick="toggleTaskPanel()">
+      <span>📋 日常任务</span>
+      <span class="task-toggle">▼</span>
+    </h3>
+    <button id="refreshTaskBtn">刷新任务</button>
+    
+    <div class="task-content" id="taskContent">
+      <div class="task-list" id="taskList">
+        <!-- 任务列表内容将通过JavaScript动态生成 -->
+      </div>
+      <div class="task-error" id="taskError"></div>
+    </div>
+  </div>
+
   <div class="main-container">
     <div class="container">
       <div class="header">
-        <h1>🎮 欢迎来到游戏界面</h1>
+        <h1>欢迎来到MagicBox!</h1>
         <div class="user-info">
           <span>用户ID:</span>
           <span class="user-id" id="userIdDisplay">加载中...</span>
@@ -689,7 +901,7 @@
       
       <!-- 投币区域 -->
       <div class="game-panel">
-        <h3><span class="coin-icon"></span> 投币游戏</h3>
+        <h3><span class="coin-icon"></span> 开始投币！！</h3>
         <div class="input-group">
           <input id="inGolds" type="number" min="1" placeholder="输入正整数金币">
           <button id="btn1">
@@ -702,10 +914,10 @@
       <!-- 功能按钮区域 -->
       <div class="function-buttons">
         <a href="bank.html" class="func-button bank">
-          🏦 银行系统
+          🏦 银行系统（来贷款吧！或者存款）
         </a>
         <a href="market.html" class="func-button market">
-          🏪 交易大厅
+          🏪 交易大厅（优质理财产品任你挑）
         </a>
       </div>
     </div>
@@ -729,6 +941,25 @@
     const rankSummary = $('rankSummary');
     const rankError = $('rankError');
     
+    // 日常任务相关元素
+    const taskPanel = $('taskPanel');
+    const taskContent = $('taskContent');
+    const taskList = $('taskList');
+    const refreshTaskBtn = $('refreshTaskBtn');
+    const taskError = $('taskError');
+    
+    // 获取用户ID
+    const uid = () => localStorage.getItem('uid');
+    // 获取cookie
+    const cookie = () => localStorage.getItem('cookie');
+    
+    // API调用函数
+    const api = (path, body) => fetch('http://47.92.231.94:8080' + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
     // 切换个人信息面板展开/收起
     function toggleUserPanel() {
       userPanel.classList.toggle('expanded');
@@ -745,11 +976,22 @@
       }
     }
     
+    // 切换任务面板展开/收起
+    function toggleTaskPanel() {
+      taskPanel.classList.toggle('expanded');
+      if (taskPanel.classList.contains('expanded')) {
+        // 如果展开时还没有加载数据，自动加载一次
+        if (taskList.children.length === 0 || taskList.textContent === '加载中...') {
+          loadTasks();
+        }
+      }
+    }
+    
     // 显示用户ID
     function displayUserId() {
-      const uid = localStorage.getItem('uid');
-      if (uid) {
-        userIdDisplay.textContent = uid;
+      const userUid = uid();
+      if (userUid) {
+        userIdDisplay.textContent = userUid;
         userIdDisplay.classList.add('pulse');
       } else {
         userIdDisplay.textContent = '未登录';
@@ -760,6 +1002,112 @@
     // 初始化显示用户ID
     displayUserId();
     
+    // 显示消息函数
+    function show(box, txt, ok) {
+      // 移除之前的类
+      box.classList.remove('success', 'error', 'show');
+      
+      // 设置文本
+      box.textContent = txt;
+      
+      // 添加适当的类
+      box.classList.add(ok ? 'success' : 'error');
+      
+      // 强制重排以触发动画
+      void box.offsetWidth;
+      
+      // 添加显示类
+      box.classList.add('show');
+    }
+    
+    // 设置按钮加载状态
+    function setButtonLoading(button, isLoading, originalText) {
+      if (isLoading) {
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner"></span> 处理中...';
+      } else {
+        button.disabled = false;
+        button.innerHTML = `<span>${originalText}</span>`;
+      }
+    }
+    
+    // 获取并显示个人信息
+    async function loadUserInfo() {
+      const userUid = uid();
+      const userCookie = cookie();
+      if (!userUid) {
+        showUserInfo('未登录，请先登录', false);
+        return;
+      }
+      
+      btn2.disabled = true;
+      btn2.innerHTML = '<span class="spinner"></span> 加载中...';
+      
+      try {
+        const res = await api('/user/info', { cookie: userCookie });
+        const data = await res.json();
+        handleInfo(data);
+      } catch (e) {
+        showUserInfo('网络错误：' + e, false);
+      } finally {
+        btn2.disabled = false;
+        btn2.innerHTML = '刷新个人信息';
+      }
+    }
+    
+    // 处理个人信息 - 美化显示
+    function handleInfo(data) {
+      if (data.code === -1) {
+        // 后端要求不打印
+        showUserInfo('', true);
+        return;
+      }
+      
+      // 计算总资产
+      const netWorth = (data.amount || 0) + (data.account || 0) - (data.loan || 0);
+      
+      // 美化显示格式
+      const infoText = `
+用户ID：${data.id || '未知'}
+══════════════════════════
+现金余额：${data.amount || 0} 
+银行存款：${data.account || 0} 
+待还贷款：${data.loan || 0} 
+══════════════════════════
+总资产：${netWorth} 
+      `;
+      
+      showUserInfo(infoText, true);
+    }
+    
+    // 显示用户信息
+    function showUserInfo(text, isOk) {
+      // 移除之前的类
+      rst2.classList.remove('success', 'error', 'show');
+      
+      // 设置文本
+      rst2.textContent = text;
+      
+      // 添加适当的类
+      if (text) {
+        rst2.classList.add(isOk ? 'success' : 'error');
+      }
+      
+      // 强制重排以触发动画
+      void rst2.offsetWidth;
+      
+      // 添加显示类
+      if (text) {
+        rst2.classList.add('show');
+      }
+      
+      // 展开面板显示信息
+      userPanel.classList.add('expanded');
+    }
+    
+    // 个人信息按钮点击事件
+    btn2.onclick = loadUserInfo;
+    
     // 投币按钮点击事件
     btn1.onclick = async () => {
       const n = Number(inGolds.value);
@@ -768,29 +1116,25 @@
         return;
       }
 
-      const uid = localStorage.getItem('uid');
-      if (!uid) {
+      const userUid = uid();
+      const userCookie = cookie();
+
+      if (!userUid) {
         show(rst1, '未登录，请先登录', false);
         return;
       }
 
-      // 禁用按钮并显示加载状态
-      btn1.disabled = true;
-      btn1.innerHTML = '<span class="spinner"></span> 处理中...';
+      // 设置按钮加载状态
+      setButtonLoading(btn1, true, '确认投币');
       
       try {
-        const res = await fetch('http://47.92.231.94:8080/game/play', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ uid, golds: n })
-        });
+        const res = await api('/game/play', { cookie: userCookie, golds: n });
         const data = await res.json();
         handleResult(data);
       } catch (e) {
         show(rst1, '网络错误：' + e, false);
         // 恢复按钮状态
-        btn1.disabled = false;
-        btn1.innerHTML = '确认投币';
+        setButtonLoading(btn1, false, '确认投币');
       }
     };
 
@@ -804,14 +1148,16 @@
         setTimeout(() => {
           showResult(data);
           // 恢复按钮状态
-          btn1.disabled = false;
-          btn1.innerHTML = '确认投币';
+          setButtonLoading(btn1, false, '确认投币');
+          // 投币成功后自动更新个人信息
+          setTimeout(loadUserInfo, 500);
         }, 2000);
       } else {
         showResult(data);
         // 恢复按钮状态
-        btn1.disabled = false;
-        btn1.innerHTML = '确认投币';
+        setButtonLoading(btn1, false, '确认投币');
+        // 投币失败后也更新个人信息
+        setTimeout(loadUserInfo, 500);
       }
     }
 
@@ -836,112 +1182,26 @@
       }
     }
 
-    // 显示消息
-    function show(box, text, isOk) {
-      // 移除之前的类
-      box.classList.remove('success', 'error', 'show');
-      
-      // 设置文本
-      box.textContent = text;
-      
-      // 添加适当的类
-      box.classList.add(isOk ? 'success' : 'error');
-      
-      // 强制重排以触发动画
-      void box.offsetWidth;
-      
-      // 添加显示类
-      box.classList.add('show');
-    }
-
-    // 个人信息按钮点击事件 - 保持原有逻辑
-    btn2.onclick = async () => {
-      const uid = localStorage.getItem('uid');
-      if (!uid) {
-        showUserInfo('未登录，请先登录', false);
-        return;
-      }
-
-      btn2.disabled = true;
-      btn2.innerHTML = '<span class="spinner"></span> 加载中...';
-      
-      try {
-        const res = await fetch('http://47.92.231.94:8080/user/info', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: uid })
-        });
-        const data = await res.json();
-        handleInfo(data);
-      } catch (e) {
-        showUserInfo('网络错误：' + e, false);
-      } finally {
-        btn2.disabled = false;
-        btn2.innerHTML = '查看个人信息';
-      }
-    };
-
-    // 处理个人信息 - 保持原有逻辑，只优化显示格式
-    function handleInfo(data) {
-      if (data.code === -1) {
-        // 后端要求不打印
-        showUserInfo('', true);
-        return;
-      }
-      // 成功打印 - 优化显示格式
-      const infoText = `用户ID：${data.id}\n现金余额：${data.amount} 金币\n银行存款：${data.account || 0} 金币\n贷款余额：${data.loan || 0} 金币\n总资产：${(data.amount || 0) + (data.account || 0) - (data.loan || 0)} 金币`;
-      showUserInfo(infoText, true);
-    }
-
-    // 显示用户信息 - 保持原有逻辑
-    function showUserInfo(text, isOk) {
-      // 移除之前的类
-      rst2.classList.remove('success', 'error', 'show');
-      
-      // 设置文本
-      rst2.textContent = text;
-      
-      // 添加适当的类
-      if (text) {
-        rst2.classList.add(isOk ? 'success' : 'error');
-      }
-      
-      // 强制重排以触发动画
-      void rst2.offsetWidth;
-      
-      // 添加显示类
-      if (text) {
-        rst2.classList.add('show');
-      }
-      
-      // 展开面板显示信息
-      userPanel.classList.add('expanded');
-    }
-
     // 排行榜按钮点击事件
     btn3.onclick = async () => {
-      const uid = localStorage.getItem('uid');
-      if (!uid) {
+      const userUid = uid();
+      const userCookie = cookie();
+
+      if (!userUid) {
         showRankError('未登录，请先登录');
         return;
       }
 
-      btn3.disabled = true;
-      btn3.innerHTML = '<span class="spinner"></span> 加载中...';
+      setButtonLoading(btn3, true, '刷新排行榜');
       
       try {
-        const res = await fetch('http://47.92.231.94:8080/game/rank', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: uid })
-        });
+        const res = await api('/game/rank', { cookie: userCookie });
         const data = await res.json();
-        handleRank(data, uid);
+        handleRank(data, userUid);
       } catch (e) {
         showRankError('网络错误：' + e);
       } finally {
-        btn3.disabled = false;
-        btn3.innerHTML = '刷新排行榜';
+        setButtonLoading(btn3, false, '刷新排行榜');
       }
     };
 
@@ -977,7 +1237,7 @@
       });
 
       // 更新汇总信息
-      rankSummary.textContent = `我的余额：${data.myAmount} 金币`;
+      rankSummary.textContent = `我的余额：${data.myAmount}`;
       
       showRankContent();
     }
@@ -1001,30 +1261,167 @@
 
     // 加载排行榜数据
     async function loadRankData() {
-      const uid = localStorage.getItem('uid');
-      if (!uid) {
+      const userUid = uid();
+      const userCookie = cookie();
+
+      if (!userUid) {
         showRankError('未登录，请先登录');
         return;
       }
 
-      btn3.disabled = true;
-      btn3.innerHTML = '<span class="spinner"></span> 加载中...';
+      setButtonLoading(btn3, true, '刷新排行榜');
       
       try {
-        const res = await fetch('http://47.92.231.94:8080/game/rank', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: uid })
-        });
+        const res = await api('/game/rank', { cookie: userCookie });
         const data = await res.json();
-        handleRank(data, uid);
+        handleRank(data, userUid);
       } catch (e) {
         showRankError('网络错误：' + e);
       } finally {
-        btn3.disabled = false;
-        btn3.innerHTML = '刷新排行榜';
+        setButtonLoading(btn3, false, '刷新排行榜');
       }
     }
+
+    // 日常任务相关函数
+    const TASK_MAP = {
+      0: '每日登录(1000币)',
+      1: '每日投币(1000币)'
+    };
+
+    /* 工具：创建任务行 */
+    function buildTask({task_id, code}) {
+      const taskItem = document.createElement('div');
+      taskItem.className = 'task-item';
+      
+      const taskName = document.createElement('div');
+      taskName.className = 'task-name';
+      taskName.textContent = TASK_MAP[task_id];
+      
+      const taskButton = document.createElement('button');
+      taskButton.className = 'task-button';
+      taskButton.dataset.tid = task_id;
+      taskButton.dataset.code = code;
+
+      switch (code) {
+        case 0: // 未完成
+          taskButton.textContent = '未完成';
+          taskButton.disabled = true;
+          taskButton.className = 'task-button incomplete';
+          break;
+        case 1: // 可领取
+          taskButton.textContent = '领取奖励';
+          taskButton.className = 'task-button available';
+          taskButton.onclick = () => claimTask(task_id, taskButton);
+          break;
+        case 2: // 已领取
+          taskButton.textContent = '已领取';
+          taskButton.disabled = true;
+          taskButton.className = 'task-button completed';
+          break;
+      }
+      
+      taskItem.appendChild(taskName);
+      taskItem.appendChild(taskButton);
+      return taskItem;
+    }
+
+    /* 领取奖励 */
+    async function claimTask(taskId, btn) {
+      const userCookie = cookie();
+      if (!userCookie) {
+        showTaskError('未登录，请先登录');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>';
+      
+      try {
+        const res = await fetch('http://47.92.231.94:8080/task/handle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cookie: userCookie,
+            task_id: taskId
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          btn.textContent = '已领取';
+          btn.className = 'task-button completed';
+          btn.onclick = null;
+          // 领取成功后刷新个人信息
+          setTimeout(loadUserInfo, 500);
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '领取奖励';
+          showTaskError(data.msg || '领取失败');
+        }
+      } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = '领取奖励';
+        showTaskError('网络错误：' + e);
+      }
+    }
+
+    /* 拉取并渲染任务 */
+    async function loadTasks() {
+      const userCookie = cookie();
+      if (!userCookie) {
+        showTaskError('未登录，请先登录');
+        return;
+      }
+
+      taskList.innerHTML = '<div class="task-loading">加载中...</div>';
+      hideTaskError();
+      
+      try {
+        const res = await fetch('http://47.92.231.94:8080/task/view', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cookie: userCookie })
+        });
+        const json = await res.json();
+        if (!json.tasks) throw new Error('格式错误');
+        renderTasks(json.tasks);
+      } catch (e) {
+        showTaskError('加载失败：' + e);
+      }
+    }
+
+    function renderTasks(tasks) {
+      taskList.innerHTML = '';
+      tasks.forEach(t => taskList.appendChild(buildTask(t)));
+    }
+
+    // 显示任务错误信息
+    function showTaskError(message) {
+      taskError.textContent = message;
+      taskError.style.display = 'block';
+    }
+
+    // 隐藏任务错误信息
+    function hideTaskError() {
+      taskError.style.display = 'none';
+    }
+
+    // 刷新按钮点击事件
+    refreshTaskBtn.onclick = loadTasks;
+
+    // 显示任务内容
+    function showTaskContent() {
+      taskContent.style.display = 'block';
+    }
+
+    // 隐藏任务内容
+    function hideTaskContent() {
+      taskContent.style.display = 'none';
+    }
+    
+    // 页面加载时自动显示个人信息
+    window.addEventListener('load', () => {
+      setTimeout(loadUserInfo, 1000);
+    });
   </script>
 </body>
 </html>

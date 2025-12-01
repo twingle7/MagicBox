@@ -164,11 +164,11 @@
     }
     
     .green-text {
-      color: #4caf50;
+      color: #6cef71;
     }
     
     .red-text {
-      color: #f44336;
+      color: #ffeb3b;
     }
     
     @media (max-width: 768px) {
@@ -186,7 +186,7 @@
   <div class="container">
     <div class="login-section">
       <h1>欢迎回来</h1>
-      <p class="subtitle">登录您的Magic Box账户</p>
+      <p class="subtitle">登录您的Magic Box账户(服务器维护中)</p>
       
       <div class="form-group">
         <label for="uid">用户ID：</label>
@@ -220,7 +220,6 @@
         考验你的勇气与智慧，合理分配你的硬币，看看你能走多远！
         <br><br>
         <span class="highlight">祝你好运！</span>
-        <span>(info:排行榜将于交易所功能完成后更新)</span>
       </p>
     </div>
   </div>
@@ -242,6 +241,9 @@
     const msg = $('msg');
     const btn = $('submitBtn');
 
+    // 标记是否已经发送过 user_finish 请求
+    //let hasSentUserFinish = localStorage.getItem('hasSentUserFinish') === 'true';
+
     btn.onclick = async () => {
       if (!uid.value || !pwd.value) {
         show('请完整填写ID和密码', false);
@@ -254,8 +256,11 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: uid.value, pwd: pwd.value })
         });
-        const data = await res.json();   // 解析后端返回的 JSON
-        handle(data);
+        const data = await res.json();
+        
+        // 处理登录结果
+        await handleLogin(data);
+        
       } catch (e) {
         show('网络错误：' + e, false);
       } finally {
@@ -263,25 +268,56 @@
       }
     };
 
-    function handle(data) {
+    async function handleLogin(data) {
       switch (data.code) {
-        case 0:   // 成功
-          localStorage.setItem('uid', uid.value);   // 保存当前用户 id
-          console.log(localStorage.getItem('uid'));
+        case 0:   // 登录成功
+          localStorage.setItem('cookie', data.cookie);
+          localStorage.setItem('uid', uid.value);
+
           show(data.msg, true);
-          // TODO: 跳转到主页或保存 token
+          
+          //登录成功，发送 user_finish 请求
+          await sendUserFinishRequest(data.cookie);
+          
+          // 跳转到游戏页面
           setTimeout(() => location.href = 'game.html', 1200);
           break;
+          
         case 1:   // 用户不存在
           show(data.msg + '，请联系TG获得邀请！', false);
-          // TODO: 可跳转注册页
           break;
+          
         case 2:   // 密码错误
           show(data.msg + '，请重新输入！', false);
-          pwd.focus();   // 光标回到密码框
+          pwd.focus();
           break;
+          
         default:
           show('未知状态码：' + data.code + data.msg, false);
+      }
+    }
+
+    async function sendUserFinishRequest(cookie) {
+      try {
+        const res = await fetch('http://47.92.231.94:8080/task/user_finish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cookie: cookie, task_id: 0})
+        });
+        
+        const result = await res.json();
+        
+        if (result.success) {
+          // 标记为已发送，避免重复发送
+          //hasSentUserFinish = true;
+          //localStorage.setItem('hasSentUserFinish', 'true');
+          console.log('user_finish 请求发送成功');
+        } else {
+          console.log('user_finish 请求失败');
+        }
+      } catch (error) {
+        console.error('发送 user_finish 请求时出错:', error);
+        // 即使发送失败也不阻止用户登录，只是记录错误
       }
     }
 
@@ -289,6 +325,26 @@
       msg.textContent = text;
       msg.className = isOk ? 'ok' : 'err';
     }
+
+    /*
+    // 初始化：检查是否已经发送过 user_finish
+    if (hasSentUserFinish) {
+      console.log('user_finish 请求已发送过，不再重复发送');
+    }*/
+
+    // 添加回车键登录支持
+    [uid, pwd].forEach(input => {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          btn.click();
+        }
+      });
+    });
+
+    // 页面加载时自动聚焦到用户ID输入框
+    window.addEventListener('load', () => {
+      if (!uid.value) uid.focus();
+    });
 
     $('regBtn').onclick = () => location.href = 'register.html';
   </script>

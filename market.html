@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>股票行情 - MagicBox</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #a29bfe;
+    }
+
+    /* 账户信息面板样式 */
+    .account-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 320px;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .account-toggle {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .account-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    .account-toggle .account-title {
+      font-size: 1.3rem;
+      color: #a29bfe;
+      font-weight: 600;
+    }
+
+    .toggle-icon {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .account-toggle.expanded .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .account-content {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 0 0 15px 15px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+
+    .account-content.expanded {
+      padding: 20px;
+      max-height: 500px;
+    }
+
+    .account-info {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .info-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-label {
+      color: #a29bfe;
+    }
+
+    .info-value {
+      font-weight: 600;
+      color: #fdcb6e;
+    }
+
+    .exchange-section {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .exchange-title {
+      font-size: 1.1rem;
+      color: #a29bfe;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .exchange-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .exchange-input {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .exchange-input:focus {
+      outline: none;
+      border-color: #6c5ce7;
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+    }
+
+    .exchange-btn {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .exchange-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+    }
+
+    .exchange-btn:disabled {
+      background: #636e72;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .exchange-btn.coin-to-money {
+      background: linear-gradient(45deg, #00b894, #55efc4);
+    }
+
+    .exchange-btn.money-to-coin {
+      background: linear-gradient(45deg, #e17055, #fab1a0);
+    }
+
+    .account-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .account-btn {
+      flex: 1;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .account-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+    }
+
+    .account-btn:disabled {
+      background: #636e72;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .account-btn.register {
+      background: linear-gradient(45deg, #00b894, #55efc4);
+      width: 100%;
+    }
+
+    .result-message {
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      margin-top: 10px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.5s ease;
+    }
+
+    .result-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-message.success {
+      background: rgba(0, 184, 148, 0.2);
+      border: 1px solid #00b894;
+      color: #00b894;
+    }
+
+    .result-message.error {
+      background: rgba(225, 112, 85, 0.2);
+      border: 1px solid #e17055;
+      color: #e17055;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .stock-container {
+      width: 90%;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 40px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .refresh-btn {
+      padding: 12px 25px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .refresh-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+    }
+
+    .refresh-btn:active {
+      transform: translateY(0);
+    }
+
+    .refresh-btn:disabled {
+      background: #636e72;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .stock-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .stock-table th {
+      background: rgba(108, 92, 231, 0.3);
+      padding: 15px 10px;
+      text-align: center;
+      font-weight: 600;
+      color: #a29bfe;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stock-table td {
+      padding: 12px 10px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.3s ease;
+    }
+
+    .stock-table tr {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .stock-table tr:hover td {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.01);
+    }
+
+    .stock-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .up {
+      color: #00b894;
+      font-weight: 600;
+    }
+
+    .down {
+      color: #e17055;
+      font-weight: 600;
+    }
+
+    .stock-price {
+      font-weight: 600;
+      color: #fdcb6e;
+    }
+
+    .stock-id {
+      font-weight: 600;
+      color: #a29bfe;
+    }
+
+    .stock-name {
+      font-weight: 500;
+    }
+
+    .update-time {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #a29bfe;
+      font-size: 1.1rem;
+    }
+
+    .error {
+      text-align: center;
+      padding: 40px;
+      background: rgba(225, 112, 85, 0.2);
+      border: 1px solid #e17055;
+      border-radius: 10px;
+      color: #e17055;
+      font-weight: 500;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: #a29bfe;
+    }
+
+    /* 买入弹窗样式 */
+    .buy-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .buy-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .buy-content {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: translateY(30px);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .buy-modal.active .buy-content {
+      transform: translateY(0);
+    }
+
+    .buy-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .buy-title {
+      font-size: 1.5rem;
+      color: #a29bfe;
+      font-weight: 600;
+    }
+
+    .close-buy-btn {
+      background: none;
+      border: none;
+      color: #a29bfe;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .close-buy-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e17055;
+    }
+
+    .buy-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .buy-input {
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .buy-input:focus {
+      outline: none;
+      border-color: #6c5ce7;
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+    }
+
+    .buy-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .buy-confirm-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(45deg, #00b894, #55efc4);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .buy-confirm-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .buy-confirm-btn:disabled {
+      background: #636e72;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .buy-cancel-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(45deg, #e17055, #fab1a0);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .buy-cancel-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 持仓信息弹窗样式 */
+    .position-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .position-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .position-content {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: translateY(30px);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .position-modal.active .position-content {
+      transform: translateY(0);
+    }
+
+    .position-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .position-title {
+      font-size: 1.5rem;
+      color: #a29bfe;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #a29bfe;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e17055;
+    }
+
+    .stock-basic-info {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .position-details {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .position-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .position-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .position-label {
+      color: #a29bfe;
+    }
+
+    .position-value {
+      font-weight: 600;
+      color: #fdcb6e;
+    }
+
+    .profit-positive {
+      color: #00b894;
+    }
+
+    .profit-negative {
+      color: #e17055;
+    }
+
+    .position-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .position-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .position-btn.buy {
+      background: linear-gradient(45deg, #00b894, #55efc4);
+    }
+
+    .position-btn.sell {
+      background: linear-gradient(45deg, #e17055, #fab1a0);
+    }
+
+    .position-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 底部按钮 */
+    .bottom-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .back-to-game {
+      padding: 12px 30px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .back-to-game:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(108, 92, 231, 0.5);
+    }
+
+    /* 预测比赛按钮 */
+    .prediction-btn {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      padding: 15px 25px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      z-index: 100;
+      /*box-shadow: 0 0 20px rgba(255, 107, 107, 0.7);
+      animation: flame 1.5s infinite alternate;*/
+    }
+
+    .prediction-btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 107, 107, 0.9);
+      animation: none;
+    }
+
+    @keyframes flame {
+      0% {
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.7),
+          0 0 25px rgba(255, 107, 107, 0.5),
+          0 0 35px rgba(255, 107, 107, 0.3);
+      }
+
+      100% {
+        box-shadow: 0 0 25px rgba(255, 107, 107, 0.9),
+          0 0 35px rgba(255, 107, 107, 0.7),
+          0 0 45px rgba(255, 107, 107, 0.5);
+      }
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .account-panel {
+        position: static;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .stock-container {
+        width: 95%;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .refresh-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stock-table {
+        font-size: 0.9rem;
+      }
+
+      .stock-table th,
+      .stock-table td {
+        padding: 10px 5px;
+      }
+
+      .position-content {
+        width: 95%;
+        padding: 20px;
+      }
+
+      .position-actions {
+        flex-direction: column;
+      }
+
+      .buy-content {
+        width: 95%;
+        padding: 20px;
+      }
+
+      .buy-actions {
+        flex-direction: column;
+      }
+
+      .prediction-btn {
+        bottom: 20px;
+        left: 20px;
+        padding: 12px 20px;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .account-panel {
+        padding: 0;
+      }
+
+      .account-toggle {
+        padding: 12px 15px;
+      }
+
+      .stock-container {
+        width: 100%;
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .stock-table {
+        font-size: 0.8rem;
+      }
+
+      .stock-table th,
+      .stock-table td {
+        padding: 8px 3px;
+      }
+
+      .update-time {
+        font-size: 0.75rem;
+      }
+
+      .position-content {
+        padding: 15px;
+      }
+
+      .position-title {
+        font-size: 1.3rem;
+      }
+
+      .position-line {
+        font-size: 0.9rem;
+      }
+
+      .buy-content {
+        padding: 15px;
+      }
+
+      .buy-title {
+        font-size: 1.3rem;
+      }
+
+      .prediction-btn {
+        bottom: 15px;
+        left: 15px;
+        padding: 10px 15px;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* 表格底部容器 */
+    .table-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    /* 交易记录按钮样式 */
+    .trade-history-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(45deg, #0984e3, #74b9ff);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .trade-history-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .table-footer {
+        justify-content: center;
+      }
+
+      .trade-history-btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 账户信息面板 -->
+  <div class="account-panel" id="accountPanel">
+    <div class="account-toggle" id="accountToggle">
+      <div class="account-title">💰 账户信息</div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="account-content" id="accountContent">
+      <!-- 内容将通过JavaScript动态生成 -->
+    </div>
+    <div class="result-message" id="accountResult"></div>
+  </div>
+
+  <div class="main-container">
+    <div class="header">
+      <h1>交易大厅</h1>
+      <div class="subtitle">每两小时股价刷新，仅支持整批次卖出，卖出股票请转到股票交易记录页</div>
+    </div>
+
+    <div class="stock-container">
+      <div class="controls">
+        <button id="refreshBtn" class="refresh-btn">
+          <span>🔄 刷新行情</span>
+        </button>
+        <div class="last-update" id="lastUpdate">最后更新: --</div>
+      </div>
+
+      <div id="stockWrap" class="loading">
+        <div class="spinner"></div> 加载股票行情中...
+      </div>
+
+      <!-- 添加交易记录按钮容器 -->
+      <div class="table-footer">
+        <a href="trade_history.html" class="trade-history-btn">📜 交易记录</a>
+      </div>
+    </div>
+
+    <div class="bottom-buttons">
+      <a href="game.html" class="back-to-game">🎮 返回游戏</a>
+    </div>
+  </div>
+
+  <!-- 买入弹窗 -->
+  <div class="buy-modal" id="buyModal">
+    <div class="buy-content">
+      <div class="buy-header">
+        <div class="buy-title">买入股票</div>
+        <button class="close-buy-btn" id="closeBuyModal">×</button>
+      </div>
+      <div class="buy-form">
+        <div class="position-line">
+          <span class="position-label">股票代码:</span>
+          <span class="position-value" id="buyStockId"></span>
+        </div>
+        <div class="position-line">
+          <span class="position-label">股票名称:</span>
+          <span class="position-value" id="buyStockName"></span>
+        </div>
+        <div class="position-line">
+          <span class="position-label">当前价格:</span>
+          <span class="position-value" id="buyStockPrice"></span>
+        </div>
+        <input type="number" id="buyQuantity" class="buy-input" placeholder="请输入买入股数（整数）" min="1" step="1">
+        <div class="position-line">
+          <span class="position-label">预计总花费:</span>
+          <span class="position-value" id="buyTotalCost">0.00 元</span>
+        </div>
+      </div>
+      <div class="buy-actions">
+        <button class="buy-confirm-btn" id="confirmBuyBtn">确认买入</button>
+        <button class="buy-cancel-btn" id="cancelBuyBtn">取消</button>
+      </div>
+      <div class="result-message" id="buyResult"></div>
+    </div>
+  </div>
+
+  <!-- 持仓信息弹窗 -->
+  <div class="position-modal" id="positionModal">
+    <div class="position-content">
+      <div class="position-header">
+        <div class="position-title">持仓信息</div>
+        <button class="close-btn" id="closePositionModal">×</button>
+      </div>
+      <div id="positionContent">
+        <!-- 持仓信息将通过JavaScript动态生成 -->
+      </div>
+      <div class="position-actions">
+        <button class="position-btn buy" id="buyBtn">买入</button>
+        <!--
+        <button class="position-btn sell" id="sellBtn">卖出</button>
+        -->
+      </div>
+    </div>
+  </div>
+
+  <a href="game-prediction.html" class="prediction-btn">🔥 预测比赛</a>
+
+  <script>
+    // 使用DOMContentLoaded确保DOM完全加载后再执行
+    document.addEventListener('DOMContentLoaded', function () {
+      // DOM元素获取函数
+      const $ = id => document.getElementById(id);
+
+      // 获取DOM元素
+      const wrap = $('stockWrap');
+      const refreshBtn = $('refreshBtn');
+      const lastUpdate = $('lastUpdate');
+      const accountContent = $('accountContent');
+      const accountResult = $('accountResult');
+      const accountToggle = $('accountToggle');
+      const accountPanel = $('accountPanel');
+      const positionModal = $('positionModal');
+      const positionContent = $('positionContent');
+      const closePositionModal = $('closePositionModal');
+      const buyBtn = $('buyBtn');
+      const sellBtn = $('sellBtn');
+      const buyModal = $('buyModal');
+      const closeBuyModal = $('closeBuyModal');
+      const buyStockId = $('buyStockId');
+      const buyStockName = $('buyStockName');
+      const buyStockPrice = $('buyStockPrice');
+      const buyQuantity = $('buyQuantity');
+      const buyTotalCost = $('buyTotalCost');
+      const confirmBuyBtn = $('confirmBuyBtn');
+      const cancelBuyBtn = $('cancelBuyBtn');
+      const buyResult = $('buyResult');
+
+      // API基础URL
+      const BASE_URL = 'http://47.92.231.94:8080';
+
+      // 账户面板状态
+      let isAccountExpanded = false;
+
+      // 存储股票列表数据
+      let stockList = [];
+
+      // 当前选中股票信息
+      let currentStock = null;
+
+      /* 工具：时间戳 → 北京时间字符串 */
+      function fmtTime(ts) {
+        const d = new Date(ts * 1000);
+        return d.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+      }
+
+      /* 工具：价格 分→元 保留2位小数 */
+      function fmtPrice(fen) {
+        return (fen / 100).toFixed(2);
+      }
+
+      /* 工具：渲染涨跌幅带箭头+颜色 */
+      function fmtChange(pc) {
+        const cls = pc >= 0 ? 'up' : 'down';
+        const arrow = pc >= 0 ? '▲' : '▼';
+        return `<span class="${cls}">${arrow} ${Math.abs(pc * 100).toFixed(4)}%</span>`;
+      }
+
+      /* 显示消息函数 */
+      function showResult(message, isSuccess, target = accountResult) {
+        target.classList.remove('success', 'error', 'show');
+        target.textContent = message;
+        target.classList.add(isSuccess ? 'success' : 'error');
+
+        void target.offsetWidth;
+        target.classList.add('show');
+
+        setTimeout(() => {
+          target.classList.remove('show');
+        }, 8000);
+      }
+
+      /* 设置按钮加载状态 */
+      function setButtonLoading(button, isLoading, originalText) {
+        if (isLoading) {
+          button.disabled = true;
+          button.innerHTML = '<span class="spinner"></span> 处理中...';
+        } else {
+          button.disabled = false;
+          button.innerHTML = originalText;
+        }
+      }
+
+      /* 获取用户ID和Cookie */
+      function getUid() {
+        return localStorage.getItem('uid');
+      }
+
+      function getCookie() {
+        return localStorage.getItem('cookie');
+      }
+
+      /* API调用函数 */
+      async function apiCall(endpoint, data) {
+        try {
+          const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error('API调用失败:', error);
+          throw error;
+        }
+      }
+
+      /* 加载账户信息 */
+      async function loadAccountInfo() {
+        const cookie = getCookie();
+        if (!cookie) {
+          renderNoLogin();
+          return;
+        }
+
+        try {
+          const data = await apiCall('/market/account_info', { cookie });
+
+          if (data.success) {
+            renderAccountInfo(data.money);
+          } else {
+            renderRegisterButton();
+          }
+        } catch (error) {
+          showResult('网络错误：' + error.message, false);
+          renderRegisterButton();
+        }
+      }
+
+      /* 渲染未登录状态 */
+      function renderNoLogin() {
+        accountContent.innerHTML = `
+          <div class="account-info">
+            <div class="info-line">
+              <span class="info-label">状态:</span>
+              <span class="info-value" style="color: #e17055;">未登录</span>
+            </div>
+          </div>
+          <div class="account-buttons">
+            <button class="account-btn" id="refreshPageBtn">刷新页面</button>
+          </div>
+        `;
+      }
+
+      /* 渲染注册按钮 */
+      function renderRegisterButton() {
+        const uid = getUid();
+        accountContent.innerHTML = `
+          <div class="account-info">
+            <div class="info-line">
+              <span class="info-label">用户ID:</span>
+              <span class="info-value">${uid || '未知'}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">账户状态:</span>
+              <span class="info-value" style="color: #e17055;">未开通</span>
+            </div>
+          </div>
+          <button class="account-btn register" id="registerBtn">开通交易账户</button>
+        `;
+      }
+
+      /* 渲染账户信息 */
+      function renderAccountInfo(money) {
+        const uid = getUid();
+        accountContent.innerHTML = `
+          <div class="account-info">
+            <div class="info-line">
+              <span class="info-label">用户ID:</span>
+              <span class="info-value">${uid || '未知'}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">交易币余额:</span>
+              <span class="info-value">${money.toFixed(2) || 0}</span>
+            </div>
+          </div>
+          <div class="exchange-section">
+            <div class="exchange-title">交易币兑换</div>
+            <div class="exchange-form">
+              <input type="number" id="coinInput" class="exchange-input" placeholder="输入金币数量" min="1">
+              <button class="exchange-btn coin-to-money" id="coinToMoneyBtn">金币 → 交易币</button>
+            </div>
+            <div class="exchange-form">
+              <input type="number" id="moneyInput" class="exchange-input" placeholder="输入交易币数量（100的倍数）" min="100" step="100">
+              <button class="exchange-btn money-to-coin" id="moneyToCoinBtn">交易币 → 金币</button>
+            </div>
+          </div>
+          <div class="account-buttons">
+            <button class="account-btn" id="refreshAccountBtn">刷新账户信息</button>
+          </div>
+        `;
+      }
+
+      /* 注册账户 */
+      async function registerAccount() {
+        const cookie = getCookie();
+        if (!cookie) {
+          showResult('请先登录', false);
+          return;
+        }
+
+        const button = $('registerBtn');
+        if (button) {
+          setButtonLoading(button, true, '开通交易账户');
+        }
+
+        try {
+          const data = await apiCall('/market/register', { cookie });
+
+          if (data.success) {
+            showResult('注册成功！', true);
+            setTimeout(loadAccountInfo, 1000);
+          } else {
+            showResult('注册失败', false);
+          }
+        } catch (error) {
+          showResult('网络错误：' + error.message, false);
+        } finally {
+          if (button) {
+            setButtonLoading(button, false, '开通交易账户');
+          }
+        }
+      }
+
+      /* 金币兑换交易币 */
+      async function coinToMoney() {
+        const cookie = getCookie();
+        const coinInput = $('coinInput');
+        const coins = coinInput ? parseInt(coinInput.value) : 0;
+
+        if (!cookie) {
+          showResult('请先登录', false);
+          return;
+        }
+
+        if (!coins || coins <= 0) {
+          showResult('请输入有效的金币数量', false);
+          return;
+        }
+
+        const button = $('coinToMoneyBtn');
+        if (button) {
+          setButtonLoading(button, true, '金币 → 交易币');
+        }
+
+        try {
+          const data = await apiCall('/market/coin_to_money', { cookie, coins });
+
+          if (data.success) {
+            showResult('兑换成功！', true);
+            if (coinInput) coinInput.value = '';
+            setTimeout(loadAccountInfo, 1000);
+          } else {
+            showResult('兑换失败', false);
+          }
+        } catch (error) {
+          showResult('网络错误：' + error.message, false);
+        } finally {
+          if (button) {
+            setButtonLoading(button, false, '金币 → 交易币');
+          }
+        }
+      }
+
+      /* 交易币兑换金币 */
+      async function moneyToCoin() {
+        const cookie = getCookie();
+        const moneyInput = $('moneyInput');
+        const money = moneyInput ? parseInt(moneyInput.value) : 0;
+
+        if (!cookie) {
+          showResult('请先登录', false);
+          return;
+        }
+
+        if (!money || money <= 0 || money % 100 !== 0) {
+          showResult('请输入100的倍数的交易币数量', false);
+          return;
+        }
+
+        const button = $('moneyToCoinBtn');
+        if (button) {
+          setButtonLoading(button, true, '交易币 → 金币');
+        }
+
+        try {
+          const data = await apiCall('/market/money_to_coin', { cookie, money });
+
+          if (data.success) {
+            showResult('兑换成功！', true);
+            if (moneyInput) moneyInput.value = '';
+            setTimeout(loadAccountInfo, 1000);
+          } else {
+            showResult('兑换失败', false);
+          }
+        } catch (error) {
+          showResult('网络错误：' + error.message, false);
+        } finally {
+          if (button) {
+            setButtonLoading(button, false, '交易币 → 金币');
+          }
+        }
+      }
+
+      /* 股票行情相关函数 */
+      async function loadStocks() {
+        if (wrap) {
+          wrap.className = 'loading';
+          wrap.innerHTML = '<div class="spinner"></div> 加载股票行情中...';
+        }
+
+        if (refreshBtn) {
+          setButtonLoading(refreshBtn, true, '🔄 刷新行情');
+        }
+
+        try {
+          const res = await fetch('http://47.92.231.94:8080/stock/view');
+          const json = await res.json();
+
+          if (!json.success) {
+            throw new Error('数据加载失败');
+          }
+
+          // 存储股票列表
+          stockList = json.stocks || [];
+
+          if (lastUpdate && json.stocks && json.stocks.length > 0) {
+            const latestUpdate = Math.max(...json.stocks.map(s => s.last_update));
+            lastUpdate.textContent = `最后更新: ${fmtTime(latestUpdate)}`;
+          }
+
+          render(json.stocks);
+        } catch (e) {
+          if (wrap) {
+            wrap.className = 'error';
+            wrap.innerHTML = `加载失败：${e.message}`;
+          }
+        } finally {
+          if (refreshBtn) {
+            setButtonLoading(refreshBtn, false, '🔄 刷新行情');
+          }
+        }
+      }
+
+      function render(list) {
+        if (!wrap) return;
+
+        if (!list || list.length === 0) {
+          wrap.className = 'empty';
+          wrap.innerHTML = '暂无股票数据';
+          return;
+        }
+
+        let html = `<table class="stock-table">
+          <thead>
+            <tr>
+              <th>代码</th>
+              <th>名称</th>
+              <th>现价 (元)</th>
+              <th>涨跌幅</th>
+              <th>更新时间</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+        list.forEach((s, index) => {
+          html += `<tr data-stock-id="${s.stock_id}" data-index="${index}">
+            <td class="stock-id">${s.stock_id}</td>
+            <td class="stock-name">${s.stock_name}</td>
+            <td class="stock-price">${fmtPrice(s.stock_price)}</td>
+            <td>${fmtChange(s.change_percent)}</td>
+            <td class="update-time">${fmtTime(s.last_update)}</td>
+          </tr>`;
+        });
+
+        html += '</tbody></table>';
+        wrap.className = '';
+        wrap.innerHTML = html;
+
+        // 为股票行添加点击事件
+        const stockRows = wrap.querySelectorAll('tr[data-stock-id]');
+        stockRows.forEach(row => {
+          row.addEventListener('click', handleStockClick);
+        });
+      }
+
+      /* 处理股票点击事件 */
+      async function handleStockClick(event) {
+        const row = event.currentTarget;
+        const stockId = row.getAttribute('data-stock-id');
+        const index = row.getAttribute('data-index');
+
+        // 获取股票信息
+        const stock = stockList[index];
+        if (!stock) return;
+
+        const cookie = getCookie();
+        if (!cookie) {
+          showResult('请先登录', false);
+          return;
+        }
+
+        try {
+          // 显示加载状态
+          positionContent.innerHTML = `
+            <div class="loading" style="padding: 40px; text-align: center;">
+              <div class="spinner"></div> 加载持仓信息中...
+            </div>
+          `;
+
+          // 显示弹窗
+          positionModal.classList.add('active');
+
+          // 调用API获取持仓信息
+          const data = await apiCall('/stock/view_one', {
+            cookie: cookie,
+            stock_id: stockId
+          });
+
+          if (data.success) {
+            renderPositionInfo(data.stock_info, data.position);
+          } else {
+            renderPositionError(data.error || '获取持仓信息失败');
+          }
+        } catch (error) {
+          console.error('获取持仓信息失败:', error);
+          renderPositionError('网络错误：' + error.message);
+        }
+      }
+
+      /* 渲染持仓信息 */
+      function renderPositionInfo(stockInfo, position) {
+        const profitClass = position.profit_loss >= 0 ? 'profit-positive' : 'profit-negative';
+        const profitSign = position.profit_loss >= 0 ? '+' : '';
+
+        positionContent.innerHTML = `
+          <div class="stock-basic-info">
+            <div class="position-line">
+              <span class="position-label">股票代码:</span>
+              <span class="position-value">${stockInfo.stock_id}</span>
+            </div>
+            <div class="position-line">
+              <span class="position-label">股票名称:</span>
+              <span class="position-value">${stockInfo.stock_name}</span>
+            </div>
+            <div class="position-line">
+              <span class="position-label">当前价格:</span>
+              <span class="position-value">${fmtPrice(stockInfo.current_price)} 元</span>
+            </div>
+          </div>
+          
+          <div class="position-details">
+            <div class="position-line">
+              <span class="position-label">持仓数量:</span>
+              <span class="position-value">${position.total_quantity} 股</span>
+            </div>
+            <div class="position-line">
+              <span class="position-label">可用数量:</span>
+              <span class="position-value">${position.available_quantity} 股</span>
+            </div>
+            <div class="position-line">
+              <span class="position-label">冻结数量:</span>
+              <span class="position-value">${position.frozen_quantity} 股</span>
+            </div>
+            <div class="position-line">
+              <span class="position-label">平均成本:</span>
+              <span class="position-value">${position.avg_cost_price} 元</span>
+            </div>
+            <div class="position-line">
+              <span class="position-label">当前市值:</span>
+              <span class="position-value">${fmtPrice(position.current_price)} 元</span>
+            </div>
+            <div class="position-line">
+              <span class="position-label">盈亏金额:</span>
+              <span class="position-value ${profitClass}">${profitSign}${position.profit_loss} 元</span>
+            </div>
+            <div class="position-line">
+              <span class="position-label">盈亏比例:</span>
+              <span class="position-value ${profitClass}">${profitSign}${position.profit_loss_rate}%</span>
+            </div>
+          </div>
+        `;
+
+        // 存储当前选中的股票信息，供买入卖出按钮使用
+        currentStock = {
+          stock_id: stockInfo.stock_id,
+          stock_name: stockInfo.stock_name,
+          current_price: stockInfo.current_price
+        };
+      }
+
+      /* 渲染持仓错误信息 */
+      function renderPositionError(errorMessage) {
+        positionContent.innerHTML = `
+          <div class="error" style="padding: 20px; text-align: center;">
+            ${errorMessage}
+          </div>
+        `;
+      }
+
+      /* 打开买入弹窗 */
+      function openBuyModal() {
+        if (!currentStock) {
+          showResult('请先选择股票', false);
+          return;
+        }
+
+        buyStockId.textContent = currentStock.stock_id;
+        buyStockName.textContent = currentStock.stock_name;
+        buyStockPrice.textContent = fmtPrice(currentStock.current_price) + ' 元';
+        buyQuantity.value = '';
+        buyTotalCost.textContent = '0.00 元';
+        buyResult.classList.remove('show');
+
+        positionModal.classList.remove('active');
+        buyModal.classList.add('active');
+      }
+
+      /* 关闭买入弹窗 */
+      function closeBuyModalHandler() {
+        buyModal.classList.remove('active');
+      }
+
+      /* 计算预计总花费 */
+      function calculateTotalCost() {
+        const quantity = parseInt(buyQuantity.value) || 0;
+        const price = currentStock ? currentStock.current_price : 0;
+        const totalCost = (quantity * price / 100).toFixed(2);
+        buyTotalCost.textContent = totalCost + ' 元';
+      }
+
+      /* 确认买入 */
+      async function confirmBuy() {
+        const cookie = getCookie();
+        const quantity = parseInt(buyQuantity.value);
+
+        if (!cookie) {
+          showResult('请先登录', false, buyResult);
+          return;
+        }
+
+        if (!quantity || quantity <= 0 || !Number.isInteger(quantity)) {
+          showResult('请输入有效的买入股数（正整数）', false, buyResult);
+          return;
+        }
+
+        if (!currentStock) {
+          showResult('请先选择股票', false, buyResult);
+          return;
+        }
+
+        setButtonLoading(confirmBuyBtn, true, '确认买入');
+
+        try {
+          const data = await apiCall('/stock/buy_one', {
+            cookie: cookie,
+            stock_id: currentStock.stock_id,
+            quantity: quantity
+          });
+
+          if (data.success) {
+            // 显示成功信息
+            showResult(
+              `买入成功！\n花费 ${data.transaction.total_cost.toFixed(2)} 元，买入 ${data.transaction.quantity} 股\n可卖出时间：${data.transaction.can_sell_after}`,
+              true,
+              buyResult
+            );
+
+            // 更新账户余额显示
+            /*const moneyElement = document.querySelector('.info-value');
+            if (moneyElement && data.new_balance !== undefined) {
+              moneyElement.textContent = data.new_balance;
+            }*/
+
+            // 关闭弹窗并刷新行情
+            setTimeout(() => {
+              closeBuyModalHandler();
+              loadStocks();
+            }, 8000);
+          } else {
+            showResult(data.error || '买入失败', false, buyResult);
+          }
+        } catch (error) {
+          showResult('网络错误：' + error.message, false, buyResult);
+        } finally {
+          setButtonLoading(confirmBuyBtn, false, '确认买入');
+        }
+      }
+
+      /* 事件委托处理函数 */
+      function handleAccountPanelClick(e) {
+        const target = e.target;
+
+        if (target.id === 'refreshAccountBtn') {
+          loadAccountInfo();
+        } else if (target.id === 'coinToMoneyBtn') {
+          coinToMoney();
+        } else if (target.id === 'moneyToCoinBtn') {
+          moneyToCoin();
+        } else if (target.id === 'registerBtn') {
+          registerAccount();
+        } else if (target.id === 'refreshPageBtn') {
+          location.reload();
+        }
+      }
+
+      /* 切换账户面板展开/收起 */
+      function toggleAccountPanel() {
+        isAccountExpanded = !isAccountExpanded;
+
+        if (isAccountExpanded) {
+          accountToggle.classList.add('expanded');
+          accountContent.classList.add('expanded');
+          loadAccountInfo();
+        } else {
+          accountToggle.classList.remove('expanded');
+          accountContent.classList.remove('expanded');
+        }
+      }
+
+      /* 关闭持仓弹窗 */
+      function closePositionModalHandler() {
+        positionModal.classList.remove('active');
+      }
+
+      /* 卖出按钮点击处理 */
+      function handleSellClick() {
+        const stockId = positionContent.getAttribute('data-stock-id');
+        const stockName = positionContent.getAttribute('data-stock-name');
+        const currentPrice = positionContent.getAttribute('data-current-price');
+
+        if (!stockId) {
+          showResult('请先选择股票', false);
+          return;
+        }
+
+        // 这里可以添加卖出逻辑
+        showResult(`准备卖出 ${stockName}(${stockId})，当前价格 ${fmtPrice(currentPrice)} 元`, true);
+        console.log('卖出股票:', stockId, stockName, currentPrice);
+
+        // 关闭弹窗
+        closePositionModalHandler();
+      }
+
+      /* 初始化 */
+      if (refreshBtn) {
+        refreshBtn.onclick = loadStocks;
+      }
+
+      // 绑定账户面板切换事件
+      if (accountToggle) {
+        accountToggle.addEventListener('click', toggleAccountPanel);
+      }
+
+      // 使用事件委托绑定账户面板的所有按钮点击事件
+      accountContent.addEventListener('click', handleAccountPanelClick);
+
+      // 绑定持仓弹窗事件
+      if (closePositionModal) {
+        closePositionModal.addEventListener('click', closePositionModalHandler);
+      }
+
+      // 点击弹窗背景关闭
+      positionModal.addEventListener('click', function (e) {
+        if (e.target === positionModal) {
+          closePositionModalHandler();
+        }
+      });
+
+      // 绑定买入卖出按钮事件
+      if (buyBtn) {
+        buyBtn.addEventListener('click', openBuyModal);
+      }
+
+      if (sellBtn) {
+        sellBtn.addEventListener('click', handleSellClick);
+      }
+
+      // 绑定买入弹窗事件
+      if (closeBuyModal) {
+        closeBuyModal.addEventListener('click', closeBuyModalHandler);
+      }
+
+      // 点击买入弹窗背景关闭
+      buyModal.addEventListener('click', function (e) {
+        if (e.target === buyModal) {
+          closeBuyModalHandler();
+        }
+      });
+
+      // 绑定买入数量输入事件
+      if (buyQuantity) {
+        buyQuantity.addEventListener('input', calculateTotalCost);
+      }
+
+      // 绑定确认买入按钮
+      if (confirmBuyBtn) {
+        confirmBuyBtn.addEventListener('click', confirmBuy);
+      }
+
+      // 绑定取消买入按钮
+      if (cancelBuyBtn) {
+        cancelBuyBtn.addEventListener('click', closeBuyModalHandler);
+      }
+
+      // 页面加载时自动加载股票行情
+      loadStocks();
+
+      /* 添加键盘快捷键支持 */
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'r' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          loadStocks();
+        }
+
+        // ESC键关闭弹窗
+        if (e.key === 'Escape') {
+          if (buyModal.classList.contains('active')) {
+            closeBuyModalHandler();
+          } else if (positionModal.classList.contains('active')) {
+            closePositionModalHandler();
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
