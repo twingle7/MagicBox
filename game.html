@@ -746,6 +746,48 @@
       background: linear-gradient(45deg, #0984e3, #74b9ff);
     }
 
+    /* 留言板组件样式 */
+    .message-board {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 280px;
+      z-index: 10;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .message-board:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .message-board h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0;
+      color: #a29bfe;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .message-board-icon {
+      font-size: 1.5rem;
+      margin-right: 10px;
+    }
+
+    .message-board-content {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
     /* 响应式设计 */
     @media (max-width: 768px) {
       .user-panel {
@@ -776,6 +818,12 @@
       .task-panel.expanded {
         width: 100%;
         max-height: 70vh;
+      }
+
+      .message-board {
+        position: static;
+        width: 100%;
+        margin-bottom: 20px;
       }
 
       .main-container {
@@ -850,6 +898,10 @@
       .user-panel pre {
         font-size: 0.85rem;
       }
+
+      .message-board {
+        padding: 12px;
+      }
     }
   </style>
 </head>
@@ -903,6 +955,13 @@
       </div>
       <div class="task-error" id="taskError"></div>
     </div>
+  </div>
+
+  <!-- 留言板组件（固定在左下角） -->
+  <div class="message-board" onclick="window.location.href='textboard.html'">
+    <h3>
+      <span><span class="message-board-icon">📝</span>留言板(禁止辱骂人类)</span>
+    </h3>
   </div>
 
   <div class="main-container">

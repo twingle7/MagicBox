@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言板 - MagicBox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            font-size: 1.1rem;
+            color: #a29bfe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-id {
+            background: rgba(162, 155, 254, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 120px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-button.primary {
+            background: linear-gradient(45deg, #00b894, #55efc4);
+        }
+
+        .nav-button.primary:hover {
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+        }
+
+        .nav-button.secondary {
+            background: linear-gradient(45deg, #636e72, #b2bec3);
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: #b2bec3;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button.active {
+            color: #6c5ce7;
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            border-radius: 3px;
+        }
+
+        .board-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .new-message-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #a29bfe;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+        }
+
+        .character-count {
+            text-align: right;
+            color: #b2bec3;
+            font-size: 0.9rem;
+        }
+
+        .character-count.warning {
+            color: #e17055;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        button:disabled {
+            background: #636e72;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        button.primary {
+            background: linear-gradient(45deg, #00b894, #55efc4);
+        }
+
+        button.primary:hover {
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+        }
+
+        button.secondary {
+            background: linear-gradient(45deg, #636e72, #b2bec3);
+        }
+
+        .messages-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .messages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .refresh-button {
+            background: linear-gradient(45deg, #0984e3, #74b9ff);
+        }
+
+        .messages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .message-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-item.system {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 235, 59, 0.05));
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .message-item.pending {
+            background: rgba(108, 92, 231, 0.1);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            border-left: 5px solid #6c5ce7;
+        }
+
+        .message-item.rejected {
+            background: rgba(225, 112, 85, 0.1);
+            border: 1px solid rgba(225, 112, 85, 0.3);
+            border-left: 5px solid #e17055;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .user-avatar.pending {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+        }
+
+        .user-avatar.rejected {
+            background: linear-gradient(45deg, #e17055, #fab1a0);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #a29bfe;
+        }
+
+        .username.system {
+            color: #ff9800;
+        }
+
+        .username.pending {
+            color: #6c5ce7;
+        }
+
+        .username.rejected {
+            color: #e17055;
+        }
+
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .system-badge {
+            background: #ff9800;
+            color: #000;
+        }
+
+        .pending-badge {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        .rejected-badge {
+            background: #e17055;
+            color: white;
+        }
+
+        .message-time {
+            color: #b2bec3;
+            font-size: 0.9rem;
+        }
+
+        .message-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            word-break: break-word;
+        }
+
+        .message-content.system {
+            color: #ffeaa7;
+        }
+
+        .message-content.pending {
+            color: #a29bfe;
+        }
+
+        .message-content.rejected {
+            color: #fab1a0;
+        }
+
+        .message-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reaction-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .reaction-button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 20px;
+            padding: 5px 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .reaction-button:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .reaction-button.flower:not(.disabled):hover {
+            background: rgba(255, 105, 180, 0.3);
+        }
+
+        .reaction-button.egg:not(.disabled):hover {
+            background: rgba(255, 193, 7, 0.3);
+        }
+
+        .reaction-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .reaction-icon {
+            font-size: 1.2rem;
+        }
+
+        .flower-count {
+            color: #ff69b4;
+            font-weight: 600;
+        }
+
+        .egg-count {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .message-id {
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result.success {
+            background: rgba(0, 184, 148, 0.2);
+            border: 1px solid #00b894;
+            color: #00b894;
+        }
+
+        .result.error {
+            background: rgba(225, 112, 85, 0.2);
+            border: 1px solid #e17055;
+            color: #e17055;
+        }
+
+        .result.info {
+            background: rgba(108, 92, 231, 0.2);
+            border: 1px solid #6c5ce7;
+            color: #a29bfe;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #a29bfe;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #b2bec3;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .new-message-section,
+            .messages-section {
+                padding: 20px;
+            }
+
+            .messages-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .message-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .user-info-container {
+                width: 100%;
+            }
+
+            .message-footer {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .reaction-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .nav-button {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .tab-container {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 5px;
+            }
+
+            .tab-button {
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .user-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .message-content {
+                font-size: 1rem;
+            }
+
+            .reaction-button {
+                padding: 4px 8px;
+                font-size: 0.9rem;
+            }
+
+            .message-item {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1>留言板</h1>
+            <div class="user-info">
+                <span>用户ID:</span>
+                <span class="user-id" id="userIdDisplay">加载中...</span>
+            </div>
+            <div class="nav-buttons">
+                <a href="game.html" class="nav-button">🏠 返回游戏</a>
+                <button class="nav-button primary" onclick="refreshMessages()" id="refreshMessagesBtn">🔄 刷新留言</button>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-button active" onclick="switchTab('public')" id="publicTab">🌐 公共留言区</button>
+            <button class="tab-button" onclick="switchTab('pending')" id="pendingTab">⏳ 我的待审核</button>
+        </div>
+
+        <div class="board-container">
+            <!-- 新留言输入区 -->
+            <div class="new-message-section">
+                <h3 class="section-title">✍️ 发布新留言</h3>
+                <div class="input-group">
+                    <textarea id="newMessage" placeholder="请输入留言内容（支持表情和换行，最多500字）" maxlength="500"></textarea>
+                    <div class="character-count" id="charCount">0/500</div>
+                </div>
+                <div class="button-group">
+                    <button id="submitBtn" onclick="submitMessage()" class="primary">
+                        发布留言
+                    </button>
+                    <button onclick="clearMessage()" class="secondary">
+                        清空内容
+                    </button>
+                </div>
+                <div id="submitResult" class="result"></div>
+            </div>
+
+            <!-- 留言列表区 -->
+            <div class="messages-section">
+                <div class="messages-header">
+                    <h3 class="section-title" id="messagesTitle">💬 公共留言区</h3>
+                    <button class="refresh-button" onclick="refreshCurrentTab()" id="refreshBtn">
+                        🔄 刷新
+                    </button>
+                </div>
+                <div id="messagesList" class="messages-list">
+                    <div class="loading">
+                        <span class="spinner"></span> 正在加载留言...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM 元素
+        const $ = id => document.getElementById(id);
+        const userIdDisplay = $('userIdDisplay');
+        const messagesList = $('messagesList');
+        const messagesTitle = $('messagesTitle');
+        const newMessageInput = $('newMessage');
+        const submitBtn = $('submitBtn');
+        const submitResult = $('submitResult');
+        const charCount = $('charCount');
+        const refreshBtn = $('refreshBtn');
+        const publicTab = $('publicTab');
+        const pendingTab = $('pendingTab');
+
+        // API基础URL
+        const API_BASE = 'http://47.92.231.94:8080';
+
+        // 当前选中的标签页
+        let currentTab = 'public';
+
+        // 存储当前显示的消息数据
+        let currentMessages = {
+            public: [],   // 公共留言
+            pending: []  // 待审核留言
+        };
+
+        // 获取用户ID和cookie
+        const getUid = () => localStorage.getItem('uid') || '游客';
+        const getCookie = () => localStorage.getItem('cookie');
+
+        // 显示消息函数
+        function showMessage(element, text, type = 'info') {
+            element.classList.remove('success', 'error', 'info', 'show');
+            element.textContent = text;
+            element.classList.add(type, 'show');
+            setTimeout(() => {
+                element.classList.remove('show');
+            }, 3000);
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            messagesList.innerHTML = '<div class="loading"><span class="spinner"></span> 正在加载留言...</div>';
+        }
+
+        // 显示空状态
+        function showEmptyState(message = '暂时没有留言') {
+            messagesList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">${currentTab === 'public' ? '💬' : '⏳'}</div>
+          <h3>${message}</h3>
+          <p>${currentTab === 'public' ? '快来发布第一条留言吧！' : '您还没有待审核的留言'}</p>
+        </div>
+      `;
+        }
+
+        // 获取用户头像首字母
+        function getUserAvatar(username) {
+            return username ? username.charAt(0).toUpperCase() : '?';
+        }
+
+        //格式化时间
+        function formatTime(timeString) {
+            if (!timeString) return '未知时间';
+
+            try {
+                /* 如果已经是"年-月-日 时:分:秒"格式，直接使用
+                if (typeof timeString === 'string' && timeString.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
+                    return timeString;
+                }*/
+
+                // 处理ISO格式或其他格式
+                let date = new Date(timeString);
+                if (isNaN(date.getTime())) {
+                    return timeString;
+                }
+
+                // 将时间转换为北京时间 (UTC+8)
+                const beijingOffset = 8 * 60;
+                const localOffset = date.getTimezoneOffset();
+                const beijingTime = new Date(date.getTime() + (beijingOffset + localOffset) * 60000);
+
+                // 格式化为"年-月-日 时:分:秒"格式
+                const formatBeijingTime = () => {
+                    const year = beijingTime.getFullYear();
+                    const month = String(beijingTime.getMonth() + 1).padStart(2, '0');
+                    const day = String(beijingTime.getDate()).padStart(2, '0');
+                    const hours = String((beijingTime.getHours() + 8) % 24).padStart(2, '0');
+                    const minutes = String(beijingTime.getMinutes()).padStart(2, '0');
+                    const seconds = String(beijingTime.getSeconds()).padStart(2, '0');
+                    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                };
+
+                // 可选：如果时间很近，显示相对时间
+                const now = new Date() - 8 * 60 * 60 * 1000;
+                const diff = now - beijingTime;
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+
+                if (minutes < 1) return '刚刚';
+                if (minutes < 60) return `${minutes}分钟前 (${formatBeijingTime()})`;
+                if (hours < 24) return `${hours}小时前 (${formatBeijingTime()})`;
+                if (days < 7) return `${days}天前 (${formatBeijingTime()})`;
+
+                return formatBeijingTime();
+            } catch (error) {
+                console.error('时间格式化错误:', error, '原始时间字符串:', timeString);
+                return timeString;
+            }
+        }
+
+        // 获取审核状态信息
+        function getStatusInfo(is_approved) {
+            if (is_approved === undefined || is_approved === null) {
+                return { text: '未知状态', class: 'pending', badgeClass: 'pending-badge', color: '#6c5ce7' };
+            }
+
+            switch (parseInt(is_approved)) {
+                case 0:
+                    return { text: '待审核', class: 'pending', badgeClass: 'pending-badge', color: '#6c5ce7' };
+                case 1:
+                    return { text: '已通过', class: 'approved', badgeClass: 'success-badge', color: '#00b894' };
+                case 2:
+                    return { text: '未通过', class: 'rejected', badgeClass: 'rejected-badge', color: '#e17055' };
+                default:
+                    return { text: '未知状态', class: 'pending', badgeClass: 'pending-badge', color: '#6c5ce7' };
+            }
+        }
+
+        // 创建留言项
+        function createMessageItem(message, isPending = false) {
+            const isSystem = message.is_master === 1;
+            const flowerCount = message.flower || 0;
+            const eggCount = message.egg || 0;
+            const isPublic = currentTab === 'public';
+
+            // 获取审核状态
+            const statusInfo = getStatusInfo(message.is_approved);
+
+            const messageItem = document.createElement('div');
+            messageItem.className = `message-item ${isSystem ? 'system' : ''} ${statusInfo.class}`;
+            messageItem.dataset.id = message.id; // 存储留言ID
+
+            messageItem.innerHTML = `
+        <div class="message-header">
+          <div class="user-info-container">
+            <div class="user-avatar ${statusInfo.class}">
+              ${getUserAvatar(message.user_id)}
+            </div>
+            <div class="user-details">
+              <div>
+                <span class="username ${isSystem ? 'system' : ''} ${statusInfo.class}">
+                  ${isSystem ? '【系统】' : ''}${message.user_id || '未知用户'}
+                  ${isSystem ? '<span class="status-badge system-badge">官方</span>' : ''}
+                  ${!isPublic ? `<span class="status-badge ${statusInfo.badgeClass}">${statusInfo.text}</span>` : ''}
+                </span>
+              </div>
+              <div class="message-time">${formatTime(message.time)}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="message-content ${isSystem ? 'system' : ''} ${statusInfo.class}">
+          ${(message.content || '').replace(/\n/g, '<br>')}
+        </div>
+        
+        <div class="message-footer">
+          <div class="reaction-buttons">
+            ${isPublic ? `
+            <button class="reaction-button flower" onclick="sendReaction(${message.id}, 'flower', this)">
+              <span class="reaction-icon">🌸</span>
+              <span class="flower-count">${flowerCount}</span>
+            </button>
+            <button class="reaction-button egg" onclick="sendReaction(${message.id}, 'egg', this)">
+              <span class="reaction-icon">🥚</span>
+              <span class="egg-count">${eggCount}</span>
+            </button>
+            ` : `<span style="color: ${statusInfo.color};">${statusInfo.text}</span>`}
+          </div>
+          <div class="message-id">#${message.id || '?'}</div>
+        </div>
+      `;
+
+            return messageItem;
+        }
+
+        // 渲染留言列表
+        function renderMessages(messages, isPending = false) {
+            if (!messages || messages.length === 0) {
+                const message = isPending ? '您还没有待审核的留言' : '暂时没有留言';
+                showEmptyState(message);
+                return;
+            }
+
+            messagesList.innerHTML = '';
+
+            // 服务器返回时间从新到旧，但待审核留言需要特别处理
+            messages.forEach(message => {
+                if (isPending) {
+                    // 在待审核列表中显示所有状态的留言
+                    messagesList.appendChild(createMessageItem(message, true));
+                } else {
+                    // 在公共留言区只显示已通过的留言
+                    if (message.is_approved === 1) {
+                        messagesList.appendChild(createMessageItem(message, false));
+                    }
+                }
+            });
+        }
+
+        // 渲染待审核留言列表
+        function renderPendingMessages(data) {
+            if (!data.success || !data.data || data.data.length === 0) {
+                showEmptyState('您还没有待审核的留言');
+                return;
+            }
+
+            // 计算各种状态的留言数量
+            const pendingCount = data.data.filter(item => item.is_approved === 0).length;
+            const approvedCount = data.data.filter(item => item.is_approved === 1).length;
+            const rejectedCount = data.data.filter(item => item.is_approved === 2).length;
+
+            // 更新标题显示统计
+            messagesTitle.textContent = `⏳ 我的待审核 (${pendingCount} 待审, ${rejectedCount} 未通过)`;
+
+            renderMessages(data.data, true);
+        }
+
+        // 发送鲜花/鸡蛋反应
+        async function sendReaction(messageId, type, buttonElement) {
+            const cookie = getCookie();
+            if (!cookie) {
+                showMessage(submitResult, '请先登录', 'error');
+                return;
+            }
+
+            // 禁用按钮防止重复点击
+            buttonElement.disabled = true;
+            buttonElement.classList.add('disabled');
+            const originalHTML = buttonElement.innerHTML;
+            buttonElement.innerHTML = '<span class="spinner"></span>';
+
+            try {
+                const response = await fetch(`${API_BASE}/textboard/${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cookie: cookie,
+                        comment_id: messageId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(submitResult, '操作成功！', 'success');
+
+                    // 更新该留言的计数显示
+                    updateMessageCount(messageId, type);
+                } else {
+                    showMessage(submitResult, data.msg || '操作失败', 'error');
+                    // 恢复按钮状态
+                    buttonElement.disabled = false;
+                    buttonElement.classList.remove('disabled');
+                    buttonElement.innerHTML = originalHTML;
+                }
+            } catch (error) {
+                showMessage(submitResult, '网络错误: ' + error.message, 'error');
+                // 恢复按钮状态
+                buttonElement.disabled = false;
+                buttonElement.classList.remove('disabled');
+                buttonElement.innerHTML = originalHTML;
+            }
+        }
+
+        // 更新留言计数显示
+        function updateMessageCount(messageId, type) {
+            // 在当前标签页的消息数组中查找对应消息
+            const messages = currentTab === 'public' ? currentMessages.public : currentMessages.pending;
+            const messageIndex = messages.findIndex(msg => msg.id === messageId);
+
+            if (messageIndex !== -1) {
+                // 更新计数
+                if (type === 'flower') {
+                    currentMessages[currentTab][messageIndex].flower = (currentMessages[currentTab][messageIndex].flower || 0) + 1;
+                } else if (type === 'egg') {
+                    currentMessages[currentTab][messageIndex].egg = (currentMessages[currentTab][messageIndex].egg || 0) + 1;
+                }
+
+                // 重新渲染整个列表
+                if (currentTab === 'public') {
+                    renderMessages(currentMessages.public, false);
+                } else {
+                    renderPendingMessages({ success: true, data: currentMessages.pending });
+                }
+            } else {
+                // 如果没找到，刷新整个列表
+                refreshCurrentTab();
+            }
+        }
+
+        // 提交新留言
+        async function submitMessage() {
+            const content = newMessageInput.value.trim();
+            const cookie = getCookie();
+
+            if (!cookie) {
+                showMessage(submitResult, '请先登录', 'error');
+                return;
+            }
+
+            if (!content) {
+                showMessage(submitResult, '请输入留言内容', 'error');
+                return;
+            }
+
+            if (content.length > 500) {
+                showMessage(submitResult, '留言内容不能超过500字', 'error');
+                return;
+            }
+
+            // 设置按钮加载状态
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span> 发布中...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/textboard/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cookie: cookie,
+                        content: content
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(submitResult, '留言已提交，正在等待审核', 'success');
+                    newMessageInput.value = '';
+                    charCount.textContent = '0';
+                    // 刷新待审核留言列表
+                    if (currentTab === 'pending') {
+                        await loadPendingMessages();
+                    }
+                } else {
+                    showMessage(submitResult, data.msg || '发布失败', 'error');
+                }
+            } catch (error) {
+                showMessage(submitResult, '网络错误: ' + error.message, 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // 获取公共留言
+        async function loadPublicMessages() {
+            try {
+                const response = await fetch(`${API_BASE}/textboard/view`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const messages = await response.json();
+                currentMessages.public = messages; // 保存到当前消息数组
+                renderMessages(messages);
+            } catch (error) {
+                messagesList.innerHTML = `
+          <div class="result error show">
+            加载留言失败: ${error.message}
+            <br>
+            <button onclick="loadMessages('public')" style="margin-top: 10px;">重试</button>
+          </div>
+        `;
+                console.error('加载公共留言失败:', error);
+            }
+        }
+
+        // 获取待审核留言
+        async function loadPendingMessages() {
+            const cookie = getCookie();
+
+            if (!cookie) {
+                showMessage(submitResult, '请先登录查看待审核留言', 'info');
+                showEmptyState('请登录后查看待审核留言');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/textboard/view_wait`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cookie: cookie
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentMessages.pending = data.data || []; // 保存到当前消息数组
+                    renderPendingMessages(data);
+                } else {
+                    showEmptyState(data.msg || '暂无待审核留言');
+                }
+            } catch (error) {
+                messagesList.innerHTML = `
+          <div class="result error show">
+            加载待审核留言失败: ${error.message}
+            <br>
+            <button onclick="loadPendingMessages()" style="margin-top: 10px;">重试</button>
+          </div>
+        `;
+                console.error('加载待审核留言失败:', error);
+            }
+        }
+
+        // 加载当前标签页的消息
+        async function loadMessages(tab) {
+            showLoading();
+
+            if (tab === 'public') {
+                messagesTitle.textContent = '💬 公共留言区';
+                await loadPublicMessages();
+            } else if (tab === 'pending') {
+                messagesTitle.textContent = '⏳ 我的待审核留言';
+                await loadPendingMessages();
+            }
+        }
+
+        // 切换标签页
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // 更新标签按钮状态
+            publicTab.classList.toggle('active', tab === 'public');
+            pendingTab.classList.toggle('active', tab === 'pending');
+
+            // 加载对应标签页的消息
+            loadMessages(tab);
+        }
+
+        // 刷新当前标签页
+        function refreshCurrentTab() {
+            loadMessages(currentTab);
+        }
+
+        // 刷新留言（公共留言）
+        function refreshMessages() {
+            switchTab('public');
+        }
+
+        // 清空留言内容
+        function clearMessage() {
+            newMessageInput.value = '';
+            charCount.textContent = '0';
+        }
+
+        // 初始化
+        function init() {
+            // 显示用户ID
+            const uid = getUid();
+            userIdDisplay.textContent = uid;
+
+            // 监听输入框字符数
+            newMessageInput.addEventListener('input', () => {
+                const length = newMessageInput.value.length;
+                charCount.textContent = `${length}/500`;
+                charCount.classList.toggle('warning', length > 450);
+            });
+
+            // 加载公共留言列表
+            loadMessages('public');
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
