@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所有卡牌</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #0984e3, #74b9ff);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
+        }
+
+        /* 卡片容器 */
+        .sets-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 卡组板块 */
+        .set-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .set-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(108, 92, 231, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .set-header:hover {
+            background: rgba(108, 92, 231, 0.2);
+        }
+
+        .set-header h2 {
+            font-size: 1.5rem;
+            color: #a29bfe;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .set-toggle {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        /* 修改：默认收起状态 */
+        .set-panel:not(.expanded) .set-toggle {
+            transform: rotate(-90deg);
+        }
+
+        /* 收起状态时的箭头 */
+        .set-panel.expanded .set-toggle {
+            transform: rotate(0deg);
+        }
+
+        .set-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .set-panel.expanded .set-content {
+            max-height: 80vh;
+            opacity: 1;
+            margin-top: 20px;
+            overflow-y: auto;
+        }
+
+        /* 稀有度分类 */
+        .rarity-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .rarity-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 稀有度颜色定义 */
+        .rarity-1 .rarity-header {
+            color: #f5f5f5;
+        }
+
+        /* 白灰色 */
+        .rarity-2 .rarity-header {
+            color: #00cec9;
+        }
+
+        /* 青绿色 */
+        .rarity-3 .rarity-header {
+            color: #74b9ff;
+        }
+
+        /* 淡蓝色 */
+        .rarity-4 .rarity-header {
+            color: #a29bfe;
+        }
+
+        /* 深紫色 */
+        .rarity-5 .rarity-header {
+            color: #fdcb6e;
+        }
+
+        /* 金橙色 */
+        .rarity-6 .rarity-header {
+            color: #ff7675;
+        }
+
+        /* 金红色 */
+        .rarity-7 .rarity-header {
+            background: linear-gradient(45deg,
+                    #ff7675, #fd79a8, #a29bfe,
+                    #74b9ff, #00cec9, #00b894,
+                    #fdcb6e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* 彩金色 */
+
+        /* 卡片滚动容器 */
+        .cards-scroll-container {
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(108, 92, 231, 0.5) rgba(255, 255, 255, 0.1);
+        }
+
+        .cards-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .cards-scroll-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .cards-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(108, 92, 231, 0.5);
+            border-radius: 3px;
+        }
+
+        .cards-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(108, 92, 231, 0.7);
+        }
+
+        .cards-grid {
+            display: flex;
+            gap: 15px;
+            min-width: min-content;
+            padding: 5px 5px 15px 5px;
+        }
+
+        /* 卡片样式 - 修改：去掉3D翻转效果，直接显示正面 */
+        .card-item {
+            width: 150px;
+            height: 225px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .card-item:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 简化：只保留正面样式 */
+        .card-front {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-image {
+            flex: 1;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .card-info {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+        }
+
+        .card-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        /* 卡片名字颜色随稀有度变化 */
+        .rarity-1 .card-name {
+            color: #f5f5f5;
+        }
+
+        .rarity-2 .card-name {
+            color: #00cec9;
+        }
+
+        .rarity-3 .card-name {
+            color: #74b9ff;
+        }
+
+        .rarity-4 .card-name {
+            color: #a29bfe;
+        }
+
+        .rarity-5 .card-name {
+            color: #fdcb6e;
+        }
+
+        .rarity-6 .card-name {
+            color: #ff7675;
+        }
+
+        .rarity-7 .card-name {
+            background: linear-gradient(45deg,
+                    #ff7675, #fd79a8, #a29bfe,
+                    #74b9ff, #00cec9, #00b894,
+                    #fdcb6e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card-rarity {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* 卡片边框颜色随稀有度变化 */
+        .rarity-1 .card-front {
+            border: 2px solid #f5f5f5;
+        }
+
+        .rarity-2 .card-front {
+            border: 2px solid #00cec9;
+        }
+
+        .rarity-3 .card-front {
+            border: 2px solid #74b9ff;
+        }
+
+        .rarity-4 .card-front {
+            border: 2px solid #a29bfe;
+        }
+
+        .rarity-5 .card-front {
+            border: 2px solid #fdcb6e;
+        }
+
+        .rarity-6 .card-front {
+            border: 2px solid #ff7675;
+        }
+
+        .rarity-7 .card-front {
+            border: 2px solid;
+            border-image: linear-gradient(45deg,
+                    #ff7675, #fd79a8, #a29bfe,
+                    #74b9ff, #00cec9, #00b894,
+                    #fdcb6e) 1;
+        }
+
+        /* 修改卡片详情模态框 - 优化横竖图显示 */
+        .card-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            animation: zoomIn 0.5s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .modal-image {
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-image.horizontal {
+            max-width: 90vw;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+        }
+
+        .modal-image.vertical {
+            max-height: 90vh;
+            max-width: 90vw;
+            width: auto;
+            height: auto;
+        }
+
+        .modal-image.portrait {
+            max-height: 85vh;
+            max-width: auto;
+            width: auto;
+            height: auto;
+        }
+
+        /* 图片信息标签 */
+        .image-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* 添加图片方向指示器 */
+        .orientation-indicator {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #a29bfe;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #6c5ce7;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 错误状态 */
+        .error {
+            text-align: center;
+            padding: 50px;
+            background: rgba(225, 112, 85, 0.2);
+            border-radius: 10px;
+            border: 1px solid #e17055;
+            color: #e17055;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .card-item {
+                width: 120px;
+                height: 180px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .set-header h2 {
+                font-size: 1.3rem;
+            }
+
+            .set-content.expanded {
+                max-height: 70vh;
+            }
+
+            /* 移动端调整模态框 */
+            .modal-content {
+                max-width: 95vw;
+                max-height: 95vh;
+                padding: 10px;
+            }
+
+            .modal-image.horizontal {
+                max-width: 95vw;
+                max-height: 50vh;
+            }
+
+            .modal-image.vertical {
+                max-height: 80vh;
+                max-width: 95vw;
+            }
+
+            .modal-image.portrait {
+                max-height: 80vh;
+                max-width: 70vw;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-item {
+                width: 100px;
+                height: 150px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .set-header h2 {
+                font-size: 1.1rem;
+            }
+
+            .back-button {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+
+            .rarity-header {
+                font-size: 1rem;
+            }
+
+            .set-content.expanded {
+                max-height: 60vh;
+            }
+
+            /* 移动端调整模态框 */
+            .modal-content {
+                max-width: 98vw;
+                max-height: 98vh;
+                padding: 5px;
+            }
+
+            .modal-image.horizontal {
+                max-width: 98vw;
+                max-height: 40vh;
+            }
+
+            .modal-image.vertical {
+                max-height: 70vh;
+                max-width: 98vw;
+            }
+
+            .modal-image.portrait {
+                max-height: 70vh;
+                max-width: 60vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 返回按钮 -->
+    <a href="drawcard.html" class="back-button">
+        ← 返回
+    </a>
+
+    <!-- 卡片详情模态框 -->
+    <div class="card-modal" id="cardModal">
+        <button class="close-modal" onclick="closeModal()">×</button>
+        <div class="modal-content">
+            <div class="image-info" id="imageInfo"></div>
+            <img id="modalImage" class="modal-image" src="" alt="卡牌详情">
+            <div class="orientation-indicator" id="orientationIndicator"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="header">
+            <h1>所有卡牌</h1>
+            <p>点击卡牌查看详情，点击卡组展开/收起</p>
+        </div>
+
+        <div class="sets-container" id="setsContainer">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>正在加载卡牌数据...</p>
+            </div>
+        </div>
+
+        <div class="error" id="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const $ = id => document.getElementById(id);
+        const setsContainer = $('setsContainer');
+        const loading = $('loading');
+        const error = $('error');
+        const cardModal = $('cardModal');
+        const modalImage = $('modalImage');
+        const imageInfo = $('imageInfo');
+        const orientationIndicator = $('orientationIndicator');
+
+        // 页面加载时获取卡牌数据
+        window.addEventListener('load', fetchCards);
+
+        // 获取卡牌数据
+        async function fetchCards() {
+            try {
+                loading.style.display = 'block';
+                error.style.display = 'none';
+
+                const response = await fetch('http://47.92.231.94:8080/card/view');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    renderCards(data.data.cards);
+                } else {
+                    showError('获取卡牌数据失败: ' + (data.message || '未知错误'));
+                }
+            } catch (err) {
+                showError('网络请求失败: ' + err.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // 渲染卡牌
+        function renderCards(cards) {
+            if (!cards || cards.length === 0) {
+                showError('暂无卡牌数据');
+                return;
+            }
+
+            // 按set分组
+            const sets = {};
+            cards.forEach(card => {
+                const setName = card.set.name;
+                if (!sets[setName]) {
+                    sets[setName] = {};
+                }
+
+                // 按rarity分组
+                const rarityId = card.rarity.id;
+                if (!sets[setName][rarityId]) {
+                    sets[setName][rarityId] = {
+                        name: card.rarity.name,
+                        cards: []
+                    };
+                }
+
+                sets[setName][rarityId].cards.push(card);
+            });
+
+            // 清空容器
+            setsContainer.innerHTML = '';
+
+            // 创建每个卡组的面板
+            Object.entries(sets).forEach(([setName, rarities], index) => {
+                const setPanel = document.createElement('div');
+                setPanel.className = 'set-panel';
+                setPanel.id = `set-${index}`;
+
+                // 卡组头部
+                const setHeader = document.createElement('div');
+                setHeader.className = 'set-header';
+                setHeader.onclick = () => toggleSet(setPanel.id);
+
+                setHeader.innerHTML = `
+          <h2>📦 ${setName}</h2>
+          <span class="set-toggle">▼</span>
+        `;
+
+                // 卡组内容
+                const setContent = document.createElement('div');
+                setContent.className = 'set-content';
+
+                // 按稀有度ID从小到大排序
+                const sortedRarities = Object.entries(rarities).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+
+                // 创建每个稀有度分类
+                sortedRarities.forEach(([rarityId, rarityData]) => {
+                    const raritySection = document.createElement('div');
+                    raritySection.className = `rarity-section rarity-${rarityId}`;
+
+                    const rarityHeader = document.createElement('div');
+                    rarityHeader.className = 'rarity-header';
+                    rarityHeader.textContent = `${rarityData.name} (${rarityData.cards.length}张)`;
+
+                    // 卡片滚动容器
+                    const cardsScrollContainer = document.createElement('div');
+                    cardsScrollContainer.className = 'cards-scroll-container';
+
+                    const cardsGrid = document.createElement('div');
+                    cardsGrid.className = 'cards-grid';
+
+                    // 添加每张卡牌
+                    rarityData.cards.forEach(card => {
+                        const cardItem = createCardElement(card);
+                        cardsGrid.appendChild(cardItem);
+                    });
+
+                    cardsScrollContainer.appendChild(cardsGrid);
+                    raritySection.appendChild(rarityHeader);
+                    raritySection.appendChild(cardsScrollContainer);
+                    setContent.appendChild(raritySection);
+                });
+
+                setPanel.appendChild(setHeader);
+                setPanel.appendChild(setContent);
+                setsContainer.appendChild(setPanel);
+            });
+        }
+
+        // 创建卡牌元素 - 修改：去掉翻转逻辑，直接显示正面
+        function createCardElement(card) {
+            const cardItem = document.createElement('div');
+            cardItem.className = `card-item rarity-${card.rarity.id}`;
+            cardItem.dataset.cardId = card.id;
+            cardItem.dataset.imageUrl = `./images/${card.set.name}/${card.rarity.id}/${card.image_url}`;
+            cardItem.dataset.cardName = card.name;
+            cardItem.dataset.rarity = card.rarity.name;
+
+            // 直接加载图片到正面
+            const imageUrl = `./images/${card.set.name}/${card.rarity.id}/${card.image_url}`;
+
+            cardItem.innerHTML = `
+        <div class="card-front">
+          <div class="card-image" style="background-image: url('${imageUrl}')"></div>
+          <div class="card-info">
+            <div class="card-name">${card.name}</div>
+            <div class="card-rarity">${card.rarity.name}</div>
+          </div>
+        </div>
+      `;
+
+            // 简化点击事件：直接显示详情
+            cardItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showCardDetail(cardItem);
+            });
+
+            return cardItem;
+        }
+
+        // 显示卡牌详情
+        function showCardDetail(cardItem) {
+            const imageUrl = cardItem.dataset.imageUrl;
+            const cardName = cardItem.dataset.cardName;
+
+            // 显示加载状态
+            modalImage.classList.remove('horizontal', 'vertical', 'portrait');
+            modalImage.src = '';
+            modalImage.alt = cardName;
+
+            // 显示模态框
+            cardModal.style.display = 'flex';
+
+            // 创建临时图片来检测尺寸
+            const tempImg = new Image();
+            tempImg.onload = function () {
+                const imgWidth = this.width;
+                const imgHeight = this.height;
+                const aspectRatio = imgWidth / imgHeight;
+
+                // 根据宽高比确定图片方向
+                let orientationClass = 'horizontal';
+                let orientationText = '横幅';
+
+                if (aspectRatio >= 1.5) {
+                    // 超宽横幅
+                    orientationClass = 'horizontal';
+                    orientationText = '横幅';
+                } else if (aspectRatio > 0.8) {
+                    // 接近正方形的图片
+                    orientationClass = 'vertical';
+                    orientationText = '方形';
+                } else if (aspectRatio > 0.5) {
+                    // 普通竖幅
+                    orientationClass = 'vertical';
+                    orientationText = '竖幅';
+                } else {
+                    // 人像竖图
+                    orientationClass = 'portrait';
+                    orientationText = '人像竖幅';
+                }
+
+                // 设置图片类
+                modalImage.className = 'modal-image ' + orientationClass;
+                modalImage.src = imageUrl;
+
+                // 显示图片信息（调试用，可移除）
+                imageInfo.textContent = `${imgWidth} × ${imgHeight} (${orientationText})`;
+                imageInfo.style.display = 'block';
+
+                orientationIndicator.textContent = orientationText;
+                orientationIndicator.style.display = 'block';
+
+                // 控制台日志（调试用）
+                console.log(`图片尺寸: ${imgWidth} × ${imgHeight}, 宽高比: ${aspectRatio.toFixed(2)}, 方向: ${orientationText}`);
+            };
+
+            tempImg.onerror = function () {
+                // 图片加载失败
+                modalImage.src = imageUrl;
+                modalImage.className = 'modal-image';
+                imageInfo.textContent = '图片加载失败';
+                imageInfo.style.display = 'block';
+                orientationIndicator.style.display = 'none';
+            };
+
+            tempImg.src = imageUrl;
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            cardModal.style.display = 'none';
+            modalImage.src = '';
+            imageInfo.style.display = 'none';
+            orientationIndicator.style.display = 'none';
+        }
+
+        // 点击模态框背景关闭
+        cardModal.addEventListener('click', (e) => {
+            if (e.target === cardModal) {
+                closeModal();
+            }
+        });
+
+        // 切换卡组展开/收起
+        function toggleSet(setId) {
+            const setPanel = $(setId);
+            setPanel.classList.toggle('expanded');
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            error.style.display = 'block';
+            setsContainer.style.display = 'none';
+
+            error.innerHTML = `
+        <p>加载失败: ${message}</p>
+        <button onclick="window.location.reload()" style="
+          padding: 10px 20px;
+          margin-top: 20px;
+          background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+          color: white;
+          border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        ">重新加载</button>
+      `;
+        }
+    </script>
+</body>
+
+</html>

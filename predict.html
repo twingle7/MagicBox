@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预测大厅 - MagicBox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #ff8e8e;
+        }
+
+        /* 账户信息面板样式 - 与market.html保持一致 */
+        .account-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .account-toggle {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .account-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .account-toggle .account-title {
+            font-size: 1.3rem;
+            color: #ff8e8e;
+            font-weight: 600;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .account-toggle.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .account-content {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 15px 15px;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .account-content.expanded {
+            padding: 20px;
+            max-height: 500px;
+        }
+
+        .account-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .info-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: #ff8e8e;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #fdcb6e;
+        }
+
+        .exchange-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .exchange-title {
+            font-size: 1.1rem;
+            color: #ff8e8e;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .exchange-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .exchange-input {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .exchange-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
+        }
+
+        .exchange-btn {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .exchange-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .exchange-btn:disabled {
+            background: #636e72;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .account-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .account-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .account-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .account-btn:disabled {
+            background: #636e72;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .account-btn.register {
+            background: linear-gradient(45deg, #00b894, #55efc4);
+            width: 100%;
+        }
+
+        .result-message {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            margin-top: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        .result-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-message.success {
+            background: rgba(0, 184, 148, 0.2);
+            border: 1px solid #00b894;
+            color: #00b894;
+        }
+
+        .result-message.error {
+            background: rgba(225, 112, 85, 0.2);
+            border: 1px solid #e17055;
+            color: #e17055;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 预测大厅容器样式 */
+        .prediction-container {
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .refresh-btn {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
+        .refresh-btn:disabled {
+            background: #636e72;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #ff8e8e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 20px;
+        }
+
+        /* 预测事件卡片样式 */
+        .prediction-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .prediction-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .prediction-title {
+            font-size: 1.3rem;
+            color: #ff8e8e;
+            margin-bottom: 5px;
+        }
+
+        .prediction-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .prediction-content {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .option-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .option-card.winner {
+            border-color: #00b894;
+            background: rgba(0, 184, 148, 0.1);
+        }
+
+        .option-card.loser {
+            border-color: #e17055;
+            background: rgba(225, 112, 85, 0.1);
+        }
+
+        .option-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fdcb6e;
+        }
+
+        .odds {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ff8e8e;
+        }
+
+        .pool-info {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 5px;
+        }
+
+        .option-image {
+            width: 100%;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+
+        .prediction-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-open {
+            background: rgba(0, 184, 148, 0.2);
+            color: #00b894;
+        }
+
+        .status-closed {
+            background: rgba(253, 203, 110, 0.2);
+            color: #fdcb6e;
+        }
+
+        .status-settled {
+            background: rgba(116, 185, 255, 0.2);
+            color: #74b9ff;
+        }
+
+        .total-potential {
+            text-align: center;
+            font-weight: 600;
+            color: #fdcb6e;
+            margin-top: 10px;
+        }
+
+        .creator-info {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #ff8e8e;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            background: rgba(225, 112, 85, 0.2);
+            border: 1px solid #e17055;
+            border-radius: 10px;
+            color: #e17055;
+            font-weight: 500;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #ff8e8e;
+        }
+
+        /* 底部按钮 */
+        .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .back-to-game {
+            padding: 12px 30px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-to-game:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.5);
+        }
+
+        /* 交易大厅按钮 */
+        .market-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            z-index: 100;
+        }
+
+        .market-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 0 30px rgba(108, 92, 231, 0.9);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .account-panel {
+                position: static;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .prediction-container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .refresh-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .prediction-content {
+                flex-direction: column;
+            }
+
+            .market-btn {
+                bottom: 20px;
+                left: 20px;
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .account-panel {
+                padding: 0;
+            }
+
+            .account-toggle {
+                padding: 12px 15px;
+            }
+
+            .prediction-container {
+                width: 100%;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .prediction-card {
+                padding: 15px;
+            }
+
+            .prediction-title {
+                font-size: 1.1rem;
+            }
+
+            .market-btn {
+                bottom: 15px;
+                left: 15px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .option-image {
+            width: 100%;
+            height: 220px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            overflow: hidden;
+        }
+
+        .option-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+            transition: transform 0.3s ease;
+        }
+
+        .option-card:hover .option-image img {
+            transform: scale(1.05);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 账户信息面板 -->
+    <div class="account-panel" id="accountPanel">
+        <div class="account-toggle" id="accountToggle">
+            <div class="account-title">💰 账户信息</div>
+            <div class="toggle-icon">▼</div>
+        </div>
+        <div class="account-content" id="accountContent">
+            <!-- 内容将通过JavaScript动态生成 -->
+        </div>
+        <div class="result-message" id="accountResult"></div>
+    </div>
+
+    <div class="main-container">
+        <div class="header">
+            <h1>预测大厅</h1>
+            <div class="subtitle">参与各种有趣的预测事件，赢取丰厚奖励</div>
+        </div>
+
+        <div class="prediction-container">
+            <div class="controls">
+                <button id="refreshBtn" class="refresh-btn">
+                    <span>🔄 刷新预测大厅</span>
+                </button>
+                <div class="last-update" id="lastUpdate">最后更新: --</div>
+            </div>
+
+            <div id="predictionWrap" class="loading">
+                <div class="spinner"></div> 加载预测事件中...
+            </div>
+        </div>
+
+        <div class="bottom-buttons">
+            <a href="game.html" class="back-to-game">🎮 返回游戏</a>
+        </div>
+    </div>
+
+    <a href="market.html" class="market-btn">📈 交易大厅</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // DOM元素获取函数
+            const $ = id => document.getElementById(id);
+
+            // 获取DOM元素
+            const wrap = $('predictionWrap');
+            const refreshBtn = $('refreshBtn');
+            const lastUpdate = $('lastUpdate');
+            const accountContent = $('accountContent');
+            const accountResult = $('accountResult');
+            const accountToggle = $('accountToggle');
+
+            // API基础URL
+            const BASE_URL = 'http://47.92.231.94:8080';
+
+            // 账户面板状态
+            let isAccountExpanded = false;
+
+            /* 工具：时间戳 → 北京时间字符串 */
+            function fmtTime(ts) {
+                const d = new Date(ts * 1000);
+                return d.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+            }
+
+            /* 显示消息函数 */
+            function showResult(message, isSuccess, target = accountResult) {
+                target.classList.remove('success', 'error', 'show');
+                target.textContent = message;
+                target.classList.add(isSuccess ? 'success' : 'error');
+
+                void target.offsetWidth;
+                target.classList.add('show');
+
+                setTimeout(() => {
+                    target.classList.remove('show');
+                }, 8000);
+            }
+
+            /* 设置按钮加载状态 */
+            function setButtonLoading(button, isLoading, originalText) {
+                if (isLoading) {
+                    button.disabled = true;
+                    button.innerHTML = '<span class="spinner"></span> 处理中...';
+                } else {
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }
+            }
+
+            /* 获取用户ID和Cookie */
+            function getUid() {
+                return localStorage.getItem('uid');
+            }
+
+            function getCookie() {
+                return localStorage.getItem('cookie');
+            }
+
+            /* 加载预测事件 */
+            async function loadPredictions() {
+                if (wrap) {
+                    wrap.className = 'loading';
+                    wrap.innerHTML = '<div class="spinner"></div> 加载预测事件中...';
+                }
+
+                if (refreshBtn) {
+                    setButtonLoading(refreshBtn, true, '🔄 刷新预测大厅');
+                }
+
+                try {
+                    const response = await fetch(`${BASE_URL}/predict/view`);
+                    const json = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    if (!json.success) {
+                        throw new Error(json.message || '获取预测事件失败');
+                    }
+
+                    if (lastUpdate && json.data && json.data.timestamp) {
+                        lastUpdate.textContent = `最后更新: ${fmtTime(json.data.timestamp)}`;
+                    }
+
+                    renderPredictions(json.data);
+                } catch (error) {
+                    if (wrap) {
+                        wrap.className = 'error';
+                        wrap.innerHTML = `加载失败：${error.message}`;
+                    }
+                } finally {
+                    if (refreshBtn) {
+                        setButtonLoading(refreshBtn, false, '🔄 刷新预测大厅');
+                    }
+                }
+            }
+
+            /* 渲染预测事件 */
+            function renderPredictions(data) {
+                if (!wrap) return;
+
+                if (!data || !data.events || data.events.length === 0) {
+                    wrap.className = 'empty';
+                    wrap.innerHTML = '暂无预测事件';
+                    return;
+                }
+
+                // 按状态分组
+                const openEvents = data.events.filter(event => event.status === 0);
+                const closedEvents = data.events.filter(event => event.status === 1);
+                const settledEvents = data.events.filter(event => event.status === 2);
+
+                let html = '';
+
+                // 开放投注的事件
+                if (openEvents.length > 0) {
+                    html += `
+            <div class="status-section">
+              <h2 class="section-title">🎯 开放投注</h2>
+              <div class="events-grid">
+                ${openEvents.map(event => createEventCard(event)).join('')}
+              </div>
+            </div>
+          `;
+                }
+
+                // 已关闭的事件
+                if (closedEvents.length > 0) {
+                    html += `
+            <div class="status-section">
+              <h2 class="section-title">⏳ 已关闭</h2>
+              <div class="events-grid">
+                ${closedEvents.map(event => createEventCard(event)).join('')}
+              </div>
+            </div>
+          `;
+                }
+
+                // 已结算的事件
+                if (settledEvents.length > 0) {
+                    html += `
+            <div class="status-section">
+              <h2 class="section-title">✅ 已结算</h2>
+              <div class="events-grid">
+                ${settledEvents.map(event => createEventCard(event)).join('')}
+              </div>
+            </div>
+          `;
+                }
+
+                wrap.className = '';
+                wrap.innerHTML = html;
+            }
+
+            /* 创建事件卡片 */
+            function createEventCard(event) {
+                const statusInfo = getStatusInfo(event.status, event.result);
+                const option1Class = event.status === 2 ? (event.result === 1 ? 'winner' : 'loser') : '';
+                const option2Class = event.status === 2 ? (event.result === 2 ? 'winner' : 'loser') : '';
+
+                return `
+          <div class="prediction-card" data-event-id="${event.id}">
+            <div class="prediction-header">
+              <div class="prediction-title">${event.title}</div>
+              <div class="prediction-description">${event.description}</div>
+            </div>
+            
+            <div class="prediction-content">
+              <div class="option-card ${option1Class}">
+                <div class="option-image">📸 选项1插图位置</div>
+                <div class="option-name">${event.option1}</div>
+                <div class="odds">${event.odds1}×</div>
+                <div class="pool-info">奖池: ${event.total_pool1.toFixed(2)}</div>
+                <div class="pool-info">占比: ${((event.total_pool1 / event.total_pool) * 100).toFixed(1)}%</div>
+              </div>
+              
+              <div class="option-card ${option2Class}">
+                <div class="option-image">📸 选项2插图位置</div>
+                <div class="option-name">${event.option2}</div>
+                <div class="odds">${event.odds2}×</div>
+                <div class="pool-info">奖池: ${event.total_pool2.toFixed(2)}</div>
+                <div class="pool-info">占比: ${((event.total_pool2 / event.total_pool) * 100).toFixed(1)}%</div>
+              </div>
+            </div>
+            
+            <div class="total-potential">
+              总奖池: ${event.total_pool.toFixed(2)} | 潜在总额: ${event.potential_total.toFixed(2)}
+            </div>
+            
+            <div class="prediction-footer">
+              <div class="creator-info">
+                创建者: ${event.creator_id} | ${event.created_at}
+              </div>
+              <div class="status-badge ${statusInfo.class}">${statusInfo.text}</div>
+            </div>
+          </div>
+        `;
+            }
+
+            /* 获取状态信息 */
+            function getStatusInfo(status, result) {
+                switch (status) {
+                    case 0:
+                        return { class: 'status-open', text: '开放投注' };
+                    case 1:
+                        return { class: 'status-closed', text: '已关闭' };
+                    case 2:
+                        if (result === 1) return { class: 'status-settled', text: '选项1获胜' };
+                        if (result === 2) return { class: 'status-settled', text: '选项2获胜' };
+                        return { class: 'status-settled', text: '未出结果' };
+                    default:
+                        return { class: 'status-closed', text: '未知状态' };
+                }
+            }
+
+            /* 账户信息相关函数（与market.html保持一致） */
+            async function loadAccountInfo() {
+                const cookie = getCookie();
+                if (!cookie) {
+                    renderNoLogin();
+                    return;
+                }
+
+                try {
+                    const data = await fetch(`${BASE_URL}/market/account_info`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cookie })
+                    }).then(res => res.json());
+
+                    if (data.success) {
+                        renderAccountInfo(data.money);
+                    } else {
+                        renderRegisterButton();
+                    }
+                } catch (error) {
+                    showResult('网络错误：' + error.message, false);
+                    renderRegisterButton();
+                }
+            }
+
+            function renderNoLogin() {
+                accountContent.innerHTML = `
+          <div class="account-info">
+            <div class="info-line">
+              <span class="info-label">状态:</span>
+              <span class="info-value" style="color: #e17055;">未登录</span>
+            </div>
+          </div>
+          <div class="account-buttons">
+            <button class="account-btn" id="refreshPageBtn">刷新页面</button>
+          </div>
+        `;
+            }
+
+            function renderRegisterButton() {
+                const uid = getUid();
+                accountContent.innerHTML = `
+          <div class="account-info">
+            <div class="info-line">
+              <span class="info-label">用户ID:</span>
+              <span class="info-value">${uid || '未知'}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">账户状态:</span>
+              <span class="info-value" style="color: #e17055;">未开通</span>
+            </div>
+          </div>
+          <button class="account-btn register" id="registerBtn">开通交易账户</button>
+        `;
+            }
+
+            function renderAccountInfo(money) {
+                const uid = getUid();
+                accountContent.innerHTML = `
+          <div class="account-info">
+            <div class="info-line">
+              <span class="info-label">用户ID:</span>
+              <span class="info-value">${uid || '未知'}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">交易币余额:</span>
+              <span class="info-value">${money.toFixed(2) || 0}</span>
+            </div>
+          </div>
+          <div class="exchange-section">
+            <div class="exchange-title">交易币兑换</div>
+            <div class="exchange-form">
+              <input type="number" id="coinInput" class="exchange-input" placeholder="输入金币数量" min="1">
+              <button class="exchange-btn coin-to-money" id="coinToMoneyBtn">金币 → 交易币</button>
+            </div>
+            <div class="exchange-form">
+              <input type="number" id="moneyInput" class="exchange-input" placeholder="输入交易币数量（100的倍数）" min="100" step="100">
+              <button class="exchange-btn money-to-coin" id="moneyToCoinBtn">交易币 → 金币</button>
+            </div>
+          </div>
+          <div class="account-buttons">
+            <button class="account-btn" id="refreshAccountBtn">刷新账户信息</button>
+          </div>
+        `;
+            }
+
+            /* 切换账户面板展开/收起 */
+            function toggleAccountPanel() {
+                isAccountExpanded = !isAccountExpanded;
+
+                if (isAccountExpanded) {
+                    accountToggle.classList.add('expanded');
+                    accountContent.classList.add('expanded');
+                    loadAccountInfo();
+                } else {
+                    accountToggle.classList.remove('expanded');
+                    accountContent.classList.remove('expanded');
+                }
+            }
+
+            /* 事件委托处理函数 */
+            function handleAccountPanelClick(e) {
+                const target = e.target;
+
+                if (target.id === 'refreshAccountBtn') {
+                    loadAccountInfo();
+                } else if (target.id === 'refreshPageBtn') {
+                    location.reload();
+                }
+                // 其他账户相关功能可以在这里添加
+            }
+
+            /* 初始化事件绑定 */
+            if (refreshBtn) {
+                refreshBtn.onclick = loadPredictions;
+            }
+
+            if (accountToggle) {
+                accountToggle.addEventListener('click', toggleAccountPanel);
+            }
+
+            accountContent.addEventListener('click', handleAccountPanelClick);
+
+            // 页面加载时自动加载预测事件
+            loadPredictions();
+
+            /* 创建事件卡片 - 修改图片路径部分 */
+            function createEventCard(event, index) {
+                const statusInfo = getStatusInfo(event.status, event.result);
+                const option1Class = event.status === 2 ? (event.result === 1 ? 'winner' : 'loser') : '';
+                const option2Class = event.status === 2 ? (event.result === 2 ? 'winner' : 'loser') : '';
+
+                // 计算图片路径：第一个事件用1-1,1-2，第二个用2-1,2-2，以此类推
+                const imageIndex = index + 1;
+                const imagePath1 = `./images/${imageIndex}-1`;
+                const imagePath2 = `./images/${imageIndex}-2`;
+
+                return `
+          <div class="prediction-card" data-event-id="${event.id}">
+            <div class="prediction-header">
+              <div class="prediction-title">${event.title}</div>
+              <div class="prediction-description">${event.description}</div>
+            </div>
+            
+            <div class="prediction-content">
+              <div class="option-card ${option1Class}">
+                <div class="option-image">
+                  <img src="${imagePath1}.jpg" alt="${event.option1}" 
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="image-placeholder" style="display: none;">
+                    📸 ${event.option1}
+                  </div>
+                </div>
+                <div class="option-name">${event.option1}</div>
+                <div class="odds">${event.odds1}×</div>
+                <div class="pool-info">奖池: ${event.total_pool1.toFixed(2)}</div>
+                <div class="pool-info">占比: ${((event.total_pool1 / event.total_pool) * 100).toFixed(1)}%</div>
+              </div>
+              
+              <div class="option-card ${option2Class}">
+                <div class="option-image">
+                  <img src="${imagePath2}.jpg" alt="${event.option2}"
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="image-placeholder" style="display: none;">
+                    📸 ${event.option2}
+                  </div>
+                </div>
+                <div class="option-name">${event.option2}</div>
+                <div class="odds">${event.odds2}×</div>
+                <div class="pool-info">奖池: ${event.total_pool2.toFixed(2)}</div>
+                <div class="pool-info">占比: ${((event.total_pool2 / event.total_pool) * 100).toFixed(1)}%</div>
+              </div>
+            </div>
+            
+            <div class="total-potential">
+              总奖池: ${event.total_pool.toFixed(2)} | 潜在总额: ${event.potential_total.toFixed(2)}
+            </div>
+            
+            <div class="prediction-footer">
+              <div class="creator-info">
+                创建者: ${event.creator_id} | ${event.created_at}
+              </div>
+              <div class="status-badge ${statusInfo.class}">${statusInfo.text}</div>
+            </div>
+          </div>
+        `;
+            }
+
+            /* 渲染预测事件 - 修改调用部分 */
+            function renderPredictions(data) {
+                if (!wrap) return;
+
+                if (!data || !data.events || data.events.length === 0) {
+                    wrap.className = 'empty';
+                    wrap.innerHTML = '暂无预测事件';
+                    return;
+                }
+
+                // 按状态分组
+                const openEvents = data.events.filter(event => event.status === 0);
+                const closedEvents = data.events.filter(event => event.status === 1);
+                const settledEvents = data.events.filter(event => event.status === 2);
+
+                let html = '';
+
+                // 开放投注的事件
+                if (openEvents.length > 0) {
+                    html += `
+            <div class="status-section">
+              <h2 class="section-title">🎯 开放投注</h2>
+              <div class="events-grid">
+                ${openEvents.map((event, index) => createEventCard(event, index)).join('')}
+              </div>
+            </div>
+          `;
+                }
+
+                // 已关闭的事件
+                if (closedEvents.length > 0) {
+                    html += `
+            <div class="status-section">
+              <h2 class="section-title">⏳ 已关闭</h2>
+              <div class="events-grid">
+                ${closedEvents.map((event, index) => createEventCard(event, index + openEvents.length)).join('')}
+              </div>
+            </div>
+          `;
+                }
+
+                // 已结算的事件
+                if (settledEvents.length > 0) {
+                    html += `
+            <div class="status-section">
+              <h2 class="section-title">✅ 已结算</h2>
+              <div class="events-grid">
+                ${settledEvents.map((event, index) => createEventCard(event, index + openEvents.length + closedEvents.length)).join('')}
+              </div>
+            </div>
+          `;
+                }
+
+                wrap.className = '';
+                wrap.innerHTML = html;
+            }
+
+            // 其他代码保持不变...
+        });
+    </script>
+</body>
+
+</html>

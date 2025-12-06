@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸运集卡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            font-size: 1.1rem;
+            color: #a29bfe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .user-id {
+            background: rgba(162, 155, 254, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        button {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #636e72;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .function-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .func-button {
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 150px;
+        }
+
+        .func-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .func-button:active {
+            transform: translateY(-1px);
+        }
+
+        .func-button.game {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+        }
+
+        .func-button.bank {
+            background: linear-gradient(45deg, #00b894, #55efc4);
+        }
+
+        .func-button.market {
+            background: linear-gradient(45deg, #e17055, #fab1a0);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* 个人信息面板样式 */
+        .user-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 280px;
+            transition: all 0.3s ease;
+            z-index: 10;
+            max-height: 60px;
+            overflow: hidden;
+        }
+
+        .user-panel.expanded {
+            max-height: 400px;
+        }
+
+        .user-panel h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .user-toggle {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .user-panel.expanded .user-toggle {
+            transform: rotate(180deg);
+        }
+
+        .user-panel button {
+            width: 100%;
+            padding: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .user-panel pre {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .user-panel pre.show {
+            opacity: 1;
+            max-height: 300px;
+            margin-top: 15px;
+            overflow-y: auto;
+        }
+
+        .user-panel pre.success {
+            color: #00b894;
+            border: 1px solid rgba(0, 184, 148, 0.3);
+        }
+
+        .user-panel pre.error {
+            color: #e17055;
+            border: 1px solid rgba(225, 112, 85, 0.3);
+        }
+
+        .user-panel pre::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .user-panel pre::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .user-panel pre::-webkit-scrollbar-thumb {
+            background: rgba(108, 92, 231, 0.5);
+            border-radius: 2px;
+        }
+
+        .user-panel pre::-webkit-scrollbar-thumb:hover {
+            background: rgba(108, 92, 231, 0.7);
+        }
+
+        /* 所有卡牌面板样式 */
+        .all-cards-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 200px;
+            z-index: 10;
+        }
+
+        .all-cards-panel h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0;
+            text-align: center;
+            color: #a29bfe;
+        }
+
+        .all-cards-button {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #0984e3, #74b9ff);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+
+        .all-cards-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .all-cards-button:active {
+            transform: translateY(0);
+        }
+
+        .card-icon {
+            font-size: 1.2rem;
+        }
+
+        /* 主内容区域样式 */
+        .main-content {
+            min-height: 300px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+            padding: 30px 20px;
+        }
+
+        .placeholder-text {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.5rem;
+            font-weight: 300;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* 卡包样式 */
+        .card-pack {
+            width: 220px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-pack:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-pack.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .pack-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .pack-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, transparent, transparent);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .pack-id {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .pack-price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fdcb6e;
+        }
+
+        .pack-price span {
+            font-size: 1.5rem;
+        }
+
+        .pack-button {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pack-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .pack-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .pack-button:disabled {
+            background: #636e72;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* bangdream包样式 - 粉色系 */
+        .pack-bangdream {
+            border-color: rgba(225, 112, 85, 0.4);
+            background: linear-gradient(135deg, rgba(225, 112, 85, 0.1), rgba(232, 67, 147, 0.1));
+        }
+
+        .pack-bangdream .pack-title {
+            background: linear-gradient(45deg, #e17055, #e84393);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .pack-bangdream .pack-button {
+            background: linear-gradient(45deg, #e17055, #e84393);
+            color: white;
+        }
+
+        /* 三国杀包样式 - 红色系 */
+        .pack-sanguosha {
+            border-color: rgba(225, 65, 65, 0.4);
+            background: linear-gradient(135deg, rgba(225, 65, 65, 0.1), rgba(214, 48, 49, 0.1));
+        }
+
+        .pack-sanguosha .pack-title {
+            background: linear-gradient(45deg, #e14141, #d63031);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .pack-sanguosha .pack-button {
+            background: linear-gradient(45deg, #e14141, #d63031);
+            color: white;
+        }
+
+        /* 王者荣耀包样式 - 金色系 */
+        .pack-wzry {
+            border-color: rgba(253, 203, 110, 0.4);
+            background: linear-gradient(135deg, rgba(253, 203, 110, 0.1), rgba(225, 177, 44, 0.1));
+        }
+
+        .pack-wzry .pack-title {
+            background: linear-gradient(45deg, #fdcb6e, #e1b12c);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .pack-wzry .pack-button {
+            background: linear-gradient(45deg, #fdcb6e, #e1b12c);
+            color: #2d3436;
+        }
+
+        /* 抽卡结果模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card-image {
+            width: 200px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-placeholder {
+            width: 200px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 3px dashed rgba(255, 255, 255, 0.2);
+            font-size: 2rem;
+        }
+
+        .card-info {
+            text-align: center;
+        }
+
+        .card-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #fdcb6e;
+        }
+
+        .rarity-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .rarity-common {
+            background: rgba(116, 125, 140, 0.3);
+            color: #a0aec0;
+        }
+
+        .rarity-uncommon {
+            background: rgba(72, 187, 120, 0.3);
+            color: #48bb78;
+        }
+
+        .rarity-rare {
+            background: rgba(66, 153, 225, 0.3);
+            color: #4299e1;
+        }
+
+        .rarity-epic {
+            background: rgba(159, 122, 234, 0.3);
+            color: #9f7aea;
+        }
+
+        .rarity-legendary {
+            background: rgba(237, 137, 54, 0.3);
+            color: #ed8936;
+        }
+
+        .card-details {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .receipt {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .receipt h4 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #a29bfe;
+            text-align: center;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .receipt-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .receipt-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .receipt-value {
+            color: #fdcb6e;
+            font-weight: 600;
+        }
+
+        .receipt-total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-button.primary {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+        }
+
+        .modal-button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .error-message {
+            background: rgba(225, 112, 85, 0.2);
+            border: 1px solid rgba(225, 112, 85, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .error-message h3 {
+            color: #e17055;
+            margin-bottom: 10px;
+        }
+
+        .error-message p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* 开箱动画相关样式 */
+        .animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            display: none;
+            pointer-events: none;
+        }
+
+        .animation-container.active {
+            display: block;
+        }
+
+        .flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            animation: flash 0.3s ease-out;
+        }
+
+        .light-beam {
+            position: absolute;
+            width: 2px;
+            height: 300px;
+            background: linear-gradient(to bottom, transparent, #ffffff, transparent);
+            filter: blur(2px);
+            transform-origin: center;
+            animation: lightBeam 1.2s ease-out forwards;
+        }
+
+        .light-beam:nth-child(2) {
+            transform: rotate(45deg);
+        }
+
+        .light-beam:nth-child(3) {
+            transform: rotate(90deg);
+        }
+
+        .light-beam:nth-child(4) {
+            transform: rotate(135deg);
+        }
+
+        .light-beam:nth-child(5) {
+            transform: rotate(180deg);
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: sparkle 1.2s ease-out forwards;
+        }
+
+        .card-reveal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            animation: cardReveal 1s ease-out 0.3s forwards;
+            z-index: 10;
+        }
+
+        .reveal-card {
+            width: 240px;
+            height: 336px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            animation: cardGlow 2s infinite alternate;
+        }
+
+        .rarity-glow {
+            animation: rarityPulse 1.5s infinite alternate;
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes lightBeam {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(var(--rotation, 0deg));
+            }
+
+            20% {
+                opacity: 1;
+                transform: scale(1) rotate(var(--rotation, 0deg));
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.2) rotate(var(--rotation, 0deg));
+            }
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            20% {
+                transform: scale(1) rotate(180deg);
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes cardReveal {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+
+            70% {
+                transform: translate(-50%, -50%) scale(1.2) rotate(10deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes cardGlow {
+            0% {
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+            }
+
+            100% {
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.7);
+            }
+        }
+
+        @keyframes rarityPulse {
+            0% {
+                filter: brightness(1) drop-shadow(0 0 5px currentColor);
+            }
+
+            100% {
+                filter: brightness(1.5) drop-shadow(0 0 20px currentColor);
+            }
+        }
+
+        .pack-opening {
+            animation: packShake 0.5s ease-in-out 3, packPulse 1s ease-out;
+        }
+
+        @keyframes packShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        @keyframes packPulse {
+            0% {
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 0 rgba(253, 203, 110, 0);
+            }
+
+            50% {
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 30px rgba(253, 203, 110, 0.6);
+            }
+
+            100% {
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 0 rgba(253, 203, 110, 0);
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            opacity: 0;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .user-panel {
+                position: static;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .all-cards-panel {
+                position: static;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .function-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .func-button {
+                width: 100%;
+            }
+
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card-pack {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .card-image,
+            .image-placeholder {
+                width: 150px;
+                height: 210px;
+            }
+
+            .reveal-card {
+                width: 180px;
+                height: 252px;
+            }
+        }
+
+        .my-cards-button {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #e84393, #fd79a8);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .my-cards-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(232, 67, 147, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .my-cards-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 480px) {
+            .user-panel {
+                width: 100%;
+            }
+
+            .user-panel pre {
+                font-size: 0.85rem;
+            }
+
+            .all-cards-panel {
+                width: 100%;
+            }
+
+            .all-cards-button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .placeholder-text {
+                font-size: 1.2rem;
+                padding: 20px;
+            }
+
+            .card-pack {
+                padding: 15px;
+            }
+
+            .pack-icon {
+                font-size: 3rem;
+            }
+
+            .pack-title {
+                font-size: 1.2rem;
+            }
+
+            .modal-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 开箱动画容器 -->
+    <div class="animation-container" id="animationContainer">
+        <!-- <div class="flash-overlay"></div> -->
+        <div class="light-beam"></div>
+        <div class="light-beam"></div>
+        <div class="light-beam"></div>
+        <div class="light-beam"></div>
+        <div class="light-beam"></div>
+        <div class="card-reveal" id="cardReveal">
+            <img src="" alt="" class="reveal-card" id="revealCard">
+        </div>
+    </div>
+
+    <!-- 所有卡牌面板（固定在左上角） -->
+    <div class="all-cards-panel">
+        <h3>🃏卡牌系统</h3>
+        <a href="allcard.html" class="all-cards-button">
+            <span class="card-icon"></span>
+            <span>所有卡牌</span>
+        </a>
+    </div>
+
+    <!-- 个人信息面板（固定在右上角） -->
+    <div class="user-panel" id="userPanel">
+        <h3 onclick="toggleUserPanel()">
+            <span>👤 个人中心</span>
+            <span class="user-toggle">▼</span>
+        </h3>
+        <button id="btn2">刷新个人信息</button>
+        <!-- 新加入的查看我的卡片按钮 -->
+        <a href="mycards.html" class="my-cards-button">
+            <span>查看我的卡片</span>
+        </a>
+        <pre id="rst2"></pre>
+    </div>
+
+    <!-- 抽卡结果模态框 -->
+    <div class="modal-overlay" id="drawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎉 抽卡结果 🎉</h2>
+                <p id="modalSubtitle">恭喜你获得了卡片！</p>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 内容由JavaScript动态生成 -->
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button secondary" onclick="closeDrawModal()">关闭</button>
+                <button class="modal-button primary" onclick="closeDrawModalAndRefresh()">确认并关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误提示模态框 -->
+    <div class="modal-overlay" id="errorModal">
+        <div class="modal-content">
+            <div class="error-message">
+                <div class="error-icon">❌</div>
+                <h3 id="errorTitle">操作失败</h3>
+                <p id="errorMessage"></p>
+                <button class="modal-button secondary" onclick="closeErrorModal()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="container">
+            <div class="header">
+                <h1>幸运集卡</h1>
+                <div class="user-info">
+                    <span>用户ID:</span>
+                    <span class="user-id" id="userIdDisplay">加载中...</span>
+                </div>
+            </div>
+
+            <!-- 主内容区域 - 卡包展示 -->
+            <div class="main-content" id="mainContent">
+                <!-- bangdream包 -->
+                <div class="card-pack pack-bangdream disabled">
+                    <div class="pack-icon">🎵</div>
+                    <div class="pack-title">bangdream卡包</div>
+                    <div class="pack-id">卡包ID: 1</div>
+                    <div class="pack-price">价格: <span>20</span> 币</div>
+                    <button class="pack-button" data-set-id="1" disabled>
+                        <span>购买并打开</span>
+                        <span>(20币)</span>
+                    </button>
+                </div>
+
+                <!-- 三国杀包 -->
+                <div class="card-pack pack-sanguosha disabled">
+                    <div class="pack-icon">⚔️</div>
+                    <div class="pack-title">三国杀卡包</div>
+                    <div class="pack-id">卡包ID: 2</div>
+                    <div class="pack-price">价格: <span>20</span> 币</div>
+                    <button class="pack-button" data-set-id="2" disabled>
+                        <span>购买并打开</span>
+                        <span>(20币)</span>
+                    </button>
+                </div>
+
+                <!-- 王者荣耀包 -->
+                <div class="card-pack pack-wzry" id="wzryPack">
+                    <div class="pack-icon">👑</div>
+                    <div class="pack-title">王者荣耀卡包</div>
+                    <div class="pack-id">卡包ID: 3</div>
+                    <div class="pack-price">价格: <span>20</span> 币</div>
+                    <button class="pack-button" data-set-id="3">
+                        <span>购买并打开</span>
+                        <span>(20币)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 功能按钮区域 -->
+            <div class="function-buttons">
+                <a href="game.html" class="func-button game">
+                    🎮 返回游戏
+                </a>
+                <a href="bank.html" class="func-button bank">
+                    🏦 银行系统
+                </a>
+                <a href="market.html" class="func-button market">
+                    🏪 交易大厅
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const $ = id => document.getElementById(id);
+        const userIdDisplay = $('userIdDisplay');
+        const btn2 = $('btn2');
+        const rst2 = $('rst2');
+        const userPanel = $('userPanel');
+        const mainContent = $('mainContent');
+        const drawModal = $('drawModal');
+        const errorModal = $('errorModal');
+        const modalBody = $('modalBody');
+        const errorMessage = $('errorMessage');
+        const errorTitle = $('errorTitle');
+        const animationContainer = $('animationContainer');
+        const cardReveal = $('cardReveal');
+        const revealCard = $('revealCard');
+        const wzryPack = $('wzryPack');
+
+        // 获取用户ID
+        const uid = () => localStorage.getItem('uid');
+        // 获取cookie
+        const cookie = () => localStorage.getItem('cookie');
+
+        // API调用函数
+        const api = (path, body) => fetch('http://47.92.231.94:8080' + path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        // 切换个人信息面板展开/收起
+        function toggleUserPanel() {
+            userPanel.classList.toggle('expanded');
+        }
+
+        // 显示用户ID
+        function displayUserId() {
+            const userUid = uid();
+            if (userUid) {
+                userIdDisplay.textContent = userUid;
+                userIdDisplay.classList.add('pulse');
+            } else {
+                userIdDisplay.textContent = '未登录';
+                userIdDisplay.style.color = '#e17055';
+            }
+        }
+
+        // 初始化显示用户ID
+        displayUserId();
+
+        // 获取并显示个人信息
+        async function loadUserInfo() {
+            const userUid = uid();
+            const userCookie = cookie();
+            if (!userUid) {
+                showUserInfo('未登录，请先登录', false);
+                return;
+            }
+
+            btn2.disabled = true;
+            btn2.innerHTML = '<span class="spinner"></span> 加载中...';
+
+            try {
+                const res = await api('/user/info', { cookie: userCookie });
+                const data = await res.json();
+                handleInfo(data);
+            } catch (e) {
+                showUserInfo('网络错误：' + e, false);
+            } finally {
+                btn2.disabled = false;
+                btn2.innerHTML = '刷新个人信息';
+            }
+        }
+
+        // 处理个人信息 - 美化显示
+        function handleInfo(data) {
+            if (data.code === -1) {
+                // 后端要求不打印
+                showUserInfo('', true);
+                return;
+            }
+
+            // 计算总资产
+            const netWorth = (data.amount || 0) + (data.account || 0) - (data.loan || 0);
+
+            // 美化显示格式
+            const infoText = `
+用户ID：${data.id || '未知'}
+══════════════════════════
+现金余额：${data.amount || 0} 
+银行存款：${data.account || 0} 
+待还贷款：${data.loan || 0} 
+══════════════════════════
+总资产：${netWorth} 
+      `;
+
+            showUserInfo(infoText, true);
+        }
+
+        // 显示用户信息
+        function showUserInfo(text, isOk) {
+            // 移除之前的类
+            rst2.classList.remove('success', 'error', 'show');
+
+            // 设置文本
+            rst2.textContent = text;
+
+            // 添加适当的类
+            if (text) {
+                rst2.classList.add(isOk ? 'success' : 'error');
+            }
+
+            // 强制重排以触发动画
+            void rst2.offsetWidth;
+
+            // 添加显示类
+            if (text) {
+                rst2.classList.add('show');
+            }
+
+            // 展开面板显示信息
+            userPanel.classList.add('expanded');
+        }
+
+        // 个人信息按钮点击事件
+        btn2.onclick = loadUserInfo;
+
+        // 页面加载时自动显示个人信息
+        window.addEventListener('load', () => {
+            setTimeout(loadUserInfo, 1000);
+        });
+
+        // 防重复点击标志
+        let isProcessing = false;
+        let currentPackElement = null;
+
+        // 播放开箱动画
+        function playOpenAnimation(cardData) {
+            return new Promise((resolve) => {
+                // 显示动画容器
+                animationContainer.classList.add('active');
+
+                // 创建光柱
+                const beams = document.querySelectorAll('.light-beam');
+                beams.forEach((beam, index) => {
+                    beam.style.setProperty('--rotation', `${index * 45}deg`);
+                });
+
+                // 创建闪烁粒子
+                createSparkles();
+
+                // 设置卡片图片
+                const imagePath = `./images/${cardData.set_name}/${cardData.rarity_id}/${cardData.image_url}`;
+                revealCard.src = imagePath;
+                revealCard.alt = cardData.name;
+
+                // 根据稀有度设置边框颜色
+                let rarityColor = '#a0aec0';
+                switch (cardData.rarity_id) {
+                    case 1: rarityColor = '#a0aec0'; break;
+                    case 2: rarityColor = '#48bb78'; break;
+                    case 3: rarityColor = '#4299e1'; break;
+                    case 4: rarityColor = '#9f7aea'; break;
+                    case 5: rarityColor = '#ed8936'; break;
+                }
+                revealCard.style.borderColor = rarityColor;
+
+                // 如果是史诗或传说卡片，添加闪烁效果
+                if (cardData.rarity_id >= 4) {
+                    revealCard.classList.add('rarity-glow');
+                }
+
+                // 动画结束后显示模态框
+                setTimeout(() => {
+                    animationContainer.classList.remove('active');
+                    revealCard.classList.remove('rarity-glow');
+                    resolve();
+                }, 2000);
+            });
+        }
+
+        // 创建闪烁粒子
+        function createSparkles() {
+            for (let i = 0; i < 20; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+
+                // 随机位置
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                sparkle.style.left = `${x}%`;
+                sparkle.style.top = `${y}%`;
+
+                // 随机大小
+                const size = Math.random() * 6 + 4;
+                sparkle.style.width = `${size}px`;
+                sparkle.style.height = `${size}px`;
+
+                // 随机颜色
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#feca57', '#ff9ff3', '#54a0ff'];
+                sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                // 随机动画延迟
+                sparkle.style.animationDelay = `${Math.random() * 0.5}s`;
+
+                animationContainer.appendChild(sparkle);
+
+                // 动画结束后移除
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1200);
+            }
+
+            // 添加一些飘落的彩纸
+            for (let i = 0; i < 15; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+
+                // 随机位置
+                const x = Math.random() * 100;
+                confetti.style.left = `${x}%`;
+
+                // 随机大小
+                const width = Math.random() * 8 + 4;
+                const height = Math.random() * 12 + 8;
+                confetti.style.width = `${width}px`;
+                confetti.style.height = `${height}px`;
+
+                // 随机颜色
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#feca57', '#ff9ff3', '#54a0ff'];
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                // 随机动画延迟
+                confetti.style.animationDelay = `${Math.random() * 0.8}s`;
+
+                // 随机旋转
+                const rotation = Math.random() * 360;
+                confetti.style.transform = `translateY(-100px) rotate(${rotation}deg)`;
+
+                animationContainer.appendChild(confetti);
+
+                // 动画结束后移除
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+
+        // 卡包抖动动画
+        function playPackShake(packElement) {
+            packElement.classList.add('pack-opening');
+            setTimeout(() => {
+                packElement.classList.remove('pack-opening');
+            }, 1500);
+        }
+
+        // 处理卡包购买
+        async function handlePackPurchase(setId, button, packElement) {
+            // 防止重复点击
+            if (isProcessing) {
+                return;
+            }
+
+            isProcessing = true;
+            currentPackElement = packElement;
+
+            // 只有王者荣耀包（setId=3）可以点击
+            if (setId === '3') {
+                const userCookie = cookie();
+                if (!userCookie) {
+                    showError('未登录', '请先登录后再进行购买操作');
+                    isProcessing = false;
+                    return;
+                }
+
+                const originalText = button.innerHTML;
+
+                // 显示加载状态
+                button.disabled = true;
+                button.innerHTML = '<span class="spinner"></span> 购买中...';
+
+                // 播放卡包抖动动画
+                playPackShake(packElement);
+
+                try {
+                    // 调用抽卡API
+                    const response = await api('/card/draw', {
+                        cookie: userCookie,
+                        set_id: parseInt(setId)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.status === 'success' && data.code === 200) {
+                        // 先播放开箱动画
+                        await playOpenAnimation(data.data.draw_result.card_info);
+
+                        // 动画播放完成后显示结果
+                        setTimeout(() => {
+                            showDrawResult(data.data);
+                        }, 500);
+                    } else {
+                        // 购买失败，显示错误
+                        showError('购买失败', data.message || '未知错误');
+                    }
+                } catch (error) {
+                    console.error('抽卡错误:', error);
+                    showError('网络错误', '请检查网络连接后重试');
+                } finally {
+                    // 恢复按钮状态
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                    isProcessing = false;
+                }
+            } else {
+                showError('暂未开放', '该卡包暂未开放，敬请期待！');
+                isProcessing = false;
+            }
+        }
+
+        // 使用事件委托处理卡包按钮点击
+        document.addEventListener('DOMContentLoaded', function () {
+            // 只在mainContent上绑定一次事件监听器
+            mainContent.addEventListener('click', function (event) {
+                const button = event.target.closest('.pack-button');
+
+                if (!button || button.disabled) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const setId = button.getAttribute('data-set-id');
+                const packElement = button.closest('.card-pack');
+                handlePackPurchase(setId, button, packElement);
+            });
+        });
+
+        // 显示抽卡结果
+        function showDrawResult(data) {
+            const { draw_result, cost_info, set_info, user_info } = data;
+            const { card_info } = draw_result;
+
+            // 构建图片路径
+            const imagePath = `./images/${card_info.set_name}/${card_info.rarity_id}/${card_info.image_url}`;
+
+            // 根据稀有度设置样式
+            let rarityClass = 'rarity-common';
+            let rarityColor = '#a0aec0';
+
+            switch (card_info.rarity_id) {
+                case 1:
+                    rarityClass = 'rarity-common';
+                    rarityColor = '#a0aec0'; // 灰色
+                    break;
+                case 2:
+                    rarityClass = 'rarity-uncommon';
+                    rarityColor = '#48bb78'; // 绿色
+                    break;
+                case 3:
+                    rarityClass = 'rarity-rare';
+                    rarityColor = '#4299e1'; // 蓝色
+                    break;
+                case 4:
+                    rarityClass = 'rarity-epic';
+                    rarityColor = '#9f7aea'; // 紫色
+                    break;
+                case 5:
+                    rarityClass = 'rarity-legendary';
+                    rarityColor = '#ed8936'; // 橙色
+                    break;
+            }
+
+            // 生成模态框内容
+            modalBody.innerHTML = `
+                <div class="card-display">
+                    <img src="${imagePath}"
+                        alt="${card_info.name}"
+                        class="card-image"
+                        style="border-color: ${rarityColor};"
+                        onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&apos;http://www.w3.org/2000/svg&apos; width=&apos;200&apos; height=&apos;280&apos; viewBox=&apos;0 0 200 280&apos;><rect width=&apos;200&apos; height=&apos;280&apos; fill=&apos;%231a1a2e&apos; rx=&apos;8&apos;/><rect x=&apos;5&apos; y=&apos;5&apos; width=&apos;190&apos; height=&apos;270&apos; fill=&apos;%2316213e&apos; rx=&apos;4&apos;/><text x=&apos;50%&apos; y=&apos;50%&apos; font-family=&apos;Arial&apos; font-size=&apos;16&apos; fill=&apos;${rarityColor}&apos; text-anchor=&apos;middle&apos; dy=&apos;.3em&apos;>${card_info.name}</text><text x=&apos;50%&apos; y=&apos;60%&apos; font-family=&apos;Arial&apos; font-size=&apos;12&apos; fill=&apos;%23a29bfe&apos; text-anchor=&apos;middle&apos; dy=&apos;.3em&apos;>稀有度: ${card_info.rarity_name}</text></svg>';">
+                    <div class="card-info">
+                        <h3>${card_info.name}</h3>
+                        <div class="rarity-badge ${rarityClass}">${card_info.rarity_name}</div>
+                        <div class="card-details">
+                            <div>全局ID: ${draw_result.card_global_id}</div>
+                            <div>套系: ${card_info.set_name}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="receipt">
+                    <h4>📃 购买收据</h4>
+                    <div class="receipt-item">
+                        <span class="receipt-label">套系名称:</span>
+                        <span class="receipt-value">${set_info.set_name}</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span class="receipt-label">套系ID:</span>
+                        <span class="receipt-value">${set_info.set_id}</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span class="receipt-label">用户ID:</span>
+                        <span class="receipt-value">${user_info.user_id}</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span class="receipt-label">消费金额:</span>
+                        <span class="receipt-value">-${cost_info.cost} 币</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span class="receipt-label">原余额:</span>
+                        <span class="receipt-value">${cost_info.old_balance} 币</span>
+                    </div>
+                    <div class="receipt-item receipt-total">
+                        <span class="receipt-label">新余额:</span>
+                        <span class="receipt-value">${cost_info.new_balance} 币</span>
+                    </div>
+                </div>
+            `;
+
+            // 显示模态框
+            drawModal.classList.add('show');
+
+            // 自动刷新用户信息
+            setTimeout(loadUserInfo, 1000);
+        }
+
+        // 显示错误信息
+        function showError(title, message) {
+            errorTitle.textContent = title;
+            errorMessage.textContent = message;
+            errorModal.classList.add('show');
+        }
+
+        // 关闭抽卡结果模态框
+        function closeDrawModal() {
+            drawModal.classList.remove('show');
+        }
+
+        // 关闭错误模态框
+        function closeErrorModal() {
+            errorModal.classList.remove('show');
+        }
+
+        // 关闭抽卡结果模态框并刷新页面
+        function closeDrawModalAndRefresh() {
+            closeDrawModal();
+            // 可以在这里添加其他刷新逻辑
+        }
+
+        // 点击模态框外部关闭
+        drawModal.addEventListener('click', (e) => {
+            if (e.target === drawModal) {
+                closeDrawModal();
+            }
+        });
+
+        errorModal.addEventListener('click', (e) => {
+            if (e.target === errorModal) {
+                closeErrorModal();
+            }
+        });
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeDrawModal();
+                closeErrorModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

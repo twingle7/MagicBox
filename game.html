@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    
+
     body {
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       color: #fff;
@@ -23,7 +24,7 @@
       padding: 20px;
       position: relative;
     }
-    
+
     .main-container {
       display: flex;
       flex-direction: column;
@@ -32,7 +33,7 @@
       max-width: 1200px;
       gap: 20px;
     }
-    
+
     .container {
       max-width: 500px;
       width: 100%;
@@ -43,12 +44,12 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
     .header {
       text-align: center;
       margin-bottom: 30px;
     }
-    
+
     h1 {
       font-size: 2.5rem;
       background: linear-gradient(45deg, #6c5ce7, #a29bfe);
@@ -58,7 +59,7 @@
       text-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
       margin-bottom: 10px;
     }
-    
+
     .user-info {
       font-size: 1.1rem;
       color: #a29bfe;
@@ -67,14 +68,14 @@
       justify-content: center;
       gap: 10px;
     }
-    
+
     .user-id {
       background: rgba(162, 155, 254, 0.2);
       padding: 5px 12px;
       border-radius: 20px;
       font-weight: 600;
     }
-    
+
     .game-panel {
       background: rgba(255, 255, 255, 0.08);
       border-radius: 15px;
@@ -83,12 +84,12 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
     }
-    
+
     .game-panel:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
-    
+
     h3 {
       margin-bottom: 20px;
       font-size: 1.5rem;
@@ -98,14 +99,14 @@
       justify-content: center;
       gap: 10px;
     }
-    
+
     .input-group {
       display: flex;
       flex-direction: column;
       gap: 15px;
       margin-bottom: 20px;
     }
-    
+
     input {
       padding: 12px 15px;
       border-radius: 10px;
@@ -115,13 +116,13 @@
       font-size: 1rem;
       transition: all 0.3s ease;
     }
-    
+
     input:focus {
       outline: none;
       border-color: #6c5ce7;
       box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
     }
-    
+
     button {
       padding: 12px 20px;
       border-radius: 10px;
@@ -137,23 +138,23 @@
       justify-content: center;
       gap: 8px;
     }
-    
+
     button:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
     }
-    
+
     button:active {
       transform: translateY(0);
     }
-    
+
     button:disabled {
       background: #636e72;
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
     }
-    
+
     .result {
       margin-top: 20px;
       padding: 15px;
@@ -164,24 +165,24 @@
       transform: translateY(10px);
       transition: all 0.5s ease;
     }
-    
+
     .result.show {
       opacity: 1;
       transform: translateY(0);
     }
-    
+
     .result.success {
       background: rgba(0, 184, 148, 0.2);
       border: 1px solid #00b894;
       color: #00b894;
     }
-    
+
     .result.error {
       background: rgba(225, 112, 85, 0.2);
       border: 1px solid #e17055;
       color: #e17055;
     }
-    
+
     .coin-icon {
       width: 24px;
       height: 24px;
@@ -190,7 +191,7 @@
       border-radius: 50%;
       box-shadow: 0 0 5px gold;
     }
-    
+
     .spinner {
       width: 20px;
       height: 20px;
@@ -200,19 +201,29 @@
       animation: spin 1s linear infinite;
       display: inline-block;
     }
-    
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
-    
+
     .pulse {
       animation: pulse 1.5s infinite;
     }
-    
+
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     /* 个人信息面板样式 - 优化显示 */
@@ -731,6 +742,10 @@
       background: linear-gradient(45deg, #e17055, #fab1a0);
     }
 
+    .func-button.lucky-card {
+      background: linear-gradient(45deg, #0984e3, #74b9ff);
+    }
+
     /* 响应式设计 */
     @media (max-width: 768px) {
       .user-panel {
@@ -738,44 +753,44 @@
         width: 100%;
         margin-bottom: 20px;
       }
-      
+
       .rank-panel {
         position: static;
         width: 100%;
         max-height: 60px;
         margin-bottom: 20px;
       }
-      
+
       .rank-panel.expanded {
         width: 100%;
         max-height: 70vh;
       }
-      
+
       .task-panel {
         position: static;
         width: 100%;
         max-height: 60px;
         margin-bottom: 20px;
       }
-      
+
       .task-panel.expanded {
         width: 100%;
         max-height: 70vh;
       }
-      
+
       .main-container {
         flex-direction: column;
       }
-      
+
       .container {
         max-width: 100%;
       }
-      
+
       .function-buttons {
         flex-direction: column;
         width: 100%;
       }
-      
+
       .func-button {
         width: 100%;
       }
@@ -783,13 +798,14 @@
       .rank-list {
         max-height: 50vh;
       }
-      
+
       .task-list {
         max-height: 50vh;
       }
     }
 
     @media (max-width: 480px) {
+
       .rank-header,
       .rank-item {
         grid-template-columns: 40px 1fr 60px;
@@ -797,24 +813,24 @@
         padding: 8px 12px;
         font-size: 0.8rem;
       }
-      
+
       .rank-panel {
         padding: 12px;
       }
-      
+
       .rank-panel.expanded {
         width: 100%;
       }
-      
+
       .task-panel {
         padding: 12px;
       }
-      
+
       .task-item {
         padding: 10px 12px;
         font-size: 0.85rem;
       }
-      
+
       .task-button {
         padding: 5px 10px;
         font-size: 0.75rem;
@@ -835,9 +851,9 @@
         font-size: 0.85rem;
       }
     }
-
   </style>
 </head>
+
 <body>
   <!-- 个人信息面板（固定在右上角） -->
   <div class="user-panel" id="userPanel">
@@ -856,7 +872,7 @@
       <span class="rank-toggle">▼</span>
     </h3>
     <button id="btn3">刷新排行榜</button>
-    
+
     <div class="rank-content" id="rankContent">
       <div class="rank-list" id="rankList">
         <div class="rank-header">
@@ -880,7 +896,7 @@
       <span class="task-toggle">▼</span>
     </h3>
     <button id="refreshTaskBtn">刷新任务</button>
-    
+
     <div class="task-content" id="taskContent">
       <div class="task-list" id="taskList">
         <!-- 任务列表内容将通过JavaScript动态生成 -->
@@ -898,7 +914,7 @@
           <span class="user-id" id="userIdDisplay">加载中...</span>
         </div>
       </div>
-      
+
       <!-- 投币区域 -->
       <div class="game-panel">
         <h3><span class="coin-icon"></span> 开始投币！！</h3>
@@ -918,6 +934,9 @@
         </a>
         <a href="market.html" class="func-button market">
           🏪 交易大厅（优质理财产品任你挑）
+        </a>
+        <a href="drawcard.html" class="func-button lucky-card">
+          🃏 幸运集卡（套系多多，抽卡赚钱）
         </a>
       </div>
     </div>
@@ -940,34 +959,34 @@
     const rankItems = $('rankItems');
     const rankSummary = $('rankSummary');
     const rankError = $('rankError');
-    
+
     // 日常任务相关元素
     const taskPanel = $('taskPanel');
     const taskContent = $('taskContent');
     const taskList = $('taskList');
     const refreshTaskBtn = $('refreshTaskBtn');
     const taskError = $('taskError');
-    
+
     // 获取用户ID
     const uid = () => localStorage.getItem('uid');
     // 获取cookie
     const cookie = () => localStorage.getItem('cookie');
-    
+
     // API调用函数
     const api = (path, body) => fetch('http://47.92.231.94:8080' + path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    
+
     // 新增：标记是否已发送过首次投币任务
     let hasSentFirstBetTask = false;
-    
+
     // 切换个人信息面板展开/收起
     function toggleUserPanel() {
       userPanel.classList.toggle('expanded');
     }
-    
+
     // 切换排行榜面板展开/收起
     function toggleRankPanel() {
       rankPanel.classList.toggle('expanded');
@@ -978,7 +997,7 @@
         }
       }
     }
-    
+
     // 切换任务面板展开/收起
     function toggleTaskPanel() {
       taskPanel.classList.toggle('expanded');
@@ -989,7 +1008,7 @@
         }
       }
     }
-    
+
     // 显示用户ID
     function displayUserId() {
       const userUid = uid();
@@ -1001,28 +1020,28 @@
         userIdDisplay.style.color = '#e17055';
       }
     }
-    
+
     // 初始化显示用户ID
     displayUserId();
-    
+
     // 显示消息函数
     function show(box, txt, ok) {
       // 移除之前的类
       box.classList.remove('success', 'error', 'show');
-      
+
       // 设置文本
       box.textContent = txt;
-      
+
       // 添加适当的类
       box.classList.add(ok ? 'success' : 'error');
-      
+
       // 强制重排以触发动画
       void box.offsetWidth;
-      
+
       // 添加显示类
       box.classList.add('show');
     }
-    
+
     // 设置按钮加载状态
     function setButtonLoading(button, isLoading, originalText) {
       if (isLoading) {
@@ -1033,7 +1052,7 @@
         button.innerHTML = `<span>${originalText}</span>`;
       }
     }
-    
+
     // 获取并显示个人信息
     async function loadUserInfo() {
       const userUid = uid();
@@ -1042,10 +1061,10 @@
         showUserInfo('未登录，请先登录', false);
         return;
       }
-      
+
       btn2.disabled = true;
       btn2.innerHTML = '<span class="spinner"></span> 加载中...';
-      
+
       try {
         const res = await api('/user/info', { cookie: userCookie });
         const data = await res.json();
@@ -1057,7 +1076,7 @@
         btn2.innerHTML = '刷新个人信息';
       }
     }
-    
+
     // 处理个人信息 - 美化显示
     function handleInfo(data) {
       if (data.code === -1) {
@@ -1065,10 +1084,10 @@
         showUserInfo('', true);
         return;
       }
-      
+
       // 计算总资产
       const netWorth = (data.amount || 0) + (data.account || 0) - (data.loan || 0);
-      
+
       // 美化显示格式
       const infoText = `
 用户ID：${data.id || '未知'}
@@ -1079,47 +1098,47 @@
 ══════════════════════════
 总资产：${netWorth} 
       `;
-      
+
       showUserInfo(infoText, true);
     }
-    
+
     // 显示用户信息
     function showUserInfo(text, isOk) {
       // 移除之前的类
       rst2.classList.remove('success', 'error', 'show');
-      
+
       // 设置文本
       rst2.textContent = text;
-      
+
       // 添加适当的类
       if (text) {
         rst2.classList.add(isOk ? 'success' : 'error');
       }
-      
+
       // 强制重排以触发动画
       void rst2.offsetWidth;
-      
+
       // 添加显示类
       if (text) {
         rst2.classList.add('show');
       }
-      
+
       // 展开面板显示信息
       userPanel.classList.add('expanded');
     }
-    
+
     // 个人信息按钮点击事件
     btn2.onclick = loadUserInfo;
-    
+
     // 新增：发送首次投币任务
     async function sendFirstBetTask() {
       const userCookie = cookie();
       if (!userCookie) {
         return false;
       }
-      
+
       try {
-        const res = await api('/task/user_finish', { cookie: userCookie , task_id: 1 });
+        const res = await api('/task/user_finish', { cookie: userCookie, task_id: 1 });
         const data = await res.json();
         return data.success === true;
       } catch (e) {
@@ -1127,7 +1146,7 @@
         return false;
       }
     }
-    
+
     // 投币按钮点击事件
     btn1.onclick = async () => {
       const n = Number(inGolds.value);
@@ -1146,7 +1165,7 @@
 
       // 设置按钮加载状态
       setButtonLoading(btn1, true, '确认投币');
-      
+
       try {
         // 新增：如果是首次投币，先发送任务请求
         if (!hasSentFirstBetTask) {
@@ -1156,7 +1175,7 @@
             console.log('首次投币任务发送成功');
           }
         }
-        
+
         // 执行正常的投币逻辑
         const res = await api('/game/play', { cookie: userCookie, golds: n });
         const data = await res.json();
@@ -1174,7 +1193,7 @@
       if (data.code === 0 || data.code === 8) {
         // 先显示加载动画
         show(rst1, '游戏进行中...', true);
-        
+
         setTimeout(() => {
           showResult(data);
           // 恢复按钮状态
@@ -1223,7 +1242,7 @@
       }
 
       setButtonLoading(btn3, true, '刷新排行榜');
-      
+
       try {
         const res = await api('/game/rank', { cookie: userCookie });
         const data = await res.json();
@@ -1244,16 +1263,16 @@
 
       // 隐藏错误信息
       rankError.style.display = 'none';
-      
+
       // 清空之前的排行榜内容
       rankItems.innerHTML = '';
-      
+
       // 创建排行榜项
       data.ranklist.forEach((item, index) => {
         const isCurrentUser = item.id === myId;
         const rankItem = document.createElement('div');
         rankItem.className = `rank-item ${isCurrentUser ? 'current-user' : ''} rank-${index + 1}`;
-        
+
         rankItem.innerHTML = `
           <div class="rank-position">${index + 1}</div>
           <div class="rank-user">
@@ -1262,13 +1281,13 @@
           </div>
           <div class="rank-amount">${item.amount}</div>
         `;
-        
+
         rankItems.appendChild(rankItem);
       });
 
       // 更新汇总信息
       rankSummary.textContent = `我的余额：${data.myAmount}`;
-      
+
       showRankContent();
     }
 
@@ -1300,7 +1319,7 @@
       }
 
       setButtonLoading(btn3, true, '刷新排行榜');
-      
+
       try {
         const res = await api('/game/rank', { cookie: userCookie });
         const data = await res.json();
@@ -1319,14 +1338,14 @@
     };
 
     /* 工具：创建任务行 */
-    function buildTask({task_id, code}) {
+    function buildTask({ task_id, code }) {
       const taskItem = document.createElement('div');
       taskItem.className = 'task-item';
-      
+
       const taskName = document.createElement('div');
       taskName.className = 'task-name';
       taskName.textContent = TASK_MAP[task_id];
-      
+
       const taskButton = document.createElement('button');
       taskButton.className = 'task-button';
       taskButton.dataset.tid = task_id;
@@ -1349,7 +1368,7 @@
           taskButton.className = 'task-button completed';
           break;
       }
-      
+
       taskItem.appendChild(taskName);
       taskItem.appendChild(taskButton);
       return taskItem;
@@ -1365,7 +1384,7 @@
 
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span>';
-      
+
       try {
         const res = await fetch('http://47.92.231.94:8080/task/user_take', {
           method: 'POST',
@@ -1404,7 +1423,7 @@
 
       taskList.innerHTML = '<div class="task-loading">加载中...</div>';
       hideTaskError();
-      
+
       try {
         const res = await fetch('http://47.92.231.94:8080/task/view', {
           method: 'POST',
@@ -1447,11 +1466,12 @@
     function hideTaskContent() {
       taskContent.style.display = 'none';
     }
-    
+
     // 页面加载时自动显示个人信息
     window.addEventListener('load', () => {
       setTimeout(loadUserInfo, 1000);
     });
   </script>
 </body>
+
 </html>
