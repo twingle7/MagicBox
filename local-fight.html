@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地双人格斗 | MagicBox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #e35909, #ffb574);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(227, 89, 9, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #ffb574;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 500px;
+            border: 3px solid #e35909;
+            border-radius: 10px;
+            background: #0f1525;
+            display: block;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .health-bar-container {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .health-bar {
+            width: 40%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #fff;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .p1-health {
+            background: linear-gradient(to right, #ff6b6b, #ff8e8e);
+        }
+
+        .p2-health {
+            background: linear-gradient(to right, #4ecdc4, #6de5dd);
+        }
+
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .p1-info {
+            color: #ff6b6b;
+        }
+
+        .p2-info {
+            color: #4ecdc4;
+        }
+
+        .controls-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .control-group {
+            width: 45%;
+        }
+
+        .control-group h3 {
+            margin-bottom: 10px;
+            color: #ffb574;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .control-key {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .game-button {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .game-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .game-button.fight {
+            background: linear-gradient(45deg, #e35909, #ffb574);
+        }
+
+        .game-button.back {
+            background: linear-gradient(45deg, #636e72, #b2bec3);
+        }
+
+        .winner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .winner-text {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .p1-win {
+            color: #ff6b6b;
+        }
+
+        .p2-win {
+            color: #4ecdc4;
+        }
+
+        .winner-subtext {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #ffb574;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 20;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: #ffb574;
+            margin-top: 20px;
+        }
+
+        .loading-bar {
+            width: 80%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(45deg, #e35909, #ffb574);
+            transition: width 0.3s ease;
+        }
+
+        .debug-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-family: monospace;
+            color: #fff;
+            z-index: 5;
+        }
+
+        .status-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 20px;
+            font-size: 12px;
+            color: #ffb574;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .combo-counter {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffdd59;
+            text-shadow: 0 0 10px rgba(255, 221, 89, 0.7);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .damage-text {
+            position: absolute;
+            font-size: 16px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: damageFloat 1s ease-out forwards;
+        }
+
+        @keyframes damageFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+        }
+
+        /* 攻击距离指示器 */
+        .range-indicator {
+            position: absolute;
+            top: 120px;
+            left: 20px;
+            font-size: 12px;
+            color: #ffb574;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .controls-info {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .control-group {
+                width: 100%;
+            }
+
+            .game-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .game-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .health-bar {
+                height: 20px;
+            }
+
+            .player-info {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>本地双人格斗</h1>
+        <p class="subtitle">实力至上，输了给钱！</p>
+    </div>
+
+    <div class="game-container">
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="850" height="500"></canvas>
+
+            <div class="ui-overlay">
+                <div class="health-bar-container">
+                    <div class="health-bar">
+                        <div class="health-fill p1-health" id="p1Health" style="width: 100%"></div>
+                    </div>
+                    <div class="health-bar">
+                        <div class="health-fill p2-health" id="p2Health" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="player-info">
+                    <div class="p1-info">玩家1</div>
+                    <div class="p2-info">玩家2</div>
+                </div>
+
+                <div class="combo-counter" id="comboCounter"></div>
+            </div>
+
+            <div class="loading-overlay" id="loadingOverlay">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">⚔️</div>
+                    <div class="loading-text" id="loadingText">加载游戏中...</div>
+                </div>
+                <div class="loading-bar">
+                    <div class="loading-progress" id="loadingProgress"></div>
+                </div>
+            </div>
+
+            <div class="winner-overlay" id="winnerOverlay">
+                <div class="winner-text" id="winnerText"></div>
+                <div class="winner-subtext" id="winnerSubtext">按空格键重新开始</div>
+                <button class="game-button fight" onclick="restartGame()">再来一局</button>
+            </div>
+
+            <div class="debug-info" id="debugInfo"></div>
+            <div class="status-indicator" id="statusIndicator"></div>
+            <div class="range-indicator" id="rangeIndicator"></div>
+        </div>
+
+        <div class="controls-info">
+            <div class="control-group">
+                <h3>👤 玩家1控制</h3>
+                <div class="control-item">
+                    <span>移动：</span>
+                    <div>
+                        <span class="control-key">A</span> 左
+                        <span class="control-key">D</span> 右
+                    </div>
+                </div>
+                <div class="control-item">
+                    <span>跳跃：</span>
+                    <span class="control-key">W</span>
+                </div>
+                <div class="control-item">
+                    <span>攻击：</span>
+                    <span class="control-key">J</span>
+                </div>
+                <div class="control-item">
+                    <span>发波：</span>
+                    <span class="control-key">K</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>👤 玩家2控制</h3>
+                <div class="control-item">
+                    <span>移动：</span>
+                    <div>
+                        <span class="control-key">←</span> 左
+                        <span class="control-key">→</span> 右
+                    </div>
+                </div>
+                <div class="control-item">
+                    <span>跳跃：</span>
+                    <span class="control-key">↑</span>
+                </div>
+                <div class="control-item">
+                    <span>攻击：</span>
+                    <span class="control-key">数字1</span>
+                </div>
+                <div class="control-item">
+                    <span>发波：</span>
+                    <span class="control-key">数字0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button class="game-button fight" onclick="restartGame()">重新开始</button>
+            <button class="game-button back" onclick="window.location.href='fight.html'">返回主菜单</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const debugInfo = document.getElementById('debugInfo');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const comboCounter = document.getElementById('comboCounter');
+        const rangeIndicator = document.getElementById('rangeIndicator');
+
+        const ImageManager = {
+            images: {},
+            loaded: false,
+            loadCount: 0,
+            totalCount: 0,
+            loadingProgress: document.getElementById('loadingProgress'),
+            loadingText: document.getElementById('loadingText'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+
+            paths: {
+                background: 'images/pingpong-fight/background.png',
+                player1: {
+                    idle: 'images/pingpong-fight/player1/idle.png',
+                    walk: 'images/pingpong-fight/player1/walk.png',
+                    attack: 'images/pingpong-fight/player1/attack.png',
+                    special: 'images/pingpong-fight/player1/special.png',
+                    hurt: 'images/pingpong-fight/player1/hurt.png'
+                },
+                player2: {
+                    idle: 'images/pingpong-fight/player2/idle.png',
+                    walk: 'images/pingpong-fight/player2/walk.png',
+                    attack: 'images/pingpong-fight/player2/attack.png',
+                    special: 'images/pingpong-fight/player2/special.png',
+                    hurt: 'images/pingpong-fight/player2/hurt.png'
+                },
+                effects: {
+                    punch: 'images/pingpong-fight/effects/punch.png',
+                    projectile: 'images/pingpong-fight/effects/projectile.png',
+                    hit: 'images/pingpong-fight/effects/hit.png'
+                }
+            },
+
+            loadAll: function (callback) {
+                console.log('开始加载图片资源...');
+                this.loadingText.textContent = '加载游戏中...';
+
+                const allPaths = [];
+                const allKeys = [];
+
+                allPaths.push(this.paths.background);
+                allKeys.push('background');
+
+                for (let state in this.paths.player1) {
+                    allPaths.push(this.paths.player1[state]);
+                    allKeys.push(`player1_${state}`);
+                }
+
+                for (let state in this.paths.player2) {
+                    allPaths.push(this.paths.player2[state]);
+                    allKeys.push(`player2_${state}`);
+                }
+
+                for (let effect in this.paths.effects) {
+                    allPaths.push(this.paths.effects[effect]);
+                    allKeys.push(`effect_${effect}`);
+                }
+
+                this.totalCount = allPaths.length;
+                this.loadCount = 0;
+
+                for (let i = 0; i < allPaths.length; i++) {
+                    this.loadImage(allKeys[i], allPaths[i]);
+                }
+
+                const checkInterval = setInterval(() => {
+                    if (this.loadCount >= this.totalCount) {
+                        this.loaded = true;
+                        clearInterval(checkInterval);
+                        console.log('所有图片资源加载完成！');
+                        this.loadingOverlay.style.display = 'none';
+                        if (callback) callback();
+                    } else {
+                        const progress = Math.round((this.loadCount / this.totalCount) * 100);
+                        this.loadingProgress.style.width = `${progress}%`;
+                        this.loadingText.textContent = `加载中... ${this.loadCount}/${this.totalCount} (${progress}%)`;
+                    }
+                }, 100);
+            },
+
+            loadImage: function (key, path) {
+                const img = new Image();
+                img.onload = () => {
+                    this.images[key] = img;
+                    this.loadCount++;
+                };
+                img.onerror = () => {
+                    console.warn(`图片加载失败: ${path}`);
+                    this.loadCount++;
+                };
+                img.src = path;
+            },
+
+            get: function (key) {
+                return this.images[key] || null;
+            },
+
+            isReady: function () {
+                return this.loaded;
+            }
+        };
+
+        const gameState = {
+            isRunning: true,
+            winner: null,
+            imagesLoaded: false,
+            debugMode: false,
+            combo: 0,
+            comboTimeout: null,
+            lastHitTime: 0
+        };
+
+        const GROUND_Y = 400;
+        const GRAVITY = 0.5;
+        const JUMP_FORCE = -12;
+        const MOVE_SPEED = 5;
+        const MAX_HP = 1000;
+
+        const damageNumbers = [];
+
+        class Player {
+            constructor(x, color, controls, isPlayer1 = true) {
+                this.x = x;
+                this.y = GROUND_Y;
+                this.width = 60;
+                this.height = 100;
+                this.hp = MAX_HP;
+                this.maxHp = MAX_HP;
+                this.color = color;
+                this.controls = controls;
+                this.isPlayer1 = isPlayer1;
+
+                this.velocityX = 0;
+                this.velocityY = 0;
+                this.isJumping = false;
+                this.facing = isPlayer1 ? 'right' : 'left';
+
+                this.state = 'idle';
+                this.stateTimer = 0;
+                this.attackCooldown = 0;
+                this.specialCooldown = 0;
+                this.hitStun = 0;
+                this.invincible = 0;
+                this.canAct = true;
+
+                this.attackHit = false;
+                this.lastAttackTime = 0;
+                this.attackHitEnemies = [];
+
+                this.animationFrame = 0;
+                this.animationTimer = 0;
+
+                this.attackRange = 80; // 攻击范围
+                this.attackOffset = 20; // 攻击框偏移
+            }
+
+            update(keys) {
+                if (!gameState.isRunning) return;
+
+                if (this.hitStun > 0) {
+                    this.hitStun--;
+                    this.canAct = false;
+                    this.state = 'hurt';
+                } else {
+                    this.canAct = true;
+                }
+
+                if (this.invincible > 0) this.invincible--;
+
+                this.velocityX = 0;
+
+                if (this.canAct) {
+                    if (keys[this.controls.left]) {
+                        this.velocityX = -MOVE_SPEED;
+                        this.facing = 'left';
+                        if (this.state !== 'attack' && this.state !== 'special') {
+                            this.state = 'walk';
+                        }
+                    }
+                    if (keys[this.controls.right]) {
+                        this.velocityX = MOVE_SPEED;
+                        this.facing = 'right';
+                        if (this.state !== 'attack' && this.state !== 'special') {
+                            this.state = 'walk';
+                        }
+                    }
+
+                    if (keys[this.controls.jump] && !this.isJumping) {
+                        this.velocityY = JUMP_FORCE;
+                        this.isJumping = true;
+                    }
+
+                    if (keys[this.controls.attack] && this.attackCooldown <= 0) {
+                        this.state = 'attack';
+                        this.stateTimer = 20;
+                        this.attackCooldown = 30;
+                        this.attackHit = false;
+                        this.attackHitEnemies = [];
+                        this.lastAttackTime = Date.now();
+                    }
+
+                    if (keys[this.controls.special] && this.specialCooldown <= 0) {
+                        this.state = 'special';
+                        this.stateTimer = 25;
+                        this.specialCooldown = 40;
+                        createProjectile(this);
+                    }
+                }
+
+                if (this.velocityX === 0 && this.state === 'walk' && this.stateTimer <= 0 && this.hitStun <= 0) {
+                    this.state = 'idle';
+                }
+
+                if ((this.state === 'attack' || this.state === 'special') && this.stateTimer <= 0) {
+                    this.state = 'idle';
+                }
+
+                this.velocityY += GRAVITY;
+
+                this.x += this.velocityX;
+                this.y += this.velocityY;
+
+                this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
+
+                if (this.y >= GROUND_Y) {
+                    this.y = GROUND_Y;
+                    this.velocityY = 0;
+                    this.isJumping = false;
+                }
+
+                if (this.stateTimer > 0) this.stateTimer--;
+
+                if (this.attackCooldown > 0) this.attackCooldown--;
+                if (this.specialCooldown > 0) this.specialCooldown--;
+
+                this.animationTimer++;
+                if (this.animationTimer >= 10) {
+                    this.animationFrame = (this.animationFrame + 1) % 2;
+                    this.animationTimer = 0;
+                }
+            }
+
+            draw() {
+                if (gameState.imagesLoaded && ImageManager.isReady()) {
+                    const playerType = this.isPlayer1 ? 'player1' : 'player2';
+                    let imageKey = `${playerType}_${this.state}`;
+                    let img = ImageManager.get(imageKey);
+
+                    if (!img) {
+                        imageKey = `${playerType}_idle`;
+                        img = ImageManager.get(imageKey);
+                    }
+
+                    if (img) {
+                        ctx.save();
+
+                        if (this.invincible > 0 && Math.floor(this.invincible / 3) % 2 === 0) {
+                            ctx.globalAlpha = 0.5;
+                        }
+
+                        if (this.facing === 'left') {
+                            ctx.scale(-1, 1);
+                            ctx.drawImage(img, -this.x - this.width, this.y, this.width, this.height);
+                        } else {
+                            ctx.drawImage(img, this.x, this.y, this.width, this.height);
+                        }
+                        ctx.restore();
+                    } else {
+                        this.drawPlaceholder();
+                    }
+                } else {
+                    this.drawPlaceholder();
+                }
+
+                // 调试：绘制攻击范围
+                if (gameState.debugMode) {
+                    ctx.save();
+                    ctx.strokeStyle = this.isPlayer1 ? '#ff0000' : '#00ff00';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+
+                    const attackBox = this.getAttackHitbox();
+                    if (attackBox) {
+                        ctx.strokeRect(attackBox.x, attackBox.y, attackBox.width, attackBox.height);
+                    }
+                    ctx.restore();
+                }
+            }
+
+            drawPlaceholder() {
+                ctx.save();
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+                ctx.fillStyle = this.isPlayer1 ? '#ff6b6b' : '#4ecdc4';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.isPlayer1 ? 'P1' : 'P2', this.x + this.width / 2, this.y + this.height / 2);
+                ctx.restore();
+            }
+
+            getAttackHitbox() {
+                if (this.state !== 'attack') return null;
+
+                const attackFrame = 20 - this.stateTimer;
+
+                // 攻击生效帧：第5-15帧
+                if (attackFrame >= 5 && attackFrame <= 15) {
+                    // 修复：攻击框应该从玩家位置开始，而不是从反方向
+                    if (this.facing === 'right') {
+                        // 面向右侧，攻击框在玩家右侧
+                        return {
+                            x: this.x + this.width - this.attackOffset, // 从身体右侧开始
+                            y: this.y + 20,
+                            width: this.attackRange,
+                            height: 60
+                        };
+                    } else {
+                        // 面向左侧，攻击框在玩家左侧
+                        return {
+                            x: this.x - this.attackRange + this.attackOffset, // 从身体左侧开始减去攻击范围
+                            y: this.y + 20,
+                            width: this.attackRange,
+                            height: 60
+                        };
+                    }
+                }
+                return null;
+            }
+
+            takeDamage(damage, attacker, attackDirection = null) {
+                if (this.invincible > 0) return false;
+
+                this.hp = Math.max(0, this.hp - damage);
+
+                addDamageNumber(this.x + this.width / 2, this.y, damage);
+
+                const now = Date.now();
+                if (now - gameState.lastHitTime < 1000) {
+                    gameState.combo++;
+                } else {
+                    gameState.combo = 1;
+                }
+                gameState.lastHitTime = now;
+                showCombo(gameState.combo);
+
+                this.hitStun = 15;
+                this.invincible = 20;
+                this.state = 'hurt';
+                this.stateTimer = 20;
+
+                // 修复：击退方向应该是被攻击者远离攻击者的方向
+                let knockback = 0;
+                if (attackDirection) {
+                    // 攻击方向是攻击者面朝的方向
+                    if (attackDirection === 'right') {
+                        // 攻击者面向右侧，应该把被攻击者向右击退
+                        knockback = 8;
+                    } else if (attackDirection === 'left') {
+                        // 攻击者面向左侧，应该把被攻击者向左击退
+                        knockback = -8;
+                    }
+                } else if (attacker) {
+                    // 如果没有提供攻击方向，根据攻击者位置判断
+                    if (attacker.x < this.x) {
+                        // 攻击者在左侧，向右击退
+                        knockback = 8;
+                    } else {
+                        // 攻击者在右侧，向左击退
+                        knockback = -8;
+                    }
+                }
+
+                this.x += knockback;
+                this.velocityY = -4;
+
+                updateHealthBars();
+
+                if (this.hp <= 0) {
+                    gameState.isRunning = false;
+                    gameState.winner = this.isPlayer1 ? '玩家2' : '玩家1';
+                    setTimeout(() => showWinner(), 500);
+                }
+
+                return true;
+            }
+        }
+
+        class Projectile {
+            constructor(x, y, direction, isPlayer1) {
+                this.x = x;
+                this.y = y;
+                this.width = 30;
+                this.height = 30;
+                this.speed = direction === 'right' ? 8 : -8;
+                this.isPlayer1 = isPlayer1;
+                this.direction = direction;
+                this.color = isPlayer1 ? '#00ffff' : '#ff00ff';
+                this.hasHit = false;
+            }
+
+            update() {
+                this.x += this.speed;
+
+                if (this.x < -50 || this.x > canvas.width + 50) {
+                    return false;
+                }
+                return true;
+            }
+
+            draw() {
+                if (gameState.imagesLoaded && ImageManager.isReady()) {
+                    const img = ImageManager.get('effect_projectile');
+                    if (img) {
+                        ctx.save();
+                        if (this.direction === 'left') {
+                            ctx.scale(-1, 1);
+                            ctx.drawImage(img, -this.x - this.width, this.y - this.height / 2, this.width, this.height);
+                        } else {
+                            ctx.drawImage(img, this.x, this.y - this.height / 2, this.width, this.height);
+                        }
+                        ctx.restore();
+                    } else {
+                        this.drawPlaceholder();
+                    }
+                } else {
+                    this.drawPlaceholder();
+                }
+            }
+
+            drawPlaceholder() {
+                ctx.save();
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const player1 = new Player(
+            200,
+            '#ff6b6b',
+            {
+                left: 'KeyA',
+                right: 'KeyD',
+                jump: 'KeyW',
+                attack: 'KeyJ',
+                special: 'KeyK'
+            },
+            true
+        );
+
+        const player2 = new Player(
+            600,
+            '#4ecdc4',
+            {
+                left: 'ArrowLeft',
+                right: 'ArrowRight',
+                jump: 'ArrowUp',
+                attack: 'Numpad1',
+                special: 'Numpad0'
+            },
+            false
+        );
+
+        let projectiles = [];
+        let hitEffects = [];
+        const keys = {};
+
+        function createProjectile(player) {
+            const x = player.facing === 'right' ? player.x + player.width : player.x;
+            const y = player.y + 50;
+            projectiles.push(new Projectile(x, y, player.facing, player.isPlayer1));
+        }
+
+        function createHitEffect(x, y) {
+            hitEffects.push({
+                x: x,
+                y: y,
+                timer: 15,
+                scale: 1.5
+            });
+        }
+
+        function addDamageNumber(x, y, damage) {
+            damageNumbers.push({
+                x: x + (Math.random() * 20 - 10),
+                y: y - 20,
+                value: damage,
+                life: 60,
+                velocityX: (Math.random() * 2 - 1) * 2,
+                velocityY: -3
+            });
+        }
+
+        function showCombo(combo) {
+            if (combo > 1) {
+                comboCounter.textContent = `${combo} COMBO!`;
+                comboCounter.style.opacity = '1';
+                comboCounter.style.transform = 'translateX(-50%) scale(1.2)';
+
+                setTimeout(() => {
+                    comboCounter.style.opacity = '0';
+                    comboCounter.style.transform = 'translateX(-50%) scale(1)';
+                }, 1000);
+
+                if (gameState.comboTimeout) clearTimeout(gameState.comboTimeout);
+                gameState.comboTimeout = setTimeout(() => {
+                    gameState.combo = 0;
+                }, 2000);
+            }
+        }
+
+        function checkCollisions() {
+            // 玩家1攻击玩家2
+            if (player1.state === 'attack') {
+                const attackBox = player1.getAttackHitbox();
+                if (attackBox && !player1.attackHit && !player1.attackHitEnemies.includes(player2)) {
+                    if (checkRectCollision(attackBox, player2)) {
+                        if (player2.takeDamage(20, player1, player1.facing)) {
+                            player1.attackHit = true;
+                            player1.attackHitEnemies.push(player2);
+                            createHitEffect(attackBox.x + attackBox.width / 2, attackBox.y + attackBox.height / 2);
+                        }
+                    }
+                }
+            }
+
+            // 玩家2攻击玩家1
+            if (player2.state === 'attack') {
+                const attackBox = player2.getAttackHitbox();
+                if (attackBox && !player2.attackHit && !player2.attackHitEnemies.includes(player1)) {
+                    if (checkRectCollision(attackBox, player1)) {
+                        if (player1.takeDamage(20, player2, player2.facing)) {
+                            player2.attackHit = true;
+                            player2.attackHitEnemies.push(player1);
+                            createHitEffect(attackBox.x + attackBox.width / 2, attackBox.y + attackBox.height / 2);
+                        }
+                    }
+                }
+            }
+
+            // 飞行道具碰撞检测
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                const proj = projectiles[i];
+                if (proj.hasHit) continue;
+
+                const target = proj.isPlayer1 ? player2 : player1;
+
+                if (checkRectCollision(proj, target)) {
+                    if (target.takeDamage(30, proj.isPlayer1 ? player1 : player2, proj.direction)) {
+                        proj.hasHit = true;
+                        createHitEffect(proj.x, proj.y);
+                        projectiles.splice(i, 1);
+                    }
+                }
+            }
+        }
+
+        function checkRectCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                rect1.x + rect1.width > rect2.x &&
+                rect1.y < rect2.y + rect2.height &&
+                rect1.y + rect1.height > rect2.y;
+        }
+
+        function updateHealthBars() {
+            document.getElementById('p1Health').style.width = `${(player1.hp / player1.maxHp) * 100}%`;
+            document.getElementById('p2Health').style.width = `${(player2.hp / player2.maxHp) * 100}%`;
+        }
+
+        function showWinner() {
+            const overlay = document.getElementById('winnerOverlay');
+            const winnerText = document.getElementById('winnerText');
+            const subtext = document.getElementById('winnerSubtext');
+
+            winnerText.textContent = `${gameState.winner} 胜利！`;
+            winnerText.className = `winner-text ${gameState.winner === '玩家1' ? 'p1-win' : 'p2-win'}`;
+            subtext.textContent = '按空格键重新开始';
+
+            overlay.style.display = 'flex';
+        }
+
+        function restartGame() {
+            player1.x = 200;
+            player1.y = GROUND_Y;
+            player1.hp = MAX_HP;
+            player1.state = 'idle';
+            player1.stateTimer = 0;
+            player1.velocityX = 0;
+            player1.velocityY = 0;
+            player1.isJumping = false;
+            player1.hitStun = 0;
+            player1.invincible = 0;
+            player1.canAct = true;
+            player1.attackHit = false;
+            player1.attackHitEnemies = [];
+
+            player2.x = 600;
+            player2.y = GROUND_Y;
+            player2.hp = MAX_HP;
+            player2.state = 'idle';
+            player2.stateTimer = 0;
+            player2.velocityX = 0;
+            player2.velocityY = 0;
+            player2.isJumping = false;
+            player2.hitStun = 0;
+            player2.invincible = 0;
+            player2.canAct = true;
+            player2.attackHit = false;
+            player2.attackHitEnemies = [];
+
+            projectiles = [];
+            hitEffects = [];
+            damageNumbers.length = 0;
+
+            gameState.isRunning = true;
+            gameState.winner = null;
+            gameState.combo = 0;
+            gameState.lastHitTime = 0;
+
+            document.getElementById('winnerOverlay').style.display = 'none';
+            comboCounter.style.opacity = '0';
+
+            updateHealthBars();
+
+            for (let key in keys) {
+                keys[key] = false;
+            }
+        }
+
+        function drawBackground() {
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a0e1a');
+            gradient.addColorStop(1, '#1a1a2e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (gameState.imagesLoaded && ImageManager.isReady()) {
+                const bgImg = ImageManager.get('background');
+                if (bgImg) {
+                    ctx.save();
+                    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                    ctx.restore();
+                }
+            }
+        }
+
+        function drawDamageNumbers() {
+            for (let i = damageNumbers.length - 1; i >= 0; i--) {
+                const dmg = damageNumbers[i];
+
+                if (dmg.life <= 0) {
+                    damageNumbers.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = dmg.life / 60;
+                ctx.fillStyle = '#ffdd59';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#000';
+                ctx.shadowBlur = 3;
+                ctx.fillText(`-${dmg.value}`, dmg.x, dmg.y);
+                ctx.restore();
+
+                dmg.x += dmg.velocityX;
+                dmg.y += dmg.velocityY;
+                dmg.life--;
+                dmg.velocityY += 0.1;
+            }
+        }
+
+        function drawHitEffects() {
+            for (let i = hitEffects.length - 1; i >= 0; i--) {
+                const effect = hitEffects[i];
+
+                if (effect.timer <= 0) {
+                    hitEffects.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = effect.timer / 15;
+
+                const gradient = ctx.createRadialGradient(
+                    effect.x, effect.y, 0,
+                    effect.x, effect.y, 30 * effect.scale
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 0, 1)');
+                gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(effect.x, effect.y, 30 * effect.scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                if (gameState.imagesLoaded && ImageManager.isReady()) {
+                    const hitImg = ImageManager.get('effect_hit');
+                    if (hitImg) {
+                        ctx.save();
+                        ctx.globalAlpha = effect.timer / 15;
+                        ctx.drawImage(
+                            hitImg,
+                            effect.x - 40 * effect.scale,
+                            effect.y - 40 * effect.scale,
+                            80 * effect.scale,
+                            80 * effect.scale
+                        );
+                        ctx.restore();
+                    }
+                }
+
+                effect.timer--;
+                effect.scale *= 1.1;
+            }
+        }
+
+        function drawAttackEffects() {
+            if (!gameState.imagesLoaded || !ImageManager.isReady()) return;
+
+            const punchImg = ImageManager.get('effect_punch');
+            if (!punchImg) return;
+
+            if (player1.state === 'attack' && player1.stateTimer > 0) {
+                const attackFrame = 20 - player1.stateTimer;
+                if (attackFrame >= 5 && attackFrame <= 15) {
+                    const attackBox = player1.getAttackHitbox();
+                    if (attackBox) {
+                        ctx.save();
+                        if (player1.facing === 'left') {
+                            ctx.scale(-1, 1);
+                            ctx.drawImage(punchImg, -attackBox.x - attackBox.width / 2, attackBox.y - 20, 80, 80);
+                        } else {
+                            ctx.drawImage(punchImg, attackBox.x, attackBox.y - 20, 80, 80);
+                        }
+                        ctx.restore();
+                    }
+                }
+            }
+
+            if (player2.state === 'attack' && player2.stateTimer > 0) {
+                const attackFrame = 20 - player2.stateTimer;
+                if (attackFrame >= 5 && attackFrame <= 15) {
+                    const attackBox = player2.getAttackHitbox();
+                    if (attackBox) {
+                        ctx.save();
+                        if (player2.facing === 'left') {
+                            ctx.scale(-1, 1);
+                            ctx.drawImage(punchImg, -attackBox.x - attackBox.width / 2, attackBox.y - 20, 80, 80);
+                        } else {
+                            ctx.drawImage(punchImg, attackBox.x, attackBox.y - 20, 80, 80);
+                        }
+                        ctx.restore();
+                    }
+                }
+            }
+        }
+
+        function drawDebugInfo() {
+            if (!gameState.debugMode) return;
+
+            const p1AttackBox = player1.getAttackHitbox();
+            const p2AttackBox = player2.getAttackHitbox();
+
+            let debugText = `
+                玩家1: HP=${player1.hp}, 状态=${player1.state}, 朝向=${player1.facing}<br>
+                玩家2: HP=${player2.hp}, 状态=${player2.state}, 朝向=${player2.facing}<br>
+            `;
+
+            if (p1AttackBox) {
+                debugText += `P1攻击框: x=${p1AttackBox.x.toFixed(0)}, y=${p1AttackBox.y.toFixed(0)}<br>`;
+            }
+            if (p2AttackBox) {
+                debugText += `P2攻击框: x=${p2AttackBox.x.toFixed(0)}, y=${p2AttackBox.y.toFixed(0)}<br>`;
+            }
+
+            debugText += `连击: ${gameState.combo}, 道具: ${projectiles.length}`;
+
+            debugInfo.innerHTML = debugText;
+        }
+
+        function gameLoop() {
+            if (gameState.isRunning) {
+                player1.update(keys);
+                player2.update(keys);
+
+                for (let i = projectiles.length - 1; i >= 0; i--) {
+                    if (!projectiles[i].update()) {
+                        projectiles.splice(i, 1);
+                    }
+                }
+
+                checkCollisions();
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBackground();
+
+            projectiles.forEach(proj => proj.draw());
+
+            player1.draw();
+            player2.draw();
+
+            drawAttackEffects();
+            drawHitEffects();
+            drawDamageNumbers();
+
+            drawDebugInfo();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+
+            if (e.code === 'Space' && !gameState.isRunning) {
+                restartGame();
+                e.preventDefault();
+            }
+
+            if (e.code === 'F3') {
+                gameState.debugMode = !gameState.debugMode;
+                debugInfo.style.display = gameState.debugMode ? 'block' : 'none';
+                e.preventDefault();
+            }
+
+            if (e.code === 'F2') {
+                rangeIndicator.style.display = rangeIndicator.style.display === 'block' ? 'none' : 'block';
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if ([
+                'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+                'Space', 'KeyW', 'KeyA', 'KeyS', 'KeyD',
+                'KeyJ', 'KeyK', 'Numpad1', 'Numpad0', 'F3', 'F2'
+            ].includes(e.code)) {
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('load', () => {
+            console.log('页面加载完成，开始加载图片资源...');
+
+            ImageManager.loadAll(() => {
+                console.log('图片加载完成，开始游戏循环');
+                gameState.imagesLoaded = true;
+                console.log('已加载图片:', Object.keys(ImageManager.images));
+
+                updateHealthBars();
+
+                requestAnimationFrame(gameLoop);
+
+                canvas.focus();
+            });
+        });
+
+        canvas.setAttribute('tabindex', '0');
+        canvas.style.outline = 'none';
+
+        debugInfo.style.display = 'none';
+        rangeIndicator.style.display = 'none';
+    </script>
+</body>
+
+</html>

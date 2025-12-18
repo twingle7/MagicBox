@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
     }
-    
+
     body {
       background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
       min-height: 100vh;
@@ -20,7 +21,7 @@
       align-items: center;
       padding: 20px;
     }
-    
+
     .container {
       display: flex;
       max-width: 900px;
@@ -30,12 +31,12 @@
       overflow: hidden;
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
     }
-    
+
     .login-section {
       flex: 1;
       padding: 40px;
     }
-    
+
     .game-info {
       flex: 1;
       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -45,30 +46,30 @@
       flex-direction: column;
       justify-content: center;
     }
-    
+
     h1 {
       color: #333;
       margin-bottom: 10px;
       font-size: 28px;
     }
-    
+
     .subtitle {
       color: #666;
       margin-bottom: 30px;
       font-size: 16px;
     }
-    
+
     .form-group {
       margin-bottom: 20px;
     }
-    
+
     label {
       display: block;
       margin-bottom: 8px;
       color: #555;
       font-weight: 500;
     }
-    
+
     input {
       width: 100%;
       padding: 12px 15px;
@@ -77,19 +78,20 @@
       font-size: 16px;
       transition: all 0.3s;
     }
-    
+
     input:focus {
       outline: none;
       border-color: #6a11cb;
       box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
     }
-    
+
     .btn-group {
       display: flex;
+      flex-direction: column;
       gap: 15px;
       margin-top: 30px;
     }
-    
+
     button {
       flex: 1;
       padding: 12px;
@@ -100,32 +102,47 @@
       cursor: pointer;
       transition: all 0.3s;
     }
-    
+
     #submitBtn {
       background: linear-gradient(to right, #6a11cb, #2575fc);
       color: white;
     }
-    
+
     #submitBtn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
     }
-    
+
     #submitBtn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
-    
+
     #regBtn {
       background: #f8f9fa;
       color: #6a11cb;
       border: 2px solid #e1e5ee;
     }
-    
+
     #regBtn:hover {
       background: #e9ecef;
     }
-    
+
+    /* 添加修改密码按钮的样式 */
+    #changePwdBtn {
+      background: #f0f0f0;
+      /* 浅灰色背景 */
+      color: #666;
+      /* 灰色文字 */
+      border: 2px solid #e0e0e0;
+      /* 更浅的灰色边框 */
+    }
+
+    #changePwdBtn:hover {
+      background: #e0e0e0;
+      /* 悬停时稍微深一点的灰色 */
+    }
+
     #msg {
       margin-top: 15px;
       padding: 10px;
@@ -133,83 +150,107 @@
       text-align: center;
       font-weight: 500;
     }
-    
+
     .err {
       background-color: #ffe6e6;
       color: #d32f2f;
       border-left: 4px solid #d32f2f;
     }
-    
+
     .ok {
       background-color: #e6f4ea;
       color: #0f9d58;
       border-left: 4px solid #0f9d58;
     }
-    
+
     .game-title {
       font-size: 28px;
       margin-bottom: 20px;
       text-align: center;
     }
-    
+
     .game-description {
       line-height: 1.6;
       font-size: 16px;
       text-align: justify;
     }
-    
+
     .highlight {
       font-weight: 600;
       color: #ffeb3b;
     }
-    
+
     .green-text {
       color: #6cef71;
     }
-    
+
     .red-text {
       color: #ffeb3b;
     }
-    
+
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
       }
-      
+
       .game-info {
         order: -1;
       }
     }
+
+    .change-pwd-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .change-pwd {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+
+    .change-pwd:hover {
+      color: #666;
+      text-decoration: underline;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="login-section">
       <h1>欢迎回来</h1>
       <p class="subtitle">登录您的Magic Box账户(服务器维护中)</p>
-      
+
       <div class="form-group">
         <label for="uid">用户ID：</label>
         <input id="uid" type="text" placeholder="请输入用户ID" />
       </div>
-      
+
       <div class="form-group">
         <label for="pwd">密码：</label>
         <input id="pwd" type="password" placeholder="请输入密码" />
       </div>
-      
+
       <div id="msg"></div>
-      
+
       <div class="btn-group">
         <button id="submitBtn">登录</button>
-        <!-- <button id="regBtn">去注册</button> -->
+        <!-- 在登录按钮下方添加修改密码按钮 -->
+        <button id="regBtn">去注册</button>
+      </div>
+      <!-- 添加的修改密码链接 -->
+      <div class="change-pwd-link">
+        <a href="changepwd.html" class="change-pwd">修改密码</a>
       </div>
     </div>
-    
+
     <div class="game-info">
       <h2 class="game-title">Magic Box 游戏简介</h2>
       <p class="game-description">
-        欢迎来到<span class="highlight">Magic Box</span>！在这个刺激的游戏中，你将会拥有一个神奇的魔法盒子，以及<span class="highlight">10,000枚硬币</span>的启动资金。
+        欢迎来到<span class="highlight">Magic Box</span>！在这个刺激的游戏中，你将会拥有一个神奇的魔法盒子，以及<span
+          class="highlight">10,000枚硬币</span>的启动资金。
         <br><br>
         每次游戏，你可以选择一定量的硬币投入魔法盒子中。结果将由命运决定：
         <br><br>
@@ -225,15 +266,110 @@
   </div>
 
   <script>
-    // 数据格式（JSON）：
-    // POST /user/login
-    // {"id": "abc123", "pwd": "123456"}
-    //
-    // 后端返回格式：
-    // 200 OK
-    // {"code": 0, "msg": "登录成功"}           // 成功
-    // {"code": 1, "msg": "用户不存在"}         // 需要注册
-    // {"code": 2, "msg": "密码错误"}           // 重新输入
+    // 纯JavaScript实现的SHA256函数
+    function sha256(str) {
+      // 初始化常量
+      const K = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+        0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+        0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+        0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+        0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+      ];
+
+      // 初始哈希值
+      let H = [
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+      ];
+
+      // 将字符串转换为字节数组
+      const bytes = new TextEncoder().encode(str);
+
+      // 预处理：添加填充位
+      const bits = bytes.length * 8;
+      const blocks = [];
+
+      for (let i = 0; i < bytes.length; i++) {
+        if (i % 4 === 0) blocks[i >> 2] = 0;
+        blocks[i >> 2] |= bytes[i] << (24 - (i % 4) * 8);
+      }
+
+      // 添加1比特
+      blocks[bytes.length >> 2] |= 0x80 << (24 - (bytes.length % 4) * 8);
+
+      // 添加原始长度
+      blocks[(((bits + 64) >>> 9) << 4) + 15] = bits;
+
+      // 处理每个512位块
+      for (let i = 0; i < blocks.length; i += 16) {
+        const W = new Array(64);
+
+        // 准备消息调度
+        for (let t = 0; t < 16; t++) {
+          W[t] = blocks[i + t] || 0;
+        }
+
+        for (let t = 16; t < 64; t++) {
+          const s0 = rotr(W[t - 15], 7) ^ rotr(W[t - 15], 18) ^ (W[t - 15] >>> 3);
+          const s1 = rotr(W[t - 2], 17) ^ rotr(W[t - 2], 19) ^ (W[t - 2] >>> 10);
+          W[t] = (W[t - 16] + s0 + W[t - 7] + s1) & 0xffffffff;
+        }
+
+        // 初始化工作变量
+        let [a, b, c, d, e, f, g, h] = H;
+
+        // 主循环
+        for (let t = 0; t < 64; t++) {
+          const S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+          const ch = (e & f) ^ (~e & g);
+          const temp1 = (h + S1 + ch + K[t] + W[t]) & 0xffffffff;
+          const S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+          const maj = (a & b) ^ (a & c) ^ (b & c);
+          const temp2 = (S0 + maj) & 0xffffffff;
+
+          h = g;
+          g = f;
+          f = e;
+          e = (d + temp1) & 0xffffffff;
+          d = c;
+          c = b;
+          b = a;
+          a = (temp1 + temp2) & 0xffffffff;
+        }
+
+        // 计算中间哈希值
+        H[0] = (H[0] + a) & 0xffffffff;
+        H[1] = (H[1] + b) & 0xffffffff;
+        H[2] = (H[2] + c) & 0xffffffff;
+        H[3] = (H[3] + d) & 0xffffffff;
+        H[4] = (H[4] + e) & 0xffffffff;
+        H[5] = (H[5] + f) & 0xffffffff;
+        H[6] = (H[6] + g) & 0xffffffff;
+        H[7] = (H[7] + h) & 0xffffffff;
+      }
+
+      // 生成最终的哈希字符串
+      let hash = '';
+      for (let i = 0; i < 8; i++) {
+        hash += (H[i] >>> 0).toString(16).padStart(8, '0');
+      }
+
+      return hash;
+    }
+
+    // 循环右移辅助函数
+    function rotr(x, n) {
+      return (x >>> n) | (x << (32 - n));
+    }
+
+    // 与之前兼容的sha256函数包装
+    async function sha256Async(message) {
+      return sha256(message);
+    }
 
     const $ = id => document.getElementById(id);
     const uid = $('uid');
@@ -241,28 +377,35 @@
     const msg = $('msg');
     const btn = $('submitBtn');
 
-    // 标记是否已经发送过 user_finish 请求
-    //let hasSentUserFinish = localStorage.getItem('hasSentUserFinish') === 'true';
-
     btn.onclick = async () => {
       if (!uid.value || !pwd.value) {
         show('请完整填写ID和密码', false);
         return;
       }
+
       btn.disabled = true;
+      show('正在处理...', true);
+
       try {
+        // 计算密码的SHA-256哈希值
+        const pwdHash = await sha256Async(pwd.value);
+
         const res = await fetch('http://47.92.231.94:8080/user/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: uid.value, pwd: pwd.value })
+          body: JSON.stringify({
+            id: uid.value,
+            pwd_hash: pwdHash
+          })
         });
+
         const data = await res.json();
-        
+
         // 处理登录结果
         await handleLogin(data);
-        
+
       } catch (e) {
-        show('网络错误：' + e, false);
+        show('网络错误：' + e.message, false);
       } finally {
         btn.disabled = false;
       }
@@ -275,25 +418,25 @@
           localStorage.setItem('uid', uid.value);
 
           show(data.msg, true);
-          
+
           //登录成功，发送 user_finish 请求
           await sendUserFinishRequest(data.cookie);
-          
+
           // 跳转到游戏页面
           setTimeout(() => location.href = 'game.html', 1200);
           break;
-          
+
         case 1:   // 用户不存在
-          show(data.msg + '，请联系TG获得邀请！', false);
+          show(data.msg + '，请注册！', false);
           break;
-          
+
         case 2:   // 密码错误
           show(data.msg + '，请重新输入！', false);
           pwd.focus();
           break;
-          
+
         default:
-          show('未知状态码：' + data.code + data.msg, false);
+          show('未知状态码：' + data.code + ' ' + (data.msg || ''), false);
       }
     }
 
@@ -302,15 +445,12 @@
         const res = await fetch('http://47.92.231.94:8080/task/user_finish', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ cookie: cookie, task_id: 0})
+          body: JSON.stringify({ cookie: cookie, task_id: 0 })
         });
-        
+
         const result = await res.json();
-        
+
         if (result.success) {
-          // 标记为已发送，避免重复发送
-          //hasSentUserFinish = true;
-          //localStorage.setItem('hasSentUserFinish', 'true');
           console.log('user_finish 请求发送成功');
         } else {
           console.log('user_finish 请求失败');
@@ -326,17 +466,11 @@
       msg.className = isOk ? 'ok' : 'err';
     }
 
-    /*
-    // 初始化：检查是否已经发送过 user_finish
-    if (hasSentUserFinish) {
-      console.log('user_finish 请求已发送过，不再重复发送');
-    }*/
-
     // 添加回车键登录支持
     [uid, pwd].forEach(input => {
-      input.addEventListener('keypress', (e) => {
+      input.addEventListener('keypress', async (e) => {
         if (e.key === 'Enter') {
-          btn.click();
+          await btn.click();
         }
       });
     });
@@ -347,6 +481,8 @@
     });
 
     $('regBtn').onclick = () => location.href = 'register.html';
+
   </script>
 </body>
+
 </html>

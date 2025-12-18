@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Magic Box - 注册</title>
   <style>
@@ -11,7 +12,7 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
     }
-    
+
     body {
       background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
       min-height: 100vh;
@@ -20,22 +21,22 @@
       align-items: center;
       padding: 20px;
     }
-    
+
     .container {
       display: flex;
-      max-width: 900px;
+      max-width: 1000px;
       width: 100%;
       background: white;
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
     }
-    
+
     .register-section {
       flex: 1;
       padding: 40px;
     }
-    
+
     .game-info {
       flex: 1;
       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -45,30 +46,30 @@
       flex-direction: column;
       justify-content: center;
     }
-    
+
     h1 {
       color: #333;
       margin-bottom: 10px;
       font-size: 28px;
     }
-    
+
     .subtitle {
       color: #666;
       margin-bottom: 30px;
       font-size: 16px;
     }
-    
+
     .form-group {
       margin-bottom: 20px;
     }
-    
+
     label {
       display: block;
       margin-bottom: 8px;
       color: #555;
       font-weight: 500;
     }
-    
+
     input {
       width: 100%;
       padding: 12px 15px;
@@ -77,19 +78,83 @@
       font-size: 16px;
       transition: all 0.3s;
     }
-    
+
     input:focus {
       outline: none;
       border-color: #6a11cb;
       box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
     }
-    
+
+    /* 邮箱和验证码输入组样式 */
+    .email-verification-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .email-input {
+      flex: 1;
+    }
+
+    #getCodeBtn {
+      width: 120px;
+      padding: 12px 5px;
+      background: linear-gradient(to right, #2575fc, #6a11cb);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    #getCodeBtn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(37, 117, 252, 0.3);
+    }
+
+    #getCodeBtn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* 密码强度指示器 */
+    .password-strength {
+      display: flex;
+      align-items: center;
+      margin-top: 8px;
+      gap: 5px;
+    }
+
+    .strength-bar {
+      height: 4px;
+      flex: 1;
+      background: #e0e0e0;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .strength-fill {
+      height: 100%;
+      width: 0%;
+      background: #f44336;
+      transition: all 0.3s ease;
+    }
+
+    .strength-text {
+      font-size: 12px;
+      color: #666;
+      min-width: 60px;
+      text-align: right;
+    }
+
     .btn-group {
       display: flex;
       gap: 15px;
       margin-top: 30px;
     }
-    
+
     button {
       flex: 1;
       padding: 12px;
@@ -100,32 +165,32 @@
       cursor: pointer;
       transition: all 0.3s;
     }
-    
+
     #submitBtn {
       background: linear-gradient(to right, #6a11cb, #2575fc);
       color: white;
     }
-    
+
     #submitBtn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
     }
-    
+
     #submitBtn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
-    
+
     #backBtn {
       background: #f8f9fa;
       color: #6a11cb;
       border: 2px solid #e1e5ee;
     }
-    
+
     #backBtn:hover {
       background: #e9ecef;
     }
-    
+
     #msg {
       margin-top: 15px;
       padding: 10px;
@@ -133,83 +198,156 @@
       text-align: center;
       font-weight: 500;
     }
-    
+
     .err {
       background-color: #ffe6e6;
       color: #d32f2f;
       border-left: 4px solid #d32f2f;
     }
-    
+
     .ok {
       background-color: #e6f4ea;
       color: #0f9d58;
       border-left: 4px solid #0f9d58;
     }
-    
+
+    .info {
+      background-color: #e3f2fd;
+      color: #1565c0;
+      border-left: 4px solid #1565c0;
+    }
+
     .game-title {
       font-size: 28px;
       margin-bottom: 20px;
       text-align: center;
     }
-    
+
     .game-description {
       line-height: 1.6;
       font-size: 16px;
       text-align: justify;
     }
-    
+
     .highlight {
       font-weight: 600;
       color: #ffeb3b;
     }
-    
+
     .green-text {
       color: #4caf50;
     }
-    
+
     .red-text {
       color: #f44336;
     }
-    
+
+    /* 倒计时样式 */
+    .countdown {
+      color: #6a11cb;
+      font-weight: bold;
+    }
+
+    /* 密码匹配提示 */
+    .password-match {
+      font-size: 12px;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .match-icon {
+      font-size: 14px;
+    }
+
+    .match {
+      color: #4caf50;
+    }
+
+    .mismatch {
+      color: #f44336;
+    }
+
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
       }
-      
+
       .game-info {
         order: -1;
+      }
+
+      .email-verification-group {
+        flex-direction: column;
+      }
+
+      #getCodeBtn {
+        width: 100%;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="register-section">
       <h1>创建账户</h1>
       <p class="subtitle">注册您的Magic Box账户</p>
-      
+
       <div class="form-group">
         <label for="uid">用户ID：</label>
-        <input id="uid" type="text" placeholder="请输入新ID" />
+        <input id="uid" type="text" placeholder="请输入用户名（3-20位字母、数字或下划线）" />
       </div>
-      
+
+      <div class="form-group">
+        <label for="email">邮箱：</label>
+        <div class="email-verification-group">
+          <div class="email-input">
+            <input id="email" type="email" placeholder="请输入有效的邮箱地址" />
+          </div>
+          <button id="getCodeBtn">获取验证码</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="verificationCode">验证码：</label>
+        <input id="verificationCode" type="text" placeholder="请输入邮箱收到的验证码" />
+      </div>
+
       <div class="form-group">
         <label for="pwd">密码：</label>
-        <input id="pwd" type="password" placeholder="请输入密码" />
+        <input id="pwd" type="password" placeholder="请输入密码（至少6位）" />
+        <div class="password-strength">
+          <div class="strength-bar">
+            <div class="strength-fill" id="strengthFill"></div>
+          </div>
+          <div class="strength-text" id="strengthText">弱</div>
+        </div>
       </div>
-      
+
+      <div class="form-group">
+        <label for="confirmPwd">确认密码：</label>
+        <input id="confirmPwd" type="password" placeholder="请再次输入密码" />
+        <div class="password-match" id="passwordMatch">
+          <span class="match-icon">🔒</span>
+          <span>请确认密码</span>
+        </div>
+      </div>
+
       <div id="msg"></div>
-      
+
       <div class="btn-group">
         <button id="submitBtn">注册</button>
         <button id="backBtn">返回登录</button>
       </div>
     </div>
-    
+
     <div class="game-info">
       <h2 class="game-title">Magic Box 游戏简介</h2>
       <p class="game-description">
-        欢迎来到<span class="highlight">Magic Box</span>！在这个刺激的游戏中，你将会拥有一个神奇的魔法盒子，以及<span class="highlight">10,000枚硬币</span>的启动资金。
+        欢迎来到<span class="highlight">Magic Box</span>！在这个刺激的游戏中，你将会拥有一个神奇的魔法盒子，以及<span
+          class="highlight">10,000枚硬币</span>的启动资金。
         <br><br>
         每次游戏，你可以选择一定量的硬币投入魔法盒子中。结果将由命运决定：
         <br><br>
@@ -225,28 +363,326 @@
   </div>
 
   <script>
+    // 纯JavaScript实现的SHA256函数（与登录和修改密码页面相同）
+    function sha256(str) {
+      // 初始化常量
+      const K = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+        0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+        0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+        0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+        0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+      ];
+
+      // 初始哈希值
+      let H = [
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+      ];
+
+      // 将字符串转换为字节数组
+      const bytes = new TextEncoder().encode(str);
+
+      // 预处理：添加填充位
+      const bits = bytes.length * 8;
+      const blocks = [];
+
+      for (let i = 0; i < bytes.length; i++) {
+        if (i % 4 === 0) blocks[i >> 2] = 0;
+        blocks[i >> 2] |= bytes[i] << (24 - (i % 4) * 8);
+      }
+
+      // 添加1比特
+      blocks[bytes.length >> 2] |= 0x80 << (24 - (bytes.length % 4) * 8);
+
+      // 添加原始长度
+      blocks[(((bits + 64) >>> 9) << 4) + 15] = bits;
+
+      // 处理每个512位块
+      for (let i = 0; i < blocks.length; i += 16) {
+        const W = new Array(64);
+
+        // 准备消息调度
+        for (let t = 0; t < 16; t++) {
+          W[t] = blocks[i + t] || 0;
+        }
+
+        for (let t = 16; t < 64; t++) {
+          const s0 = rotr(W[t - 15], 7) ^ rotr(W[t - 15], 18) ^ (W[t - 15] >>> 3);
+          const s1 = rotr(W[t - 2], 17) ^ rotr(W[t - 2], 19) ^ (W[t - 2] >>> 10);
+          W[t] = (W[t - 16] + s0 + W[t - 7] + s1) & 0xffffffff;
+        }
+
+        // 初始化工作变量
+        let [a, b, c, d, e, f, g, h] = H;
+
+        // 主循环
+        for (let t = 0; t < 64; t++) {
+          const S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+          const ch = (e & f) ^ (~e & g);
+          const temp1 = (h + S1 + ch + K[t] + W[t]) & 0xffffffff;
+          const S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+          const maj = (a & b) ^ (a & c) ^ (b & c);
+          const temp2 = (S0 + maj) & 0xffffffff;
+
+          h = g;
+          g = f;
+          f = e;
+          e = (d + temp1) & 0xffffffff;
+          d = c;
+          c = b;
+          b = a;
+          a = (temp1 + temp2) & 0xffffffff;
+        }
+
+        // 计算中间哈希值
+        H[0] = (H[0] + a) & 0xffffffff;
+        H[1] = (H[1] + b) & 0xffffffff;
+        H[2] = (H[2] + c) & 0xffffffff;
+        H[3] = (H[3] + d) & 0xffffffff;
+        H[4] = (H[4] + e) & 0xffffffff;
+        H[5] = (H[5] + f) & 0xffffffff;
+        H[6] = (H[6] + g) & 0xffffffff;
+        H[7] = (H[7] + h) & 0xffffffff;
+      }
+
+      // 生成最终的哈希字符串
+      let hash = '';
+      for (let i = 0; i < 8; i++) {
+        hash += (H[i] >>> 0).toString(16).padStart(8, '0');
+      }
+
+      return hash;
+    }
+
+    // 循环右移辅助函数
+    function rotr(x, n) {
+      return (x >>> n) | (x << (32 - n));
+    }
+
+    // 异步包装函数，保持接口一致
+    async function sha256Async(message) {
+      return sha256(message);
+    }
+
     const $ = id => document.getElementById(id);
     const uid = $('uid');
+    const email = $('email');
+    const verificationCode = $('verificationCode');
     const pwd = $('pwd');
+    const confirmPwd = $('confirmPwd');
+    const getCodeBtn = $('getCodeBtn');
     const msg = $('msg');
     const btn = $('submitBtn');
+    const strengthFill = $('strengthFill');
+    const strengthText = $('strengthText');
+    const passwordMatch = $('passwordMatch');
 
-    btn.onclick = async () => {
-      if (!uid.value || !pwd.value) {
-        show('请完整填写ID和密码', false);
+    // 密码强度检测
+    pwd.addEventListener('input', function () {
+      const password = this.value;
+      let strength = 0;
+      let text = '弱';
+      let color = '#f44336';
+      let width = '0%';
+
+      if (password.length >= 6) strength++;
+      if (password.length >= 8) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+      switch (strength) {
+        case 0:
+        case 1:
+          text = '弱';
+          color = '#f44336';
+          width = '25%';
+          break;
+        case 2:
+        case 3:
+          text = '中';
+          color = '#ff9800';
+          width = '50%';
+          break;
+        case 4:
+          text = '强';
+          color = '#4caf50';
+          width = '75%';
+          break;
+        case 5:
+          text = '很强';
+          color = '#2e7d32';
+          width = '100%';
+          break;
+      }
+
+      strengthFill.style.width = width;
+      strengthFill.style.backgroundColor = color;
+      strengthText.textContent = text;
+      strengthText.style.color = color;
+
+      // 检查密码是否匹配
+      checkPasswordMatch();
+    });
+
+    // 密码匹配检查
+    confirmPwd.addEventListener('input', checkPasswordMatch);
+
+    function checkPasswordMatch() {
+      const password = pwd.value;
+      const confirm = confirmPwd.value;
+      const icon = passwordMatch.querySelector('.match-icon');
+      const text = passwordMatch.querySelector('span:last-child');
+
+      if (confirm === '') {
+        icon.textContent = '🔒';
+        icon.className = 'match-icon';
+        text.textContent = '请确认密码';
+        text.className = '';
+        return false;
+      }
+
+      if (password === confirm) {
+        icon.textContent = '✓';
+        icon.className = 'match-icon match';
+        text.textContent = '密码匹配';
+        text.className = 'match';
+        return true;
+      } else {
+        icon.textContent = '✗';
+        icon.className = 'match-icon mismatch';
+        text.textContent = '密码不匹配';
+        text.className = 'mismatch';
+        return false;
+      }
+    }
+
+    // 获取验证码倒计时
+    let countdown = 0;
+    let countdownInterval = null;
+
+    getCodeBtn.onclick = async () => {
+      if (!email.value) {
+        show('请输入邮箱地址', false);
         return;
       }
-      btn.disabled = true;
+
+      // 简单的邮箱验证
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.value)) {
+        show('请输入有效的邮箱地址', false);
+        return;
+      }
+
+      getCodeBtn.disabled = true;
+      show('正在发送验证码...', true);
+
       try {
+        // 这里调用获取验证码的接口
+        const res = await fetch('http://47.92.231.94:8080/user/email_send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email.value })
+        });
+
+        const data = await res.json();
+
+        if (data.code === 0) {
+          show('验证码已发送到您的邮箱，请查收', true);
+          startCountdown();
+        } else {
+          show(data.msg || '验证码发送失败，请稍后重试', false);
+          getCodeBtn.disabled = false;
+        }
+      } catch (e) {
+        show('网络错误：' + e.message, false);
+        getCodeBtn.disabled = false;
+      }
+    };
+
+    function startCountdown() {
+      countdown = 60;
+      getCodeBtn.textContent = `${countdown}秒后重新获取`;
+
+      countdownInterval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          getCodeBtn.textContent = `${countdown}秒后重新获取`;
+        } else {
+          clearInterval(countdownInterval);
+          getCodeBtn.textContent = '获取验证码';
+          getCodeBtn.disabled = false;
+        }
+      }, 1000);
+    }
+
+    btn.onclick = async () => {
+      // 验证所有必填项
+      if (!uid.value || !email.value || !verificationCode.value || !pwd.value || !confirmPwd.value) {
+        show('请完整填写所有必填项', false);
+        return;
+      }
+
+      // 验证用户名格式（3-20位字母、数字、下划线）
+      const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+      if (!usernameRegex.test(uid.value)) {
+        show('用户名格式不正确（3-20位字母、数字或下划线）', false);
+        return;
+      }
+
+      // 验证邮箱格式
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.value)) {
+        show('请输入有效的邮箱地址', false);
+        return;
+      }
+
+      // 验证验证码（6位数字）
+      const codeRegex = /^\d{6}$/;
+      if (!codeRegex.test(verificationCode.value)) {
+        show('验证码格式不正确（6位数字）', false);
+        return;
+      }
+
+      // 验证密码长度
+      if (pwd.value.length < 6) {
+        show('密码长度至少6位', false);
+        return;
+      }
+
+      // 验证密码是否匹配
+      if (!checkPasswordMatch()) {
+        show('两次输入的密码不一致', false);
+        return;
+      }
+
+      btn.disabled = true;
+      show('正在注册...', true);
+
+      try {
+        // 使用纯JavaScript实现的SHA256计算密码的哈希值
+        const pwdHash = await sha256Async(pwd.value);
+
+        // 调用注册接口，发送密码哈希值
         const res = await fetch('http://47.92.231.94:8080/user/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: uid.value, pwd: pwd.value })
+          body: JSON.stringify({
+            id: uid.value,
+            pwd_hash: pwdHash,  // 发送密码哈希值
+            email: email.value,
+            code: verificationCode.value
+          })
         });
+
         const data = await res.json();
         handle(data);
       } catch (e) {
-        show('网络错误：' + e, false);
+        show('网络错误：' + e.message, false);
       } finally {
         btn.disabled = false;
       }
@@ -254,21 +690,79 @@
 
     function handle(data) {
       if (data.code === 0) {          // 注册成功
-        localStorage.setItem('uid', uid.value);   // 保存当前用户 id
-        show(data.msg + '，即将进入游戏...', true);
-        setTimeout(() => location.href = 'game.html', 1200);
-      } else {                          // 用户已存在
+        // 保存用户信息
+        localStorage.setItem('uid', uid.value);
+        if (data.cookie) {
+          localStorage.setItem('cookie', data.cookie);
+        }
+
+        show(data.msg + '，即将进入登录界面...', true);
+
+        // 登录成功后，发送 user_finish 请求（与登录页面保持一致）
+        if (data.cookie) {
+          sendUserFinishRequest(data.cookie);
+        }
+
+        setTimeout(() => location.href = 'index.html', 1200);
+      } else {                          // 注册失败
         show(data.msg, false);
+      }
+    }
+
+    // 发送 user_finish 请求（与登录页面保持一致）
+    async function sendUserFinishRequest(cookie) {
+      try {
+        const res = await fetch('http://47.92.231.94:8080/task/user_finish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cookie: cookie, task_id: 0 })
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          console.log('user_finish 请求发送成功');
+        } else {
+          console.log('user_finish 请求失败');
+        }
+      } catch (error) {
+        console.error('发送 user_finish 请求时出错:', error);
       }
     }
 
     function show(text, isOk) {
       msg.textContent = text;
-      msg.className = isOk ? 'ok' : 'err';
+
+      // 根据消息类型设置样式
+      if (text.includes('验证码已发送')) {
+        msg.className = 'info';
+      } else if (isOk) {
+        msg.className = 'ok';
+      } else {
+        msg.className = 'err';
+      }
+
+      // 3秒后自动消失（成功消息不自动消失）
+      if (!isOk || text.includes('验证码已发送')) {
+        setTimeout(() => {
+          if (msg.textContent === text) {
+            msg.textContent = '';
+            msg.className = '';
+          }
+        }, 3000);
+      }
     }
-    
+
     // 添加返回登录页面的功能
     $('backBtn').onclick = () => location.href = 'index.html';
+
+    // 添加回车键提交功能
+    document.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        await btn.click();
+      }
+    });
   </script>
 </body>
+
 </html>
