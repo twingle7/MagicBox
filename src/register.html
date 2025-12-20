@@ -295,52 +295,54 @@
       <h1>创建账户</h1>
       <p class="subtitle">注册您的Magic Box账户</p>
 
-      <div class="form-group">
-        <label for="uid">用户ID：</label>
-        <input id="uid" type="text" placeholder="请输入用户名（3-20位字母、数字或下划线）" />
-      </div>
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="uid">用户ID：</label>
+          <input id="uid" type="text" placeholder="请输入用户名（3-20位字母、数字或下划线）" autocomplete="username" required />
+        </div>
 
-      <div class="form-group">
-        <label for="email">邮箱：</label>
-        <div class="email-verification-group">
-          <div class="email-input">
-            <input id="email" type="email" placeholder="请输入有效的邮箱地址" />
+        <div class="form-group">
+          <label for="email">邮箱：</label>
+          <div class="email-verification-group">
+            <div class="email-input">
+              <input id="email" type="email" placeholder="请输入有效的邮箱地址" required />
+            </div>
+            <button id="getCodeBtn" type="button">获取验证码</button>
           </div>
-          <button id="getCodeBtn">获取验证码</button>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="verificationCode">验证码：</label>
-        <input id="verificationCode" type="text" placeholder="请输入邮箱收到的验证码" />
-      </div>
+        <div class="form-group">
+          <label for="verificationCode">验证码：</label>
+          <input id="verificationCode" type="text" placeholder="请输入邮箱收到的验证码" required />
+        </div>
 
-      <div class="form-group">
-        <label for="pwd">密码：</label>
-        <input id="pwd" type="password" placeholder="请输入密码（至少6位）" />
-        <div class="password-strength">
-          <div class="strength-bar">
-            <div class="strength-fill" id="strengthFill"></div>
+        <div class="form-group">
+          <label for="pwd">密码：</label>
+          <input id="pwd" type="password" placeholder="请输入密码（至少6位）" autocomplete="new-password" required />
+          <div class="password-strength">
+            <div class="strength-bar">
+              <div class="strength-fill" id="strengthFill"></div>
+            </div>
+            <div class="strength-text" id="strengthText">弱</div>
           </div>
-          <div class="strength-text" id="strengthText">弱</div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="confirmPwd">确认密码：</label>
-        <input id="confirmPwd" type="password" placeholder="请再次输入密码" />
-        <div class="password-match" id="passwordMatch">
-          <span class="match-icon">🔒</span>
-          <span>请确认密码</span>
+        <div class="form-group">
+          <label for="confirmPwd">确认密码：</label>
+          <input id="confirmPwd" type="password" placeholder="请再次输入密码" autocomplete="new-password" required />
+          <div class="password-match" id="passwordMatch">
+            <span class="match-icon">🔒</span>
+            <span>请确认密码</span>
+          </div>
         </div>
-      </div>
 
-      <div id="msg"></div>
+        <div id="msg"></div>
 
-      <div class="btn-group">
-        <button id="submitBtn">注册</button>
-        <button id="backBtn">返回登录</button>
-      </div>
+        <div class="btn-group">
+          <button id="submitBtn" type="submit">注册</button>
+          <button id="backBtn" type="button">返回登录</button>
+        </div>
+      </form>
     </div>
 
     <div class="game-info">
@@ -469,6 +471,7 @@
     }
 
     const $ = id => document.getElementById(id);
+    const registerForm = $('registerForm');
     const uid = $('uid');
     const email = $('email');
     const verificationCode = $('verificationCode');
@@ -583,7 +586,7 @@
 
       try {
         // 这里调用获取验证码的接口
-        const res = await fetch('http://47.92.231.94:8080/user/email_send', {
+        const res = await fetch('/api/user/email_send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: email.value })
@@ -620,7 +623,8 @@
       }, 1000);
     }
 
-    btn.onclick = async () => {
+    registerForm.onsubmit = async (e) => {
+      e.preventDefault();
       // 验证所有必填项
       if (!uid.value || !email.value || !verificationCode.value || !pwd.value || !confirmPwd.value) {
         show('请完整填写所有必填项', false);
@@ -668,7 +672,7 @@
         const pwdHash = await sha256Async(pwd.value);
 
         // 调用注册接口，发送密码哈希值
-        const res = await fetch('http://47.92.231.94:8080/user/register', {
+        const res = await fetch('/api/user/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -712,7 +716,7 @@
     // 发送 user_finish 请求（与登录页面保持一致）
     async function sendUserFinishRequest(cookie) {
       try {
-        const res = await fetch('http://47.92.231.94:8080/task/user_finish', {
+        const res = await fetch('/api/task/user_finish', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ cookie: cookie, task_id: 0 })
@@ -755,13 +759,6 @@
 
     // 添加返回登录页面的功能
     $('backBtn').onclick = () => location.href = 'index.html';
-
-    // 添加回车键提交功能
-    document.addEventListener('keydown', async (e) => {
-      if (e.key === 'Enter') {
-        await btn.click();
-      }
-    });
   </script>
 </body>
 

@@ -647,7 +647,7 @@
                 loading.style.display = 'block';
                 error.style.display = 'none';
 
-                const response = await fetch('http://47.92.231.94:8080/card/view');
+                const response = await fetch('/api/card/view');
                 const data = await response.json();
 
                 if (data.status === 'success') {

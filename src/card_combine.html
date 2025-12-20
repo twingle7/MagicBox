@@ -601,7 +601,7 @@
                     return;
                 }
 
-                const response = await fetch('http://47.92.231.94:8080/card/combine/view', {
+                const response = await fetch('/api/card/combine/view', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -764,7 +764,7 @@
                     return;
                 }
 
-                const response = await fetch('http://47.92.231.94:8080/card/combine/execute', {
+                const response = await fetch('/api/card/combine/execute', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

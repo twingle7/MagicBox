@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    
+
     body {
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       color: #fff;
@@ -23,7 +24,7 @@
       padding: 20px;
       position: relative;
     }
-    
+
     .main-container {
       display: flex;
       flex-direction: column;
@@ -32,7 +33,7 @@
       max-width: 1200px;
       gap: 20px;
     }
-    
+
     .container {
       max-width: 500px;
       width: 100%;
@@ -43,12 +44,12 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
     .header {
       text-align: center;
       margin-bottom: 30px;
     }
-    
+
     h1 {
       font-size: 2.5rem;
       background: linear-gradient(45deg, #00b894, #55efc4);
@@ -58,7 +59,7 @@
       text-shadow: 0 2px 10px rgba(0, 184, 148, 0.3);
       margin-bottom: 10px;
     }
-    
+
     .user-info {
       font-size: 1.1rem;
       color: #a29bfe;
@@ -67,14 +68,14 @@
       justify-content: center;
       gap: 10px;
     }
-    
+
     .user-id {
       background: rgba(162, 155, 254, 0.2);
       padding: 5px 12px;
       border-radius: 20px;
       font-weight: 600;
     }
-    
+
     .bank-panel {
       background: rgba(255, 255, 255, 0.08);
       border-radius: 15px;
@@ -83,12 +84,12 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
     }
-    
+
     .bank-panel:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
-    
+
     h3 {
       margin-bottom: 20px;
       font-size: 1.5rem;
@@ -98,27 +99,27 @@
       justify-content: center;
       gap: 10px;
     }
-    
+
     .input-group {
       display: flex;
       flex-direction: column;
       gap: 15px;
       margin-bottom: 20px;
     }
-    
+
     .input-row {
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
-    
+
     .input-label {
       min-width: 60px;
       color: #a29bfe;
       font-weight: 500;
     }
-    
+
     input {
       padding: 12px 15px;
       border-radius: 10px;
@@ -130,17 +131,17 @@
       flex: 1;
       min-width: 150px;
     }
-    
+
     input:focus {
       outline: none;
       border-color: #00b894;
       box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.3);
     }
-    
+
     input::placeholder {
       color: rgba(255, 255, 255, 0.5);
     }
-    
+
     button {
       padding: 12px 20px;
       border-radius: 10px;
@@ -157,23 +158,23 @@
       gap: 8px;
       flex: 1;
     }
-    
+
     button:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
     }
-    
+
     button:active {
       transform: translateY(0);
     }
-    
+
     button:disabled {
       background: #636e72;
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
     }
-    
+
     .result {
       margin-top: 20px;
       padding: 15px;
@@ -184,24 +185,24 @@
       transform: translateY(10px);
       transition: all 0.5s ease;
     }
-    
+
     .result.show {
       opacity: 1;
       transform: translateY(0);
     }
-    
+
     .result.success {
       background: rgba(0, 184, 148, 0.2);
       border: 1px solid #00b894;
       color: #00b894;
     }
-    
+
     .result.error {
       background: rgba(225, 112, 85, 0.2);
       border: 1px solid #e17055;
       color: #e17055;
     }
-    
+
     .bank-icon {
       width: 24px;
       height: 24px;
@@ -210,7 +211,7 @@
       border-radius: 50%;
       box-shadow: 0 0 5px #00b894;
     }
-    
+
     .spinner {
       width: 20px;
       height: 20px;
@@ -220,21 +221,31 @@
       animation: spin 1s linear infinite;
       display: inline-block;
     }
-    
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
-    
+
     .pulse {
       animation: pulse 1.5s infinite;
     }
-    
+
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
-    
+
     .function-buttons {
       display: flex;
       gap: 15px;
@@ -242,7 +253,7 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-    
+
     .func-button {
       padding: 15px 25px;
       border-radius: 12px;
@@ -260,26 +271,26 @@
       gap: 8px;
       min-width: 150px;
     }
-    
+
     .func-button:hover {
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
       text-decoration: none;
       color: white;
     }
-    
+
     .func-button:active {
       transform: translateY(-1px);
     }
-    
+
     .func-button.game {
       background: linear-gradient(45deg, #6c5ce7, #a29bfe);
     }
-    
+
     .func-button.market {
       background: linear-gradient(45deg, #e17055, #fab1a0);
     }
-    
+
     /* 个人信息面板样式 */
     .user-panel {
       position: absolute;
@@ -297,34 +308,34 @@
       max-height: 60px;
       overflow: hidden;
     }
-    
+
     .user-panel.expanded {
       max-height: 400px;
     }
-    
+
     .user-panel h3 {
       font-size: 1.2rem;
       margin-bottom: 15px;
       justify-content: space-between;
       cursor: pointer;
     }
-    
+
     .user-toggle {
       font-size: 1rem;
       transition: transform 0.3s ease;
     }
-    
+
     .user-panel.expanded .user-toggle {
       transform: rotate(180deg);
     }
-    
+
     .user-panel button {
       width: 100%;
       padding: 10px;
       font-size: 0.9rem;
       margin-bottom: 15px;
     }
-    
+
     .user-panel pre {
       background: rgba(0, 0, 0, 0.2);
       border-radius: 8px;
@@ -339,42 +350,42 @@
       overflow: hidden;
       transition: all 0.5s ease;
     }
-    
+
     .user-panel pre.show {
       opacity: 1;
       max-height: 300px;
       margin-top: 15px;
       overflow-y: auto;
     }
-    
+
     .user-panel pre.success {
       color: #00b894;
       border: 1px solid rgba(0, 184, 148, 0.3);
     }
-    
+
     .user-panel pre.error {
       color: #e17055;
       border: 1px solid rgba(225, 112, 85, 0.3);
     }
-    
+
     .user-panel pre::-webkit-scrollbar {
       width: 4px;
     }
-    
+
     .user-panel pre::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.1);
       border-radius: 2px;
     }
-    
+
     .user-panel pre::-webkit-scrollbar-thumb {
       background: rgba(108, 92, 231, 0.5);
       border-radius: 2px;
     }
-    
+
     .user-panel pre::-webkit-scrollbar-thumb:hover {
       background: rgba(108, 92, 231, 0.7);
     }
-    
+
     /* 响应式设计 */
     @media (max-width: 768px) {
       .user-panel {
@@ -382,71 +393,73 @@
         width: 100%;
         margin-bottom: 20px;
       }
-      
+
       .container {
         max-width: 100%;
         padding: 20px;
       }
-      
+
       h1 {
         font-size: 2rem;
       }
-      
+
       .bank-panel {
         padding: 20px;
       }
-      
+
       .input-row {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
       }
-      
+
       input {
         min-width: auto;
       }
-      
+
       button {
         width: 100%;
       }
-      
+
       .function-buttons {
         flex-direction: column;
       }
-      
+
       .func-button {
         width: 100%;
       }
     }
-    
+
     @media (max-width: 480px) {
       .container {
         padding: 15px;
       }
-      
+
       h1 {
         font-size: 1.8rem;
       }
-      
+
       .bank-panel {
         padding: 15px;
       }
-      
+
       h3 {
         font-size: 1.3rem;
       }
-      
-      input, button {
+
+      input,
+      button {
         padding: 10px 12px;
         font-size: 0.9rem;
       }
-      
+
       .user-panel {
         width: 100%;
       }
     }
   </style>
 </head>
+
 <body>
   <!-- 个人信息面板（固定在右上角） -->
   <div class="user-panel" id="userPanel">
@@ -467,75 +480,83 @@
           <span class="user-id" id="userIdDisplay">加载中...</span>
         </div>
       </div>
-      
+
       <!-- 1. 贷款 -->
       <div class="bank-panel">
         <h3><span class="bank-icon"></span> 贷款服务</h3>
-        <div class="input-group">
-          <div class="input-row">
-            <span class="input-label">金额：</span>
-            <input id="loanNum" type="number" min="1" placeholder="输入正整数金额">
-            <button id="loanBtn">
-              <span>申请贷款</span>
-            </button>
+        <form id="loanForm">
+          <div class="input-group">
+            <div class="input-row">
+              <span class="input-label">金额：</span>
+              <input id="loanNum" type="number" min="1" placeholder="输入正整数金额" required>
+              <button id="loanBtn" type="submit">
+                <span>申请贷款</span>
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
         <div id="loanMsg" class="result"></div>
       </div>
-      
+
       <!-- 2. 还贷款 -->
       <div class="bank-panel">
         <h3><span class="bank-icon"></span> 还款服务</h3>
-        <div class="input-group">
-          <div class="input-row">
-            <span class="input-label">金额：</span>
-            <input id="repayNum" type="number" min="1" placeholder="输入正整数金额">
-            <button id="repayBtn">
-              <span>立即还款</span>
-            </button>
+        <form id="repayForm">
+          <div class="input-group">
+            <div class="input-row">
+              <span class="input-label">金额：</span>
+              <input id="repayNum" type="number" min="1" placeholder="输入正整数金额" required>
+              <button id="repayBtn" type="submit">
+                <span>立即还款</span>
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
         <div id="repayMsg" class="result"></div>
       </div>
-      
+
       <!-- 3. 存钱 -->
       <div class="bank-panel">
         <h3><span class="bank-icon"></span> 存款服务</h3>
-        <div class="input-group">
-          <div class="input-row">
-            <span class="input-label">密码：</span>
-            <input id="depPwd" type="password" placeholder="请输入登录密码">
+        <form id="depForm">
+          <div class="input-group">
+            <div class="input-row">
+              <span class="input-label">密码：</span>
+              <input id="depPwd" type="password" placeholder="请输入登录密码" autocomplete="current-password" required>
+            </div>
+            <div class="input-row">
+              <span class="input-label">金额：</span>
+              <input id="depNum" type="number" min="1" placeholder="输入正整数金额" required>
+              <button id="depBtn" type="submit">
+                <span>确认存款</span>
+              </button>
+            </div>
           </div>
-          <div class="input-row">
-            <span class="input-label">金额：</span>
-            <input id="depNum" type="number" min="1" placeholder="输入正整数金额">
-            <button id="depBtn">
-              <span>确认存款</span>
-            </button>
-          </div>
-        </div>
+        </form>
         <div id="depMsg" class="result"></div>
       </div>
-      
+
       <!-- 4. 取钱 -->
       <div class="bank-panel">
         <h3><span class="bank-icon"></span> 取款服务</h3>
-        <div class="input-group">
-          <div class="input-row">
-            <span class="input-label">密码：</span>
-            <input id="wdPwd" type="password" placeholder="请输入登录密码">
+        <form id="wdForm">
+          <div class="input-group">
+            <div class="input-row">
+              <span class="input-label">密码：</span>
+              <input id="wdPwd" type="password" placeholder="请输入登录密码" autocomplete="current-password" required>
+            </div>
+            <div class="input-row">
+              <span class="input-label">金额：</span>
+              <input id="wdNum" type="number" min="1" placeholder="输入正整数金额" required>
+              <button id="wdBtn" type="submit">
+                <span>确认取款</span>
+              </button>
+            </div>
           </div>
-          <div class="input-row">
-            <span class="input-label">金额：</span>
-            <input id="wdNum" type="number" min="1" placeholder="输入正整数金额">
-            <button id="wdBtn">
-              <span>确认取款</span>
-            </button>
-          </div>
-        </div>
+        </form>
         <div id="wdMsg" class="result"></div>
       </div>
-      
+
       <!-- 功能按钮区域 -->
       <div class="function-buttons">
         <a href="game.html" class="func-button game">
@@ -547,7 +568,7 @@
       </div>
     </div>
   </div>
-  
+
   <script>
     // 获取DOM元素
     const $ = id => document.getElementById(id);
@@ -555,33 +576,37 @@
     const loanNum = $('loanNum');
     const loanBtn = $('loanBtn');
     const loanMsg = $('loanMsg');
+    const loanForm = $('loanForm');
     const repayNum = $('repayNum');
     const repayBtn = $('repayBtn');
     const repayMsg = $('repayMsg');
+    const repayForm = $('repayForm');
     const depPwd = $('depPwd');
     const depNum = $('depNum');
     const depBtn = $('depBtn');
     const depMsg = $('depMsg');
+    const depForm = $('depForm');
     const wdPwd = $('wdPwd');
     const wdNum = $('wdNum');
     const wdBtn = $('wdBtn');
     const wdMsg = $('wdMsg');
+    const wdForm = $('wdForm');
     const btn2 = $('btn2');
     const rst2 = $('rst2');
     const userPanel = $('userPanel');
-    
+
     // 获取用户ID
     const uid = () => localStorage.getItem('uid');
     // 获取cookie
     const cookie = () => localStorage.getItem('cookie');
-    
+
     // API调用函数
-    const api = (path, body) => fetch('http://47.92.231.94:8080' + path, {
+    const api = (path, body) => fetch('/api' + path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    
+
     // 显示用户ID
     function displayUserId() {
       const userUid = uid();
@@ -593,33 +618,33 @@
         userIdDisplay.style.color = '#e17055';
       }
     }
-    
+
     // 初始化显示用户ID
     displayUserId();
-    
+
     // 切换个人信息面板展开/收起
     function toggleUserPanel() {
       userPanel.classList.toggle('expanded');
     }
-    
+
     // 显示消息函数
     function show(box, txt, ok) {
       // 移除之前的类
       box.classList.remove('success', 'error', 'show');
-      
+
       // 设置文本
       box.textContent = txt;
-      
+
       // 添加适当的类
       box.classList.add(ok ? 'success' : 'error');
-      
+
       // 强制重排以触发动画
       void box.offsetWidth;
-      
+
       // 添加显示类
       box.classList.add('show');
     }
-    
+
     // 设置按钮加载状态
     function setButtonLoading(button, isLoading, originalText) {
       if (isLoading) {
@@ -630,7 +655,7 @@
         button.innerHTML = `<span>${originalText}</span>`;
       }
     }
-    
+
     // 获取并显示个人信息
     async function loadUserInfo() {
       const userUid = uid();
@@ -640,10 +665,10 @@
         showUserInfo('未登录，请先登录', false);
         return;
       }
-      
+
       btn2.disabled = true;
       btn2.innerHTML = '<span class="spinner"></span> 加载中...';
-      
+
       try {
         const res = await api('/user/info', { cookie: userCookie });
         const data = await res.json();
@@ -655,7 +680,7 @@
         btn2.innerHTML = '刷新个人信息';
       }
     }
-    
+
     // 处理个人信息 - 美化显示
     function handleInfo(data) {
       if (data.code === -1) {
@@ -663,10 +688,10 @@
         showUserInfo('', true);
         return;
       }
-      
+
       // 计算总资产
       const netWorth = (data.amount || 0) + (data.account || 0) - (data.loan || 0);
-      
+
       // 美化显示格式
       const infoText = `
 用户ID：${data.id || '未知'}
@@ -677,46 +702,47 @@
 ══════════════════════════
 总资产：${netWorth} 
       `;
-      
+
       showUserInfo(infoText, true);
     }
-    
+
     // 显示用户信息
     function showUserInfo(text, isOk) {
       // 移除之前的类
       rst2.classList.remove('success', 'error', 'show');
-      
+
       // 设置文本
       rst2.textContent = text;
-      
+
       // 添加适当的类
       if (text) {
         rst2.classList.add(isOk ? 'success' : 'error');
       }
-      
+
       // 强制重排以触发动画
       void rst2.offsetWidth;
-      
+
       // 添加显示类
       if (text) {
         rst2.classList.add('show');
       }
-      
+
       // 展开面板显示信息
       userPanel.classList.add('expanded');
     }
-    
+
     // 个人信息按钮点击事件
     btn2.onclick = loadUserInfo;
-    
+
     /* ========== 贷款 ========== */
-    loanBtn.onclick = async () => {
+    loanForm.onsubmit = async (e) => {
+      e.preventDefault();
       const n = Number(loanNum.value);
       if (!Number.isInteger(n) || n <= 0) {
         show(loanMsg, '请输入正整数金额', false);
         return;
       }
-      
+
       const userUid = uid();
       const userCookie = cookie();
 
@@ -724,27 +750,27 @@
         show(loanMsg, '未登录，请先登录', false);
         return;
       }
-      
+
       // 设置按钮加载状态
       setButtonLoading(loanBtn, true, '申请贷款');
-      
+
       // 先显示"等待中"信息
       show(loanMsg, '等待中...', true);
-      
+
       try {
         // 延迟1秒后再发送请求
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         const res = await api('/bank/loan', { cookie: userCookie, num: n });
         const data = await res.json();
-        
+
         let message = data.msg;
         if (data.code === -1) {
           message = '数据库故障';
         }
-        
+
         show(loanMsg, message, data.code === 0);
-        
+
         // 成功后清空输入框并更新个人信息
         if (data.code === 0) {
           loanNum.value = '';
@@ -756,43 +782,44 @@
         setButtonLoading(loanBtn, false, '申请贷款');
       }
     };
-    
+
     /* ========== 还款 ========== */
-    repayBtn.onclick = async () => {
+    repayForm.onsubmit = async (e) => {
+      e.preventDefault();
       const n = Number(repayNum.value);
       if (!Number.isInteger(n) || n <= 0) {
         show(repayMsg, '请输入正整数金额', false);
         return;
       }
-      
+
       const userUid = uid();
-      const userCookie =cookie();
+      const userCookie = cookie();
 
       if (!userUid) {
         show(repayMsg, '未登录，请先登录', false);
         return;
       }
-      
+
       // 设置按钮加载状态
       setButtonLoading(repayBtn, true, '立即还款');
-      
+
       // 先显示"等待中"信息
       show(repayMsg, '等待中...', true);
-      
+
       try {
         // 延迟1秒后再发送请求
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         const res = await api('/bank/repay', { cookie: userCookie, num: n });
         const data = await res.json();
-        
+
         let message = data.msg;
         if (data.code === -1) {
           message = '数据库故障';
         }
-        
+
         show(repayMsg, message, data.code === 0);
-        
+
         // 成功后清空输入框并更新个人信息
         if (data.code === 0) {
           repayNum.value = '';
@@ -804,12 +831,13 @@
         setButtonLoading(repayBtn, false, '立即还款');
       }
     };
-    
+
     /* ========== 存钱 ========== */
-    depBtn.onclick = async () => {
+    depForm.onsubmit = async (e) => {
+      e.preventDefault();
       const pwd = depPwd.value;
       const n = Number(depNum.value);
-      
+
       if (!pwd) {
         show(depMsg, '请输入密码', false);
         return;
@@ -818,7 +846,7 @@
         show(depMsg, '请输入正整数金额', false);
         return;
       }
-      
+
       const userUid = uid();
       const userCookie = cookie();
 
@@ -826,20 +854,20 @@
         show(depMsg, '未登录，请先登录', false);
         return;
       }
-      
+
       // 设置按钮加载状态
       setButtonLoading(depBtn, true, '确认存款');
-      
+
       // 先显示"等待中"信息
       show(depMsg, '等待中...', true);
-      
+
       try {
         // 延迟1秒后再发送请求
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         const res = await api('/bank/deposit', { cookie: userCookie, pwd, num: n });
         const data = await res.json();
-        
+
         // 三种情况：0 成功 / 1 密码错 / 2 现金不足 / -1 数据库故障
         let message = data.msg;
         if (data.code === 2) {
@@ -847,9 +875,9 @@
         } else if (data.code === -1) {
           message = '数据库故障';
         }
-        
+
         show(depMsg, message, data.code === 0);
-        
+
         // 成功后清空输入框并更新个人信息
         if (data.code === 0) {
           depPwd.value = '';
@@ -862,12 +890,13 @@
         setButtonLoading(depBtn, false, '确认存款');
       }
     };
-    
+
     /* ========== 取钱 ========== */
-    wdBtn.onclick = async () => {
+    wdForm.onsubmit = async (e) => {
+      e.preventDefault();
       const pwd = wdPwd.value;
       const n = Number(wdNum.value);
-      
+
       if (!pwd) {
         show(wdMsg, '请输入密码', false);
         return;
@@ -876,35 +905,35 @@
         show(wdMsg, '请输入正整数金额', false);
         return;
       }
-      
+
       const userUid = uid();
       const userCookie = cookie();
-      
+
       if (!userUid) {
         show(wdMsg, '未登录，请先登录', false);
         return;
       }
-      
+
       // 设置按钮加载状态
       setButtonLoading(wdBtn, true, '确认取款');
-      
+
       // 先显示"等待中"信息
       show(wdMsg, '等待中...', true);
-      
+
       try {
         // 延迟1秒后再发送请求
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         const res = await api('/bank/withdraw', { cookie: userCookie, pwd, num: n });
         const data = await res.json();
-        
+
         let message = data.msg;
         if (data.code === -1) {
           message = '数据库故障';
         }
-        
+
         show(wdMsg, message, data.code === 0);
-        
+
         // 成功后清空输入框并更新个人信息
         if (data.code === 0) {
           wdPwd.value = '';
@@ -917,11 +946,12 @@
         setButtonLoading(wdBtn, false, '确认取款');
       }
     };
-    
+
     // 页面加载时自动显示个人信息
     window.addEventListener('load', () => {
       setTimeout(loadUserInfo, 1000);
     });
   </script>
 </body>
+
 </html>

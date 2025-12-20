@@ -1001,9 +1001,9 @@
         <a href="drawcard.html" class="func-button lucky-card">
           🃏 幸运集卡（套系多多，抽卡赚钱）
         </a>
-        <a href="fight.html" class="func-button fight">
+        <!-- <a href="fight.html" class="func-button fight">
           ⚔️ 双人格斗（实力至上，输了给钱）
-        </a>
+        </a> -->
       </div>
     </div>
   </div>
@@ -1039,7 +1039,7 @@
     const cookie = () => localStorage.getItem('cookie');
 
     // API调用函数
-    const api = (path, body) => fetch('http://47.92.231.94:8080' + path, {
+    const api = (path, body) => fetch('/api' + path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -1452,7 +1452,7 @@
       btn.innerHTML = '<span class="spinner"></span>';
 
       try {
-        const res = await fetch('http://47.92.231.94:8080/task/user_take', {
+        const res = await fetch('/api/task/user_take', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1491,7 +1491,7 @@
       hideTaskError();
 
       try {
-        const res = await fetch('http://47.92.231.94:8080/task/view', {
+        const res = await fetch('/api/task/view', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ cookie: userCookie })

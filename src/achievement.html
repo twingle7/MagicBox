@@ -1174,7 +1174,7 @@
                 error.style.display = 'none';
                 noData.style.display = 'none';
 
-                const response = await fetch('http://47.92.231.94:8080/card/achievement/view', {
+                const response = await fetch('/api/card/achievement/view', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1465,7 +1465,7 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = '创建中...';
 
-                const response = await fetch('http://47.92.231.94:8080/card/achievement/set', {
+                const response = await fetch('/api/card/achievement/set', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

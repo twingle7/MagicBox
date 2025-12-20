@@ -1094,7 +1094,7 @@
       const buyResult = $('buyResult');
 
       // API基础URL
-      const BASE_URL = 'http://47.92.231.94:8080';
+      const BASE_URL = '/api';
 
       // 账户面板状态
       let isAccountExpanded = false;
@@ -1386,7 +1386,7 @@
         }
 
         try {
-          const res = await fetch('http://47.92.231.94:8080/stock/view');
+          const res = await fetch('/api/stock/view');
           const json = await res.json();
 
           if (!json.success) {

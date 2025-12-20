@@ -204,34 +204,37 @@
             <h1>修改密码</h1>
             <p class="subtitle">请填写以下信息以修改您的密码</p>
 
-            <div class="form-group">
-                <label for="uid">用户ID：</label>
-                <input id="uid" type="text" placeholder="请输入用户ID" />
-            </div>
+            <form id="changePwdForm">
+                <div class="form-group">
+                    <label for="uid">用户ID：</label>
+                    <input id="uid" type="text" placeholder="请输入用户ID" autocomplete="username" required />
+                </div>
 
-            <div class="form-group">
-                <label for="oldPwd">旧密码：</label>
-                <input id="oldPwd" type="password" placeholder="请输入旧密码" />
-            </div>
+                <div class="form-group">
+                    <label for="oldPwd">旧密码：</label>
+                    <input id="oldPwd" type="password" placeholder="请输入旧密码" autocomplete="current-password" required />
+                </div>
 
-            <div class="form-group">
-                <label for="newPwd">新密码：</label>
-                <input id="newPwd" type="password" placeholder="请输入新密码" />
-            </div>
+                <div class="form-group">
+                    <label for="newPwd">新密码：</label>
+                    <input id="newPwd" type="password" placeholder="请输入新密码" autocomplete="new-password" required />
+                </div>
 
-            <div class="form-group">
-                <label for="confirmPwd">确认新密码：</label>
-                <input id="confirmPwd" type="password" placeholder="请再次输入新密码" />
-                <div id="pwdMatch" class="password-match">密码匹配</div>
-                <div id="pwdMismatch" class="password-mismatch">密码不匹配</div>
-            </div>
+                <div class="form-group">
+                    <label for="confirmPwd">确认新密码：</label>
+                    <input id="confirmPwd" type="password" placeholder="请再次输入新密码" autocomplete="new-password"
+                        required />
+                    <div id="pwdMatch" class="password-match">密码匹配</div>
+                    <div id="pwdMismatch" class="password-mismatch">密码不匹配</div>
+                </div>
 
-            <div id="msg"></div>
+                <div id="msg"></div>
 
-            <div class="btn-group">
-                <button id="submitBtn">确定</button>
-                <button id="backBtn">返回</button>
-            </div>
+                <div class="btn-group">
+                    <button id="submitBtn" type="submit">确定</button>
+                    <button id="backBtn" type="button">返回</button>
+                </div>
+            </form>
         </div>
 
         <div class="game-info">
@@ -360,6 +363,7 @@
         }
 
         const $ = id => document.getElementById(id);
+        const changePwdForm = $('changePwdForm');
         const uid = $('uid');
         const oldPwd = $('oldPwd');
         const newPwd = $('newPwd');
@@ -397,7 +401,8 @@
         }
 
         // 提交修改密码请求
-        btn.onclick = async () => {
+        changePwdForm.onsubmit = async (e) => {
+            e.preventDefault();
             if (!uid.value || !oldPwd.value || !newPwd.value || !confirmPwd.value) {
                 show('请完整填写所有字段', false);
                 return;
@@ -421,7 +426,7 @@
                 const oldPwdHash = await sha256Async(oldPwd.value);
                 const newPwdHash = await sha256Async(newPwd.value);
 
-                const res = await fetch('http://47.92.231.94:8080/user/change_pwd', {
+                const res = await fetch('/api/user/change_pwd', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -488,15 +493,6 @@
         $('backBtn').onclick = () => {
             window.location.href = 'index.html';
         };
-
-        // 添加回车键支持
-        [uid, oldPwd, newPwd, confirmPwd].forEach(input => {
-            input.addEventListener('keypress', async (e) => {
-                if (e.key === 'Enter') {
-                    await btn.click();
-                }
-            });
-        });
 
         // 页面加载时自动聚焦到用户ID输入框
         window.addEventListener('load', () => {
